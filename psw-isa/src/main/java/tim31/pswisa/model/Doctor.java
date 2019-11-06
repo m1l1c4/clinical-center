@@ -4,4 +4,5 @@ public class Doctor {
 
 	private int br;
 	private int cc;
+	private int gg;
 }
