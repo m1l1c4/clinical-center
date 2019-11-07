@@ -1,7 +1,6 @@
 package tim31.pswisa.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Room {
 	private String name;
