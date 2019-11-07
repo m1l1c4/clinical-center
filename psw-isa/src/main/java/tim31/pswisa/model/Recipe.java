@@ -39,6 +39,7 @@ public class Recipe {
 		return doctor;
 	}
 
+	
 	public void setDoctor(MedicalWorker doctor) {
 		this.doctor = doctor;
 	}
