@@ -2,7 +2,6 @@ package tim31.pswisa.model;
 
 public class Operation {
 
-	
 	private Patient patient;
 	private ArrayList<Doctor>doctors;
 	private Room room;
