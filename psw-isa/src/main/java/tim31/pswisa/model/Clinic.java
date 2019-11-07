@@ -17,7 +17,8 @@ public class Clinic {
 	private ArrayList<Checkup> availableAppointments;	//slobodni pregledi
 	
 	/* key - tip pregleda
-	 * value - cena za taj tip pregleda	 */	
+	 * value - cena za taj tip pregleda	 
+	*/	
 	private HashMap<String, Double> pricelist;
 
 	public Clinic() {
