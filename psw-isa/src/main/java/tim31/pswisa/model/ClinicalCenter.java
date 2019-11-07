@@ -16,6 +16,7 @@ public class ClinicalCenter {
 		this.clinics = clinics;
 		this.codebook = codebook;
 	}
+	
 	public ArrayList<Clinic> getClinics() {
 		return clinics;
 	}
