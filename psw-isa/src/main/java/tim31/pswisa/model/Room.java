@@ -7,15 +7,12 @@ public class Room {
 	private String name;
 	private String type;
 	private boolean isFree;	//dostupnost sale
-	private int num;	//broj sale
-	
-	private ArrayList<Checkup> bookedCheckups;	//zakazani pregledi
-	private ArrayList<Date> freeDates;		//slobodni termini ?
+	private int num;	//broj sale	
+	private ArrayList<Checkup> bookedCheckups;	//zakazani pregledi	
 	
 	public Room() {
 		super();
-		this.bookedCheckups = new ArrayList<Checkup>();	//zakazani pregledi
-		this.freeDates = new ArrayList<Date>();	
+		this.bookedCheckups = new ArrayList<Checkup>();	//zakazani pregledi		
 	}
 
 	public String getName() {
@@ -58,13 +55,7 @@ public class Room {
 		this.bookedCheckups = bookedCheckups;
 	}
 
-	public ArrayList<Date> getFreeDates() {
-		return freeDates;
-	}
-
-	public void setFreeDates(ArrayList<Date> freeDates) {
-		this.freeDates = freeDates;
-	}
+	
 	
 	
 	
