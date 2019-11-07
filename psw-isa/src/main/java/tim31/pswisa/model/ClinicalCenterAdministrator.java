@@ -18,7 +18,6 @@ public class ClinicalCenterAdministrator {
 		this.requests = requests;
 	}
 	
-	
 
 
 }
