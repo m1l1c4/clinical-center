@@ -16,6 +16,7 @@ public class Report {
 		this.diagnosis = diagnosis;
 	}
 
+	
 	public String getDiagnosis() {
 		return diagnosis;
 	}
