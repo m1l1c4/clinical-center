@@ -1,14 +1,16 @@
 package tim31.pswisa.model;
 
+import java.util.ArrayList;
+
 public class Operation {
 
 	private Patient patient;
-	private ArrayList<Doctor>doctors;
+	private ArrayList<MedicalWorker>doctors;
 	private Room room;
 	private int duration; //minute
 	
 	public Operation() {
-		doctors = new ArrayList<Doctor>();
+		doctors = new ArrayList<MedicalWorker>();
 	}
 
 	public Operation(Patient patient, Room room, int duration) {
