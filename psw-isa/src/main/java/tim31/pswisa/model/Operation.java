@@ -10,7 +10,7 @@ public class Operation {
 	private int duration; //minute
 	
 	public Operation() {
-		doctors = new ArrayList<MedicalWorker>();
+		setDoctors(new ArrayList<MedicalWorker>());
 	}
 
 	public Operation(Patient patient, Room room, int duration) {
@@ -28,14 +28,7 @@ public class Operation {
 		this.patient = patient;
 	}
 
-	public ArrayList<Doctor> getDoctors() {
-		return doctors;
-	}
-
-	public void setDoctors(ArrayList<Doctor> doctors) {
-		this.doctors = doctors;
-	}
-
+	
 	public Room getRoom() {
 		return room;
 	}
@@ -50,6 +43,14 @@ public class Operation {
 
 	public void setDuration(int duration) {
 		this.duration = duration;
+	}
+
+	public ArrayList<MedicalWorker> getDoctors() {
+		return doctors;
+	}
+
+	public void setDoctors(ArrayList<MedicalWorker> doctors) {
+		this.doctors = doctors;
 	}
 	
 	
