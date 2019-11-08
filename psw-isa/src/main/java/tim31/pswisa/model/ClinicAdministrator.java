@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class ClinicAdministrator {
 	
+	private User user;
 	private String clinic;
 	private ArrayList<Absence> absences;
 	
@@ -16,6 +17,15 @@ public class ClinicAdministrator {
 		this.clinic = clinic;
 		this.absences = absences;
 	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	public String getClinic() {
 		return clinic;
 	}

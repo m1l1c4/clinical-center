@@ -5,19 +5,16 @@ import java.util.Date;
 
 
 public class MedicalWorker {
-	private String email;
-	private String password;	//pass hesirati
-	private String name;
-	private String surname;
+	private User user;
 	private String role;	//DOKTOR ili MED SESTRA
 	private Clinic clinic;	//klinika na kojoj je radik zaposlen
 	
 	private ArrayList<Patient> patients;	//lista pregledanih pacijenata	
 	private ArrayList<Absence> hollydays;
 	
-	//samo za role == doktor
+	// samo za role == doktor
 	private int rating;
-	private Date startHr;	//pocetak rv
+	private Date startHr;	// pocetak rv
 	private Date endHr;		//kraj rv
 	private ArrayList<Checkup> finishedApp;		//obavljeni pregledi
 	
@@ -33,36 +30,12 @@ public class MedicalWorker {
 		this.receipts = new ArrayList<Recipe>();
 	}
 
-	public String getEmail() {
-		return email;
+	public User getUser() {
+		return user;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getRole() {

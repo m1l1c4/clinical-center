@@ -3,16 +3,13 @@ package tim31.pswisa.model;
 import java.util.ArrayList;
 
 public class Patient {
-	private String email;
-	private String password;	//pass hesirati
-	private String name;
-	private String surname;
+	private User user;
 	private String phoneNumber;
 	private String jbo;
 	private String city;
 	private String state;
 	private String adress;	//ulica i broj
-	private Codebook cb; 	//zdravstveni karton
+	private MedicalRecord medicalRecord; 	//zdravstveni karton
 	
 	private ArrayList<Checkup> appointments;
 	private ArrayList<Operation> operations;
@@ -23,37 +20,23 @@ public class Patient {
 		this.operations = new ArrayList<Operation>();
 	}
 
-	public String getEmail() {
-		return email;
+	public User getUser() {
+		return user;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public String getPassword() {
-		return password;
+	public MedicalRecord getMedicalRecord() {
+		return medicalRecord;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setMedicalRecord(MedicalRecord medicalRecord) {
+		this.medicalRecord = medicalRecord;
 	}
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -95,14 +78,6 @@ public class Patient {
 		this.adress = adress;
 	}
 
-	public Codebook getCb() {
-		return cb;
-	}
-
-	public void setCb(Codebook cb) {
-		this.cb = cb;
-	}
-
 	public ArrayList<Checkup> getAppointments() {
 		return appointments;
 	}
@@ -117,8 +92,7 @@ public class Patient {
 
 	public void setOperations(ArrayList<Operation> operations) {
 		this.operations = operations;
-	}
-	
+	}	
 	
 	
 }
