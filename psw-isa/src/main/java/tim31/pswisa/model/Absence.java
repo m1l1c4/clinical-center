@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Absence {
 
-	private String email; // da bismo znali ko salje zahtjev
+	private String email; // to know who sends request
 	private Date start;
 	private int duration;
 	

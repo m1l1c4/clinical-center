@@ -7,7 +7,7 @@ public class Operation {
 	private Patient patient;
 	private ArrayList<MedicalWorker>doctors;
 	private Room room;
-	private int duration; //minute
+	private int duration; // minutes
 	
 	public Operation() {
 		setDoctors(new ArrayList<MedicalWorker>());

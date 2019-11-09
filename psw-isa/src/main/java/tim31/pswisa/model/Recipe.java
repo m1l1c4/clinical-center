@@ -3,9 +3,9 @@ package tim31.pswisa.model;
 public class Recipe {
 
 	private Patient patient;
-	private MedicalWorker nurse; // medicinska sestra koja ga je ovjerila
-	private MedicalWorker doctor; // doktor koji ga je propisao
-	private String medicine; // lijek koje je propisan
+	private MedicalWorker nurse; 
+	private MedicalWorker doctor; 
+	private String medicine; 
 	
 	public Recipe() {
 		

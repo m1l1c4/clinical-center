@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class Checkup {
 
-	private double discount; //popust
-	private boolean scheduled; //zakazan
-	private Date date; //datum i vrijeme
-	private String type; //tip pregleda
-	private int duration; // trajanje 
+	private double discount; 
+	private boolean scheduled; 
+	private Date date; 
+	private String type; 
+	private int duration; 
 	private double price;
 	private MedicalWorker doctor;
 	private Room room;
