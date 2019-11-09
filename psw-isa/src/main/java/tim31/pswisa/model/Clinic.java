@@ -11,7 +11,7 @@ public class Clinic {
 	
 	private ArrayList<ClinicAdministrator> clAdmins;
 	private ArrayList<String> appointmentTypes;		//lista tipova pregleda
-	private ArrayList<MedicalWorker> medicalStuff;
+	private ArrayList<MedicalWorker> medicalStuff; 
 	private ArrayList<Patient> patients;
 	private ArrayList<Room> rooms;	//sale
 	private ArrayList<Checkup> availableAppointments;	//slobodni pregledi
