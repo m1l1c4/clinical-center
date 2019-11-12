@@ -2,13 +2,39 @@ package tim31.pswisa.model;
 
 import java.util.ArrayList;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Patient")
 public class Patient {
-	private User user;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	private User user;	
+	
+	@Column(name = "phoneNumber", nullable = false)
 	private String phoneNumber;
+	
+	@Column(name = "jbo", nullable = false)
 	private String jbo;
+	
+	@Column(name = "city", nullable = false)
 	private String city;
+	
+	@Column(name = "state", nullable = false)
 	private String state;
+	
+	@Column(name = "adress", nullable = false)
 	private String adress;	//ulica i broj
+	
+	
 	private MedicalRecord medicalRecord; 	//zdravstveni karton
 	
 	private ArrayList<Checkup> appointments;
