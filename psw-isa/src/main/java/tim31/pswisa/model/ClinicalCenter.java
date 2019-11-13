@@ -2,11 +2,14 @@ package tim31.pswisa.model;
 
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class ClinicalCenter {
@@ -15,10 +18,10 @@ public class ClinicalCenter {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "clinics", nullable = false)
+	@OneToMany(mappedBy = "mainCenter" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ArrayList<Clinic> clinics;
 	
-	@Column(name = "korisnici", nullable = false)
+	@OneToMany(mappedBy = "mainCenter" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ArrayList<User> users;
 	
 	/*

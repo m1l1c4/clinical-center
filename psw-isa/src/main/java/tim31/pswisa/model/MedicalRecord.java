@@ -2,9 +2,17 @@ package tim31.pswisa.model;
 
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+
+@Entity
 public class MedicalRecord {
 	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient patient;
+	
 	private ArrayList<Report> reports;
 	private String bloodType;
 	private Double diopter;

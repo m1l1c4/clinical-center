@@ -5,8 +5,7 @@ import java.util.Date;
 
 
 public class MedicalWorker {
-	private User user;
-	private String role;	//DOKTOR ili MED SESTRA
+	private User user;	
 	private Clinic clinic;	//klinika na kojoj je radik zaposlen
 	
 	private ArrayList<Patient> patients;	//lista pregledanih pacijenata	
@@ -36,15 +35,7 @@ public class MedicalWorker {
 
 	public void setUser(User user) {
 		this.user = user;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
+	}	
 
 	public Clinic getClinic() {
 		return clinic;

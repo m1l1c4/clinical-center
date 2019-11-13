@@ -3,6 +3,10 @@ package tim31.pswisa.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+
 public class Clinic {
 	private String name;
 	private String city;
@@ -15,6 +19,10 @@ public class Clinic {
 	private ArrayList<Patient> patients;
 	private ArrayList<Room> rooms;	//sale
 	private ArrayList<Checkup> availableAppointments;	//slobodni pregledi
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private ClinicalCenter mainCenter;
+	
 	
 	/* key - tip pregleda
 	 * value - cena za taj tip pregleda	 

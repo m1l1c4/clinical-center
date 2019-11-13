@@ -2,6 +2,12 @@ package tim31.pswisa.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class Checkup {
 
 	private double discount; 
@@ -12,6 +18,9 @@ public class Checkup {
 	private double price;
 	private MedicalWorker doctor;
 	private Room room;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Patient patient;
 	
 	public Checkup() {
 		
@@ -92,6 +101,14 @@ public class Checkup {
 	
 	public void setRoom(Room room) {
 		this.room = room;
+	}
+
+	public Patient getPatient() {
+		return patient;
+	}
+
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 	
 	

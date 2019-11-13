@@ -2,9 +2,17 @@ package tim31.pswisa.model;
 
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class Operation {
 
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient patient;
+	
 	private ArrayList<MedicalWorker>doctors;
 	private Room room;
 	private int duration; // minutes

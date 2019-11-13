@@ -1,10 +1,14 @@
 package tim31.pswisa.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,7 +19,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "email", nullable = false)
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 	
 	@Column(name = "password", nullable = false)
@@ -27,20 +31,26 @@ public class User {
 	@Column(name = "prezime", nullable = false)
 	private String surname;
 	
-	@Column(name = "tip", nullable = false)
+	@Column(name = "type", nullable = false)
 	private String type;
+	
+	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Patient p;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private ClinicalCenter mainCenter;
 	
 	public User() {
 		
 	}
 	
-	public User(String email, String password, String name, String surname, String type) {
+	public User(String email, String password, String name, String surname) {
 		super();
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.surname = surname;
-		this.type = type;
+		
 	}
 	public String getEmail() {
 		return email;
@@ -67,12 +77,6 @@ public class User {
 		this.surname = surname;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
+	
 	
 }
