@@ -32,10 +32,10 @@ public class Patient {
 	private String state;
 	
 	@Column(name = "adress", nullable = false)
-	private String adress;	//ulica i broj
+	private String adress;	// ulica i broj
 	
 	
-	private MedicalRecord medicalRecord; 	//zdravstveni karton
+	private MedicalRecord medicalRecord; 	// zdravstveni karton
 	
 	private ArrayList<Checkup> appointments;
 	private ArrayList<Operation> operations;
