@@ -1,32 +1,77 @@
 package tim31.pswisa.model;
-
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
-
+@Entity
 public class MedicalWorker {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private User user;	
-	private Clinic clinic;	//klinika na kojoj je radik zaposlen
 	
-	private ArrayList<Patient> patients;	//lista pregledanih pacijenata	
-	private ArrayList<Absence> hollydays;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Clinic clinic;	
 	
-	// samo za role == doktor
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Patient> patients;	
+	
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Absence> hollydays;
+	
+	// just for doctors
+	
+	@Column(name="rating", unique=false, nullable=true)
 	private int rating;
-	private Date startHr;	// pocetak rv
-	private Date endHr;		//kraj rv
-	private ArrayList<Checkup> finishedApp;		//obavljeni pregledi
 	
-	//samo za sestru
-	private ArrayList<Recipe> receipts; //sestra ima recepte	
+	@Column(name="startHr", unique=false, nullable=true)
+	private Date startHr;	
+	
+	@Column(name="endHr", unique=false, nullable=true)
+	private Date endHr;		
+	
+	@Column(name="typeOfDoctor", unique=false, nullable=false)
+	private String type;
+	
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Checkup> checkUps;		
+	
+	// just for nurse
+	
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Recipe> receipts; 
 	
 	
 	public MedicalWorker() {
 		super();
-		this.patients = new ArrayList<Patient>();	//lista pregledanih pacijenata	
-		this.hollydays = new ArrayList<Absence>();
-		this.finishedApp = new ArrayList<Checkup>();
-		this.receipts = new ArrayList<Recipe>();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Set<Checkup> getCheckUps() {
+		return checkUps;
+	}
+
+	public void setCheckUps(Set<Checkup> checkUps) {
+		this.checkUps = checkUps;
 	}
 
 	public User getUser() {
@@ -40,24 +85,32 @@ public class MedicalWorker {
 	public Clinic getClinic() {
 		return clinic;
 	}
-
+	
+	public String getType() {
+		return type;
+	}
+	
 	public void setClinic(Clinic clinic) {
 		this.clinic = clinic;
 	}
 
-	public ArrayList<Patient> getPatients() {
+	public Set<Patient> getPatients() {
 		return patients;
 	}
 
-	public void setPatients(ArrayList<Patient> patients) {
+	public void setPatients(Set<Patient> patients) {
 		this.patients = patients;
 	}
 
-	public ArrayList<Absence> getHollydays() {
+	public Set<Absence> getHollydays() {
 		return hollydays;
 	}
 
-	public void setHollydays(ArrayList<Absence> hollydays) {
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public void setHollydays(Set<Absence> hollydays) {
 		this.hollydays = hollydays;
 	}
 
@@ -85,19 +138,11 @@ public class MedicalWorker {
 		this.endHr = endHr;
 	}
 
-	public ArrayList<Checkup> getFinishedApp() {
-		return finishedApp;
-	}
-
-	public void setFinishedApp(ArrayList<Checkup> finishedApp) {
-		this.finishedApp = finishedApp;
-	}
-
-	public ArrayList<Recipe> getReceipts() {
+	public Set<Recipe> getReceipts() {
 		return receipts;
 	}
 
-	public void setReceipts(ArrayList<Recipe> receipts) {
+	public void setReceipts(Set<Recipe> receipts) {
 		this.receipts = receipts;
 	}
 	

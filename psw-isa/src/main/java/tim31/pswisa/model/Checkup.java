@@ -1,22 +1,49 @@
 package tim31.pswisa.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 @Entity
 public class Checkup {
+	
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(name = "discount", nullable = true)
 	private double discount; 
+	
+	@Column(name = "scheduled", nullable = false)
 	private boolean scheduled; 
+	
+	@Column(name = "DateOfCheckup", nullable = false)
 	private Date date; 
+	
+	// operation or appointment
+	@Column(name = "typeOfCheckup", nullable = false)
 	private String type; 
+	
+	@Column(name = "duration", nullable = false)
 	private int duration; 
+	
+	@Column(name = "price", nullable = false)
 	private double price;
-	private MedicalWorker doctor;
+	
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<MedicalWorker> doctors;
+	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Room room;
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -26,7 +53,7 @@ public class Checkup {
 		
 	}
 	
-	public Checkup(double discount, boolean scheduled, Date date, String type, int duration, double price, MedicalWorker doctor, Room room) {
+	public Checkup(double discount, boolean scheduled, Date date, String type, int duration, double price, Room room) {
 		super();
 		this.discount = discount;
 		this.scheduled = scheduled;
@@ -34,10 +61,25 @@ public class Checkup {
 		this.type = type;
 		this.duration = duration;
 		this.price = price;
-		this.doctor = doctor;
 		this.room = room;
 	}
 
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Set<MedicalWorker> getDoctors() {
+		return doctors;
+	}
+
+	public void setDoctors(Set<MedicalWorker> doctors) {
+		this.doctors = doctors;
+	}
 
 	public double getDiscount() {
 		return discount;
@@ -87,13 +129,6 @@ public class Checkup {
 		this.price = price;
 	}
 	
-	public MedicalWorker getDoctor() {
-		return doctor;
-	}
-	
-	public void setDoctor(MedicalWorker doctor) {
-		this.doctor = doctor;
-	}
 	
 	public Room getRoom() {
 		return room;
