@@ -1,17 +1,40 @@
 package tim31.pswisa.model;
 
-import java.util.ArrayList;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+@Entity
 public class Room {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(name = "roomName", unique = true, nullable = false)
 	private String name;
-	private String type;
-	private boolean isFree;	//dostupnost sale
-	private int num;	//broj sale	
-	private ArrayList<Checkup> bookedCheckups;	//zakazani pregledi	
 	
+	@Column(name = "type", unique = false, nullable = false)
+	private String type;
+	
+	@Column(name = "isFree", unique = false, nullable = false)
+	private boolean isFree;
+	
+	@Column(name = "roomNumber", unique = true, nullable = false)
+	private int number; 
+	
+	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Checkup> bookedCheckups;
+
 	public Room() {
 		super();
-		this.bookedCheckups = new ArrayList<Checkup>();	//zakazani pregledi		
 	}
 
 	public String getName() {
@@ -38,30 +61,28 @@ public class Room {
 		this.isFree = isFree;
 	}
 
-	public int getNum() {
-		return num;
+	public int getNumber() {
+		return number;
 	}
 
-	public void setNum(int num) {
-		this.num = num;
+	public void setNumber(int number) {
+		this.number = number;
 	}
 
-	public ArrayList<Checkup> getBookedCheckups() {
+	public Set<Checkup> getBookedCheckups() {
 		return bookedCheckups;
 	}
 
-	public void setBookedCheckups(ArrayList<Checkup> bookedCheckups) {
+	public void setBookedCheckups(Set<Checkup> bookedCheckups) {
 		this.bookedCheckups = bookedCheckups;
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 }

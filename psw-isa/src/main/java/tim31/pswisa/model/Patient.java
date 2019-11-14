@@ -36,8 +36,8 @@ public class Patient {
 	@Column(name = "state", nullable = false)
 	private String state;
 	
-	@Column(name = "adress", nullable = false)
-	private String adress;	// ulica i broj
+	@Column(name = "address", nullable = false)
+	private String address;	// ulica i broj
 	
 	@OneToOne(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalRecord medicalRecord; 	// zdravstveni karton
@@ -47,6 +47,9 @@ public class Patient {
 	
 	@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ArrayList<Operation> operations;
+	
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Clinic clinic;
 	
 	public Patient() {
 		super();
@@ -69,8 +72,6 @@ public class Patient {
 	public void setMedicalRecord(MedicalRecord medicalRecord) {
 		this.medicalRecord = medicalRecord;
 	}
-
-
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -104,12 +105,12 @@ public class Patient {
 		this.state = state;
 	}
 
-	public String getAdress() {
-		return adress;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setAdress(String adress) {
-		this.adress = adress;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public ArrayList<Checkup> getAppointments() {
@@ -126,6 +127,22 @@ public class Patient {
 
 	public void setOperations(ArrayList<Operation> operations) {
 		this.operations = operations;
+	}
+
+	public Clinic getClinic() {
+		return clinic;
+	}
+
+	public void setClinic(Clinic clinic) {
+		this.clinic = clinic;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}	
 	
 	
