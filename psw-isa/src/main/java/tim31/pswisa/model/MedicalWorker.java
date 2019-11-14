@@ -50,8 +50,8 @@ public class MedicalWorker {
 	
 	// just for nurse
 	
-	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Recipe> receipts; 
+	/*@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Recipe> receipts; */
 	
 	
 	public MedicalWorker() {
@@ -138,13 +138,13 @@ public class MedicalWorker {
 		this.endHr = endHr;
 	}
 
-	public Set<Recipe> getReceipts() {
+	/*public Set<Recipe> getReceipts() {
 		return receipts;
 	}
 
 	public void setReceipts(Set<Recipe> receipts) {
 		this.receipts = receipts;
-	}
+	}*/
 	
 	
 	

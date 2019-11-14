@@ -1,21 +1,39 @@
 package tim31.pswisa.model;
 
 import java.util.ArrayList;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+@Entity
 public class ClinicalCenterAdministrator {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private User user;
-	private ArrayList<Patient> requests;
+	
+	@OneToMany(mappedBy = "ccAdmin" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Patient> requests;
 	
 	public ClinicalCenterAdministrator() {
-		requests = new ArrayList<Patient>();
+		
 	}
 
-	public ArrayList<Patient> getRequests() {
+	public Set<Patient> getRequests() {
 		return requests;
 	}
 
-	public void setRequests(ArrayList<Patient> requests) {
+	public void setRequests(Set<Patient> requests) {
 		this.requests = requests;
 	}
 

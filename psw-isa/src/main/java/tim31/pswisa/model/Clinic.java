@@ -31,8 +31,8 @@ public class Clinic {
 	@Column(name = "rating", unique = false, nullable = true)
 	private int rating;
 
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ClinicAdministrator> clAdmins;
+	/*@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<ClinicAdministrator> clAdmins;*/
 
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<MedicalWorker> medicalStuff;
@@ -40,11 +40,11 @@ public class Clinic {
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Patient> patients;
 
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Room> rooms; // sale
+	/*@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Room> rooms; // sale*/
 
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Checkup> availableAppointments;
+	/*@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Checkup> availableAppointments;*/
 
 	/*
 	 * key - tip pregleda value - cena za taj tip pregleda
@@ -88,13 +88,13 @@ public class Clinic {
 		this.rating = rating;
 	}
 
-	public Set<ClinicAdministrator> getClAdmins() {
+	/*public Set<ClinicAdministrator> getClAdmins() {
 		return clAdmins;
 	}
 
 	public void setClAdmins(Set<ClinicAdministrator> clAdmins) {
 		this.clAdmins = clAdmins;
-	}
+	}*/
 
 	public Set<MedicalWorker> getMedicalStuff() {
 		return medicalStuff;
@@ -112,21 +112,21 @@ public class Clinic {
 		this.patients = patients;
 	}
 
-	public Set<Room> getRooms() {
+	/*public Set<Room> getRooms() {
 		return rooms;
 	}
 
 	public void setRooms(Set<Room> rooms) {
 		this.rooms = rooms;
-	}
+	}*/
 
-	public Set<Checkup> getAvailableAppointments() {
+	/*public Set<Checkup> getAvailableAppointments() {
 		return availableAppointments;
 	}
 
 	public void setAvailableAppointments(Set<Checkup> availableAppointments) {
 		this.availableAppointments = availableAppointments;
-	}
+	}*/
 
 	public Long getId() {
 		return id;

@@ -1,6 +1,7 @@
 package tim31.pswisa.model;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,22 +40,25 @@ public class Patient {
 	@Column(name = "address", nullable = false)
 	private String address;	// ulica i broj
 	
-	@OneToOne(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	/*@OneToOne(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalRecord medicalRecord; 	// zdravstveni karton
+	*/
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private ClinicalCenterAdministrator ccAdmin;
 	
 	@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private ArrayList<Checkup> appointments;
+	private Set<Checkup> appointments;
 	
-	@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private ArrayList<Operation> operations;
+	/*@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private ArrayList<Operation> operations;*/
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Clinic clinic;
 	
 	public Patient() {
-		super();
-		this.appointments = new ArrayList<Checkup>();
-		this.operations = new ArrayList<Operation>();
+		super();		
+		//this.operations = new ArrayList<Operation>();
 	}
 
 	public User getUser() {
@@ -65,13 +69,13 @@ public class Patient {
 		this.user = user;
 	}
 
-	public MedicalRecord getMedicalRecord() {
+	/*public MedicalRecord getMedicalRecord() {
 		return medicalRecord;
 	}
 
 	public void setMedicalRecord(MedicalRecord medicalRecord) {
 		this.medicalRecord = medicalRecord;
-	}
+	}*/
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -113,21 +117,21 @@ public class Patient {
 		this.address = address;
 	}
 
-	public ArrayList<Checkup> getAppointments() {
+	public Set<Checkup> getAppointments() {
 		return appointments;
 	}
 
-	public void setAppointments(ArrayList<Checkup> appointments) {
+	public void setAppointments(Set<Checkup> appointments) {
 		this.appointments = appointments;
 	}
 
-	public ArrayList<Operation> getOperations() {
+	/*public ArrayList<Operation> getOperations() {
 		return operations;
 	}
 
 	public void setOperations(ArrayList<Operation> operations) {
 		this.operations = operations;
-	}
+	}*/
 
 	public Clinic getClinic() {
 		return clinic;

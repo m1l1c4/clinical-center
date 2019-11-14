@@ -7,11 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 
-@Entity
+
 public class MedicalRecord {
 	
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Patient patient;
+	/*@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Patient patient;*/
 	
 	private ArrayList<Report> reports;
 	private String bloodType;
@@ -28,7 +28,7 @@ public class MedicalRecord {
 	public MedicalRecord(Patient patient, ArrayList<Report> reports, String bloodType, Double diopter, Double height,
 			Double weight, ArrayList<String> allergies) {
 		super();
-		this.patient = patient;
+		//this.patient = patient;
 		this.reports = reports;
 		this.bloodType = bloodType;
 		this.diopter = diopter;
@@ -37,13 +37,13 @@ public class MedicalRecord {
 		this.allergies = allergies;
 	}
 
-	public Patient getPatient() {
+	/*public Patient getPatient() {
 		return patient;
 	}
 
 	public void setPatient(Patient patient) {
 		this.patient = patient;
-	}
+	}*/
 
 	public ArrayList<Report> getReports() {
 		return reports;

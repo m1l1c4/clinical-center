@@ -7,11 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
-@Entity
+
 public class Operation {
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Patient patient;
+	/*@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Patient patient;*/
 	
 	private ArrayList<MedicalWorker>doctors;
 	private Room room;
@@ -23,18 +23,18 @@ public class Operation {
 
 	public Operation(Patient patient, Room room, int duration) {
 		super();
-		this.patient = patient;
+		//this.patient = patient;
 		this.room = room;
 		this.duration = duration;
 	}
 
-	public Patient getPatient() {
+	/*public Patient getPatient() {
 		return patient;
 	}
 
 	public void setPatient(Patient patient) {
 		this.patient = patient;
-	}
+	}*/
 
 	
 	public Room getRoom() {

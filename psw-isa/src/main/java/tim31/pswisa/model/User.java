@@ -37,6 +37,9 @@ public class User {
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient p;
 	
+	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private ClinicalCenterAdministrator ccAdmin;
+	
 	public User() {
 		
 	}
@@ -72,6 +75,14 @@ public class User {
 	}
 	public void setSurname(String surname) {
 		this.surname = surname;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	
