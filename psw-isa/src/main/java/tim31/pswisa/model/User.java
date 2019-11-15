@@ -38,6 +38,9 @@ public class User {
 	private Patient p;
 	
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private MedicalWorker medicalWorker;
+	
+	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ClinicalCenterAdministrator ccAdmin;
 	
 	public User() {

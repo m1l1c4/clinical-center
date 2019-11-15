@@ -19,17 +19,20 @@ public class MedicalWorker {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private User user;	
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;	
 	
-	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Patient> patients;	
+	@Column(name="phone", unique=false, nullable=true)
+	private int phone;
 	
-	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Absence> hollydays;
+	//@OneToMany(mappedBy="medical_worker", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	//private Set<Patient> patients;	
+	
+	//@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	//private Set<Absence> hollydays;
 	
 	// just for doctors
 	
@@ -45,8 +48,8 @@ public class MedicalWorker {
 	@Column(name="typeOfDoctor", unique=false, nullable=false)
 	private String type;
 	
-	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Checkup> checkUps;		
+	//@OneToMany(mappedBy = "medicalworker", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	//private Set<Checkup> checkUps;		
 	
 	// just for nurse
 	
@@ -54,8 +57,17 @@ public class MedicalWorker {
 	private Set<Recipe> receipts; */
 	
 	
+	
 	public MedicalWorker() {
 		super();
+	}
+
+	public int getPhone() {
+		return phone;
+	}
+
+	public void setPhone(int phone) {
+		this.phone = phone;
 	}
 
 	public Long getId() {
@@ -66,13 +78,13 @@ public class MedicalWorker {
 		this.id = id;
 	}
 
-	public Set<Checkup> getCheckUps() {
-		return checkUps;
-	}
+//	public Set<Checkup> getCheckUps() {
+	//	return checkUps;
+	//}
 
-	public void setCheckUps(Set<Checkup> checkUps) {
-		this.checkUps = checkUps;
-	}
+	//public void setCheckUps(Set<Checkup> checkUps) {
+//	this.checkUps = checkUps;
+//	}
 
 	public User getUser() {
 		return user;
@@ -94,25 +106,25 @@ public class MedicalWorker {
 		this.clinic = clinic;
 	}
 
-	public Set<Patient> getPatients() {
-		return patients;
-	}
+//	public Set<Patient> getPatients() {
+//		return patients;
+//	}
 
-	public void setPatients(Set<Patient> patients) {
-		this.patients = patients;
-	}
+	//public void setPatients(Set<Patient> patients) {
+	//	this.patients = patients;
+//	}
 
-	public Set<Absence> getHollydays() {
-		return hollydays;
-	}
+	// public Set<Absence> getHollydays() {
+	//	return hollydays;
+	// }
 
 	public void setType(String type) {
 		this.type = type;
 	}
 	
-	public void setHollydays(Set<Absence> hollydays) {
-		this.hollydays = hollydays;
-	}
+	// public void setHollydays(Set<Absence> hollydays) {
+	// 	this.hollydays = hollydays;
+	// }
 
 	public int getRating() {
 		return rating;

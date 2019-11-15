@@ -49,6 +49,9 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient patient;
 	
+//	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	//private MedicalWorker medicalWorker;
+	
 	public Checkup() {
 		
 	}
@@ -64,6 +67,14 @@ public class Checkup {
 		this.room = room;
 	}
 
+	
+//	public MedicalWorker getMedicalWorker() {
+//		return medicalWorker;
+	//}
+//
+//	public void setMedicalWorker(MedicalWorker medicalWorker) {
+//		this.medicalWorker = medicalWorker;
+//	}
 
 	public Long getId() {
 		return id;
