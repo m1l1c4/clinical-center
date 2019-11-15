@@ -49,6 +49,9 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient patient;
 	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Clinic clinic;
+	
 //	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	//private MedicalWorker medicalWorker;
 	

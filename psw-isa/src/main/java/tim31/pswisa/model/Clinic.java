@@ -40,11 +40,11 @@ public class Clinic {
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Patient> patients;
 
-	/*@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Room> rooms; // sale*/
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Room> rooms;
 
-	/*@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Checkup> availableAppointments;*/
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Checkup> availableAppointments;
 
 	/*
 	 * key - tip pregleda value - cena za taj tip pregleda
@@ -112,21 +112,21 @@ public class Clinic {
 		this.patients = patients;
 	}
 
-	/*public Set<Room> getRooms() {
+	public Set<Room> getRooms() {
 		return rooms;
 	}
 
 	public void setRooms(Set<Room> rooms) {
 		this.rooms = rooms;
-	}*/
+	}
 
-	/*public Set<Checkup> getAvailableAppointments() {
+	public Set<Checkup> getAvailableAppointments() {
 		return availableAppointments;
 	}
 
 	public void setAvailableAppointments(Set<Checkup> availableAppointments) {
 		this.availableAppointments = availableAppointments;
-	}*/
+	}
 
 	public Long getId() {
 		return id;
