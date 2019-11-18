@@ -27,6 +27,7 @@ public class LoggingService {
 		for (User user : users) {
 			if (user.getEmail().equals(p.getUser().getEmail()))
 				return null;
+			
 		}
 		
 		p.getUser().setType("PACIJENT");
@@ -37,6 +38,27 @@ public class LoggingService {
 		}
 		
 		return p;
+		
+	}
+	
+	public User loginUser(User u)
+	{
+		List<User> users = userRepo.findAll() ;
+		
+		for (User user : users) {
+			if (user.getEmail().equals(u.getEmail()))
+			{
+				if (user.getPassword().equals(u.getPassword()))
+				{
+					if (user.getType().equals("PACIEJNT") && user.getActivated())
+						return user;
+						
+				}
+			}
+				
+		}
+		
+		return null;
 		
 	}
 }

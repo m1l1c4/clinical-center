@@ -32,4 +32,18 @@ public class LoggingController {
 		return new ResponseEntity<Patient>(u, HttpStatus.OK);
 	}
 	
+	@PostMapping(value="/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User> loginUser(@RequestBody User u) throws Exception
+	{
+		//proveriti koja mu je uloga i da li je nalog aktiviran/da li se loguje prvi put
+		User user = service.loginUser(u);
+		
+		if (user == null) {
+			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+		}
+		
+		// postalji mejl adminu
+		return new ResponseEntity<User>(u, HttpStatus.OK);
+	}
+	
 }

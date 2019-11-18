@@ -25,6 +25,9 @@ public class User {
 	@Column(name = "password", nullable = false)
 	private String password;
 	
+	@Column(name = "active", nullable = false)
+	private boolean activated;		// if patient activated his account
+	
 	@Column(name = "ime", nullable = false)
 	private String name;
 	
@@ -56,6 +59,7 @@ public class User {
 		
 	}
 	
+
 	public Long getId() {
 		return id;
 	}
@@ -63,7 +67,19 @@ public class User {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	
+	
+	
+	public boolean getActivated() {
+		return activated;
+	}
+
+	public void setActivated(boolean activated) {
+		this.activated = activated;
+	}
+
+
 	public String getEmail() {
 		return email;
 	}

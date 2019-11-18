@@ -16,6 +16,8 @@ import tim31.pswisa.model.User;
 import tim31.pswisa.service.LoggingService;
 import tim31.pswisa.service.MedicalWorkerService;
 import tim31.pswisa.service.UserService;
+import tim31.pswisa.service.LoggingService;
+import tim31.pswisa.service.MedicalWorkerService;
 
 @RestController
 public class MedicalWorkerController {
@@ -37,11 +39,12 @@ public class MedicalWorkerController {
 		}
 	}
 	
-	@PostMapping(value="/updateMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw, @PathVariable String email) 
+
+
+	@PostMapping(value="/updateMedicalWorker/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw, @PathVariable Long id) 
 	{
-		User user = userService.findOneById(email);
-		MedicalWorker medWorker = medicalWorkerService.findByUser(user.getId());
+		MedicalWorker medWorker = medicalWorkerService.findOne(id);
 		medWorker.getUser().setName(mw.getUser().getName());
 		medWorker.getUser().setSurname(mw.getUser().getSurname());
 		medWorker.setPhone(mw.getPhone());
