@@ -12,8 +12,8 @@ public class MedicalWorkerService {
 	@Autowired
 	private MedicalWorkerRepository medicalWorkerRepository;
 	
-	public MedicalWorker findOne(Long id) {
-		return medicalWorkerRepository.findById(id).orElseGet(null);
+	public MedicalWorker findByUser(Long id) {
+		return medicalWorkerRepository.findByUser(id);
 	}
 	
 	public MedicalWorker update(MedicalWorker mw) {

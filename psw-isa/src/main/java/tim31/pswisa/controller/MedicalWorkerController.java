@@ -12,19 +12,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
+import tim31.pswisa.model.User;
 import tim31.pswisa.service.LoggingService;
 import tim31.pswisa.service.MedicalWorkerService;
+import tim31.pswisa.service.UserService;
 
 @RestController
 public class MedicalWorkerController {
 
 	@Autowired
 	public MedicalWorkerService medicalWorkerService;
+	public UserService userService;
 	
-	@GetMapping(value="/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> getMedicalWorker(@PathVariable Long id) 
+	@GetMapping(value="getMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorker> getMedicalWorker(@PathVariable String email) 
 	{
-		MedicalWorker medicalWorker = medicalWorkerService.findOne(id);
+		User user = userService.findOneById(email);
+		MedicalWorker medicalWorker = medicalWorkerService.findByUser(user.getId());
 		if(medicalWorker == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -33,10 +37,11 @@ public class MedicalWorkerController {
 		}
 	}
 	
-	@PostMapping(value="/updateMedicalWorker/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw, @PathVariable Long id) 
+	@PostMapping(value="/updateMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw, @PathVariable String email) 
 	{
-		MedicalWorker medWorker = medicalWorkerService.findOne(id);
+		User user = userService.findOneById(email);
+		MedicalWorker medWorker = medicalWorkerService.findByUser(user.getId());
 		medWorker.getUser().setName(mw.getUser().getName());
 		medWorker.getUser().setSurname(mw.getUser().getSurname());
 		medWorker.setPhone(mw.getPhone());
