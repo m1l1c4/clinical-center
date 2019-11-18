@@ -45,7 +45,7 @@ public class User {
 	
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ClinicalCenterAdministrator ccAdmin;
-	
+		
 	public User() {
 		
 	}

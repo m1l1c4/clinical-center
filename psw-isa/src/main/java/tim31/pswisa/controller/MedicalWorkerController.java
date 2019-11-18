@@ -29,7 +29,7 @@ public class MedicalWorkerController {
 	@GetMapping(value="getMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorker> getMedicalWorker(@PathVariable String email) 
 	{
-		User user = userService.findOneById(email);
+		User user = userService.findOneByEmail(email);
 		MedicalWorker medicalWorker = medicalWorkerService.findByUser(user.getId());
 		if(medicalWorker == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

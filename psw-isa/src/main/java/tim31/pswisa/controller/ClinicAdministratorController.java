@@ -26,7 +26,7 @@ public class ClinicAdministratorController {
 	@GetMapping(value="getAdministrator/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicAdministrator> getAdministrator(@PathVariable String email) {
 		
-		User user = userService.findOneById(email);
+		User user = userService.findOneByEmail(email);
 		
 		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 		if(clinicAdministrator == null) {
@@ -40,7 +40,7 @@ public class ClinicAdministratorController {
 	@PostMapping(value="/updateAdministrator/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody ClinicAdministrator ca, @PathVariable String email) 
 	{
-		User user = userService.findOneById(email);
+		User user = userService.findOneByEmail(email);
 		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 		clinicAdministrator.getUser().setName(ca.getUser().getName());
 		clinicAdministrator.getUser().setSurname(ca.getUser().getSurname());

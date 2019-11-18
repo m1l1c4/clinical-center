@@ -12,9 +12,11 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 	
-	public User findOneById(String email) {
+	public User findOneByEmail(String email) {
 		return userRepository.findOneByEmail(email);
 	}
 	
-	
+	public User save(User user) {
+		return userRepository.save(user);
+	}
 }
