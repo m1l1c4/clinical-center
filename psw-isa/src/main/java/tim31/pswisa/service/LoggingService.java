@@ -9,6 +9,7 @@ import tim31.pswisa.model.ClinicalCenterAdministrator;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CCAdminRepository;
+import tim31.pswisa.repository.PatientRepository;
 import tim31.pswisa.repository.UserRepository;
 
 @Service
@@ -20,22 +21,22 @@ public class LoggingService {
 	@Autowired
 	private CCAdminRepository adminRepo;
 	
+	@Autowired
+	private PatientRepository patientRepo;
+	
 	public Patient registerUser(Patient p)
 	{
-		List<User> users = userRepo.findAll() ;
+		List<User> users = userRepo.findAll() ;		
 		
 		for (User user : users) {
-			if (user.getEmail().equals(p.getUser().getEmail()))
-				return null;
-			
+			if (p.getUser().getActivated() == true || p.getUser().getEmail().equals(user.getEmail()))		// already activated account or already sent request
+				return null;			
 		}
 		
+		
+		p.getUser().setActivated(false);
 		p.getUser().setType("PACIJENT");
-		List<ClinicalCenterAdministrator> admins = adminRepo.findAll() ;
-		
-		for (ClinicalCenterAdministrator ad : admins) {
-			ad.getRequests().add(p);
-		}
+		patientRepo.save(p);
 		
 		return p;
 		

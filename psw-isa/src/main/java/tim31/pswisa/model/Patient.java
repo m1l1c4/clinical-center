@@ -40,11 +40,9 @@ public class Patient {
 	private String address;	// ulica i broj
 	
 	/*@OneToOne(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private MedicalRecord medicalRecord; 	// zdravstveni karton
-	*/
+	private MedicalRecord medicalRecord; 	// zdravstveni karton	*/
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private ClinicalCenterAdministrator ccAdmin;
+	
 	
 	@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> appointments;
@@ -149,15 +147,7 @@ public class Patient {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public ClinicalCenterAdministrator getCcAdmin() {
-		return ccAdmin;
-	}
-
-	public void setCcAdmin(ClinicalCenterAdministrator ccAdmin) {
-		this.ccAdmin = ccAdmin;
-	}
+	}	
 
 	public MedicalWorker getMw() {
 		return mw;
