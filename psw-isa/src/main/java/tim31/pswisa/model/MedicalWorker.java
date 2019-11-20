@@ -28,11 +28,11 @@ public class MedicalWorker {
 	@Column(name="phone", unique=false, nullable=true)
 	private int phone;
 	
-	//@OneToMany(mappedBy="medical_worker", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	//private Set<Patient> patients;	
+	@OneToMany(mappedBy="mw", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Patient> patients;	
 	
-	//@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	//private Set<Absence> hollydays;
+	@OneToMany(mappedBy="mw", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Absence> hollydays;
 	
 	// just for doctors
 	
@@ -48,8 +48,8 @@ public class MedicalWorker {
 	@Column(name="typeOfDoctor", unique=false, nullable=false)
 	private String type;
 	
-	//@OneToMany(mappedBy = "medicalworker", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	//private Set<Checkup> checkUps;		
+	@OneToMany(mappedBy = "medicalworker", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Checkup> checkUps;		
 	
 	// just for nurse
 	

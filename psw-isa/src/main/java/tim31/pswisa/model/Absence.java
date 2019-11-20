@@ -31,6 +31,9 @@ public class Absence {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ClinicAdministrator clinicAdministrator;
 	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private MedicalWorker mw;
+	
 	public Absence() {
 		
 	}

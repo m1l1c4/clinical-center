@@ -1,6 +1,5 @@
 package tim31.pswisa.model;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -55,6 +54,9 @@ public class Patient {
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Clinic clinic;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private MedicalWorker mw;
 	
 	public Patient() {
 		super();		
@@ -147,7 +149,25 @@ public class Patient {
 
 	public void setId(Long id) {
 		this.id = id;
-	}	
+	}
+
+	public ClinicalCenterAdministrator getCcAdmin() {
+		return ccAdmin;
+	}
+
+	public void setCcAdmin(ClinicalCenterAdministrator ccAdmin) {
+		this.ccAdmin = ccAdmin;
+	}
+
+	public MedicalWorker getMw() {
+		return mw;
+	}
+
+	public void setMw(MedicalWorker mw) {
+		this.mw = mw;
+	}
+	
+	
 	
 	
 }
