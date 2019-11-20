@@ -51,9 +51,11 @@ public class LoggingService {
 			{
 				if (user.getPassword().equals(u.getPassword()))
 				{
-					if (user.getType().equals("PACIEJNT") && user.getActivated())
+					if (user.getType().equals("PACIJENT") && user.getActivated())
 						return user;
-						
+					else if (!user.getFirstLogin() && !user.getType().equals("PACIJENT"))
+						user.setFirstLogin(true);
+						return user;
 				}
 			}
 				

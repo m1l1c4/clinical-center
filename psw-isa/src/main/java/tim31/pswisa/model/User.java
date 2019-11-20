@@ -28,6 +28,9 @@ public class User {
 	@Column(name = "active", nullable = false)
 	private boolean activated;		// if patient activated his account
 	
+	@Column(name = "firstLogin", nullable = false)		//default: false
+	private boolean firstLogin;
+	
 	@Column(name = "ime", nullable = false)
 	private String name;
 	
@@ -50,6 +53,65 @@ public class User {
 		
 	}
 	
+	
+	
+	
+	public boolean getFirstLogin() {
+		return firstLogin;
+	}
+
+
+
+
+	public void setFirstLogin(boolean firstLogin) {
+		this.firstLogin = firstLogin;
+	}
+
+
+
+
+	public Patient getP() {
+		return p;
+	}
+
+
+
+
+	public void setP(Patient p) {
+		this.p = p;
+	}
+
+
+
+
+	public MedicalWorker getMedicalWorker() {
+		return medicalWorker;
+	}
+
+
+
+
+	public void setMedicalWorker(MedicalWorker medicalWorker) {
+		this.medicalWorker = medicalWorker;
+	}
+
+
+
+
+	public ClinicalCenterAdministrator getCcAdmin() {
+		return ccAdmin;
+	}
+
+
+
+
+	public void setCcAdmin(ClinicalCenterAdministrator ccAdmin) {
+		this.ccAdmin = ccAdmin;
+	}
+
+
+
+
 	public User(String email, String password, String name, String surname) {
 		super();
 		this.email = email;
