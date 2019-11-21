@@ -40,10 +40,10 @@ public class MedicalWorker {
 	private int rating;
 	
 	@Column(name="startHr", unique=false, nullable=true)
-	private Date startHr;	
+	private int startHr;	
 	
 	@Column(name="endHr", unique=false, nullable=true)
-	private Date endHr;		
+	private int endHr;		
 	
 	@Column(name="typeOfDoctor", unique=false, nullable=false)
 	private String type;
@@ -134,19 +134,19 @@ public class MedicalWorker {
 		this.rating = rating;
 	}
 
-	public Date getStartHr() {
+	public int getStartHr() {
 		return startHr;
 	}
 
-	public void setStartHr(Date startHr) {
+	public void setStartHr(int startHr) {
 		this.startHr = startHr;
 	}
 
-	public Date getEndHr() {
+	public int getEndHr() {
 		return endHr;
 	}
 
-	public void setEndHr(Date endHr) {
+	public void setEndHr(int endHr) {
 		this.endHr = endHr;
 	}
 
