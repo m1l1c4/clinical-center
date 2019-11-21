@@ -39,27 +39,27 @@ public class User implements UserDetails{
 	@Column(name = "password", nullable = false)
 	private String password;
 	
-	@Column(name = "active", nullable = false)
+	@Column(name = "active", nullable = true)
 	private boolean activated;		// if patient activated his account
 	
-	@Column(name = "firstLogin", nullable = false)		//default: false
+	@Column(name = "firstLogin", nullable = true)		//default: false
 	private boolean firstLogin;
 	
-	@Column(name = "ime", nullable = false)
+	@Column(name = "ime", nullable = true)
 	private String name;
 	
-	@Column(name = "prezime", nullable = false)
+	@Column(name = "prezime", nullable = true)
 	private String surname;
 	
-	@Column(name = "type", nullable = false)
+	@Column(name = "type", nullable = true)
 	private String type;
 	
-	@Column(name = "enabled")
+	@Column(name = "enabled", nullable = true)
     private boolean enabled;		// authorization for accessing methods
 	
 	
 
-	@Column(name = "last_password_reset_date")
+	@Column(name = "last_password_reset_date", nullable = true)
     private Timestamp lastPasswordResetDate;
 
 

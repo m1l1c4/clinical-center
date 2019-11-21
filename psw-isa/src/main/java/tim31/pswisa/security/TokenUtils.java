@@ -1,24 +1,25 @@
 package tim31.pswisa.security;
 
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import tim31.pswisa.common.TimeProvider;
 import tim31.pswisa.model.User;
-
-import common.TimeProvider;
 
 @Component
 public class TokenUtils {
 
-	@Value("spring-security-example")
+	@Value("psw-isa")
 	private String APP_NAME;
 
 	@Value("somesecret")
@@ -48,7 +49,7 @@ public class TokenUtils {
 				.setAudience(generateAudience())
 				.setIssuedAt(timeProvider.now())
 				.setExpiration(generateExpirationDate())
-				// .claim("role", role) //postavljanje proizvoljnih podataka u telo JWT tokena
+				//.claim("role", role) //postavljanje proizvoljnih podataka u telo JWT tokena
 				.signWith(SIGNATURE_ALGORITHM, SECRET).compact();
 	}
 
