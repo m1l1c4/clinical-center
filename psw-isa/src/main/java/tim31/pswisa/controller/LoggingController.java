@@ -53,21 +53,28 @@ public class LoggingController {
 	@PostMapping(value="/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserTokenState> loginUser(@RequestBody JwtAuthenticationRequest authenticationRequest,
 	HttpServletResponse response) throws AuthenticationException, IOException {
+		User log = new User(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+		log = service.loginUser(log);
 		
-		final Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
-						authenticationRequest.getPassword()));
-
-		// Ubaci username + password u kontext
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		// Kreiraj token
-		User user = (User) authentication.getPrincipal();
-		String jwt = tokenUtils.generateToken(user.getUsername());
-		int expiresIn = tokenUtils.getExpiredIn();
+		if (log != null)
+		{
+			final Authentication authentication = authenticationManager		
+					.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
+							authenticationRequest.getPassword()));
+	
+			// Ubaci username + password u kontext
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+	
+			// Kreiraj token
+			User user = (User) authentication.getPrincipal();
+			String jwt = tokenUtils.generateToken(user.getUsername());
+			int expiresIn = tokenUtils.getExpiredIn();
+			return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
+		}
+		else {
+			return new ResponseEntity<UserTokenState>(HttpStatus.NOT_FOUND);
+		}
 		
-		
-		return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
 	}
 	
 }
