@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 
 @Entity
 public class Patient {
@@ -21,6 +24,7 @@ public class Patient {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@JsonManagedReference(value="user_movement")
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private User user;	
 	
@@ -43,16 +47,18 @@ public class Patient {
 	private MedicalRecord medicalRecord; 	// zdravstveni karton	*/
 	
 	
-	
+	@JsonManagedReference(value="cup_movement")
 	@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> appointments;
 	
 	/*@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ArrayList<Operation> operations;*/
 	
+	@JsonBackReference(value="clinic_movement")
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Clinic clinic;
 	
+	@JsonBackReference(value="mw_movement")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker mw;
 	

@@ -4,8 +4,6 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
-import org.joda.time.DateTime;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -24,9 +21,11 @@ import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 @Entity
-@Table(name = "Korisnik")
+@Table(name = "korisnik")
 public class User implements UserDetails{
 	
 	@Id
@@ -62,10 +61,17 @@ public class User implements UserDetails{
 	@Column(name = "last_password_reset_date", nullable = true)
     private Timestamp lastPasswordResetDate;
 
-
+	@JsonBackReference(value="user_movement")
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient p;
 	
+	public void setAuthorities(List<Authority> authorities) {
+		this.authorities = authorities;
+	}
+
+
+
+
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker medicalWorker;
 	

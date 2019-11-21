@@ -46,7 +46,7 @@ public class LoggingController {
 			return new ResponseEntity<Patient>(HttpStatus.NOT_FOUND);
 		}
 		
-		// postalji mejl adminu
+		
 		return new ResponseEntity<Patient>(u, HttpStatus.OK);
 	}
 	

@@ -1,6 +1,6 @@
 package tim31.pswisa.model;
-import java.util.Date;
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class MedicalWorker {
@@ -28,6 +30,7 @@ public class MedicalWorker {
 	@Column(name="phone", unique=false, nullable=true)
 	private int phone;
 	
+	@JsonManagedReference(value="mw_movement")
 	@OneToMany(mappedBy="mw", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Patient> patients;	
 	

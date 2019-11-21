@@ -37,17 +37,17 @@ public class LoggingService implements UserDetailsService {
 	
 	public Patient registerUser(Patient p)
 	{
-		List<User> users = userRepo.findAll() ;		
+		User user = (User) loadUserByUsername(p.getUser().getEmail());
 		
-		for (User user : users) {
-			if (p.getUser().getActivated() == true || p.getUser().getEmail().equals(user.getEmail()))		// already activated account or already sent request
-				return null;			
-		}
-		
-		//
-		p.getUser().setActivated(false);
-		p.getUser().setType("PACIJENT");
-		patientRepo.save(p);
+		if (user != null)	// there is already user with that email
+			return null;
+		else 
+		{
+			p.getUser().setEnabled(true);;
+			p.getUser().setActivated(false);
+			p.getUser().setType("PACIJENT");
+			patientRepo.save(p);
+		}	
 		
 		return p;
 		
@@ -73,11 +73,11 @@ public class LoggingService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email)
-			throws UsernameNotFoundException {
+			 {
 		User user = userRepo.findOneByEmail(email);
-		if (user == null) {			
+		/*if (user == null) {			
 			throw new UsernameNotFoundException(String.format("No user found with email '%s'.", email));			
-		} 
+		} */
 		return user;
 		
 	}
