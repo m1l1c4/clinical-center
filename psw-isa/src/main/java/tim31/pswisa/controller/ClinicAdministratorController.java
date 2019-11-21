@@ -26,6 +26,9 @@ public class ClinicAdministratorController {
 	@Autowired
 	public UserService userService;
 	
+	
+	// method returns administrator by email
+	
 	@GetMapping(value="/getAdministrator/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicAdministrator> getAdministrator(@PathVariable String email) {
 			
@@ -34,13 +37,14 @@ public class ClinicAdministratorController {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 		    if(clinicAdministrator == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-		else {
-				return new ResponseEntity<>(clinicAdministrator,HttpStatus.OK);
-			}
 		}
+		else return new ResponseEntity<>(clinicAdministrator,HttpStatus.OK);
+	    }
+		
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+	
+	// method updates administrator by email, parameter of this method is ClinicAdministrator object
 	
 	@PostMapping(value="/updateAdministrator/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicAdministrator> updateAdministrator(@RequestBody ClinicAdministrator ca, @PathVariable String email) 
@@ -56,13 +60,9 @@ public class ClinicAdministratorController {
 			clinicAdministrator = clinicAdministratorService.update(ca);
 			if(clinicAdministrator == null) {
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-			}else
-				return new ResponseEntity<>(ca,HttpStatus.OK);
+			} else return new ResponseEntity<>(ca,HttpStatus.OK);
 		}
-		else {
-			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-		}
-		
+		else return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);	
 	}
 	
 }
