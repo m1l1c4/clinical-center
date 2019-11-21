@@ -1,5 +1,5 @@
 package tim31.pswisa.model;
-import java.util.Date;
+
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class MedicalWorker {
 	
@@ -19,9 +23,11 @@ public class MedicalWorker {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@JsonBackReference
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private User user;	
 	
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;	
 	
@@ -31,6 +37,7 @@ public class MedicalWorker {
 	@OneToMany(mappedBy="mw", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Patient> patients;	
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy="mw", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Absence> hollydays;
 	
@@ -40,10 +47,10 @@ public class MedicalWorker {
 	private int rating;
 	
 	@Column(name="startHr", unique=false, nullable=true)
-	private Date startHr;	
+	private int startHr;	
 	
 	@Column(name="endHr", unique=false, nullable=true)
-	private Date endHr;		
+	private int endHr;		
 	
 	@Column(name="typeOfDoctor", unique=false, nullable=false)
 	private String type;
@@ -134,19 +141,19 @@ public class MedicalWorker {
 		this.rating = rating;
 	}
 
-	public Date getStartHr() {
+	public int getStartHr() {
 		return startHr;
 	}
 
-	public void setStartHr(Date startHr) {
+	public void setStartHr(int startHr) {
 		this.startHr = startHr;
 	}
 
-	public Date getEndHr() {
+	public int getEndHr() {
 		return endHr;
 	}
 
-	public void setEndHr(Date endHr) {
+	public void setEndHr(int endHr) {
 		this.endHr = endHr;
 	}
 

@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Checkup {
 	
@@ -52,6 +54,7 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;
 	
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker medicalworker;
 	

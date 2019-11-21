@@ -29,6 +29,7 @@ public class MedicalWorkerController {
 	@Autowired
 	public UserService userService;
 	
+	// method returns medical worker by email
 	
 	@GetMapping(value="/getMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorker> getMedicalWorker(@PathVariable String email) 
@@ -47,6 +48,8 @@ public class MedicalWorkerController {
 		
 	}
 	
+	// method updates medical worker by email, parameter of this method is MedicalWorker object
+	
 	@PostMapping(value="/updateMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw, @PathVariable String email) 
 	{
@@ -55,7 +58,7 @@ public class MedicalWorkerController {
 			MedicalWorker medWorker = medicalWorkerService.findByUser(user.getId());
 			medWorker.getUser().setName(mw.getUser().getName());
 			medWorker.getUser().setSurname(mw.getUser().getSurname());
-			medWorker.setPhone(medWorker.getPhone());
+			medWorker.setPhone(mw.getPhone());
 			medWorker.getUser().setPassword(mw.getUser().getPassword());
 			medWorker.getUser().setEmail(medWorker.getUser().getEmail());
 			medWorker.setClinic(medWorker.getClinic());
