@@ -44,7 +44,7 @@ public class LoggingService implements UserDetailsService {
 				return null;			
 		}
 		
-		
+		//
 		p.getUser().setActivated(false);
 		p.getUser().setType("PACIJENT");
 		patientRepo.save(p);
