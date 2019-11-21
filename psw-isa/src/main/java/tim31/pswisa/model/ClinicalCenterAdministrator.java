@@ -22,20 +22,11 @@ public class ClinicalCenterAdministrator {
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private User user;
 	
-	@OneToMany(mappedBy = "ccAdmin" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Patient> requests;
-	
+		
 	public ClinicalCenterAdministrator() {
 		
 	}
-
-	public Set<Patient> getRequests() {
-		return requests;
-	}
-
-	public void setRequests(Set<Patient> requests) {
-		this.requests = requests;
-	}
+	
 
 	public User getUser() {
 		return user;

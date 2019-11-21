@@ -2,11 +2,14 @@ package tim31.pswisa.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Absence {
@@ -16,9 +19,20 @@ public class Absence {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "email", nullable = false, unique = true)
 	private String email; // to know who sends request
+	
+	@Column(name = "start", nullable = false)
 	private Date start;
+	
+	@Column(name = "duration", nullable = false)
 	private int duration;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private ClinicAdministrator clinicAdministrator;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private MedicalWorker mw;
 	
 	public Absence() {
 		
@@ -54,6 +68,16 @@ public class Absence {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
+
+	public ClinicAdministrator getClinicAdministrator() {
+		return clinicAdministrator;
+	}
+
+	public void setClinicAdministrator(ClinicAdministrator clinicAdministrator) {
+		this.clinicAdministrator = clinicAdministrator;
+	}
+	
+	
 	
 	
 }

@@ -1,6 +1,5 @@
 package tim31.pswisa.model;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -41,11 +40,9 @@ public class Patient {
 	private String address;	// ulica i broj
 	
 	/*@OneToOne(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private MedicalRecord medicalRecord; 	// zdravstveni karton
-	*/
+	private MedicalRecord medicalRecord; 	// zdravstveni karton	*/
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private ClinicalCenterAdministrator ccAdmin;
+	
 	
 	@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> appointments;
@@ -55,6 +52,9 @@ public class Patient {
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Clinic clinic;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private MedicalWorker mw;
 	
 	public Patient() {
 		super();		
@@ -148,6 +148,16 @@ public class Patient {
 	public void setId(Long id) {
 		this.id = id;
 	}	
+
+	public MedicalWorker getMw() {
+		return mw;
+	}
+
+	public void setMw(MedicalWorker mw) {
+		this.mw = mw;
+	}
+	
+	
 	
 	
 }

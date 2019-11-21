@@ -42,7 +42,7 @@ public class LoggingController {
 			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 		}
 		
-		// postalji mejl adminu
+		
 		return new ResponseEntity<User>(u, HttpStatus.OK);
 	}
 	
