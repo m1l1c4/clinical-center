@@ -14,7 +14,7 @@ public class ClinicAdministratorService {
 	private ClinicAdministratorRepository clinicAdministratorRepository;
 	
 	public ClinicAdministrator findByUser(Long id) {
-		return clinicAdministratorRepository.findByUser(id);
+		return clinicAdministratorRepository.findOneByUserId(id);
 	}
 	
 	public ClinicAdministrator update(ClinicAdministrator ca) {

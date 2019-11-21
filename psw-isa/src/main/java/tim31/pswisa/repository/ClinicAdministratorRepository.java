@@ -8,7 +8,7 @@ import tim31.pswisa.model.ClinicAdministrator;
 
 public interface ClinicAdministratorRepository extends JpaRepository<ClinicAdministrator, Long> {
 
-	ClinicAdministrator findByUser(Long id);
+	ClinicAdministrator findOneByUserId(Long id);
 	
 }
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
@@ -24,36 +25,53 @@ public class MedicalWorkerController {
 
 	@Autowired
 	public MedicalWorkerService medicalWorkerService;
+	
+	@Autowired
 	public UserService userService;
 	
-	@GetMapping(value="getMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	
+	@GetMapping(value="/getMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorker> getMedicalWorker(@PathVariable String email) 
 	{
 		User user = userService.findOneByEmail(email);
-		MedicalWorker medicalWorker = medicalWorkerService.findByUser(user.getId());
-		if(medicalWorker == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		if(user!=null) {
+			MedicalWorker medicalWorker = medicalWorkerService.findByUser(user.getId());
+			if(medicalWorker == null) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			else {
+				return new ResponseEntity<>(medicalWorker,HttpStatus.OK);
+			}
 		}
-		else {
-			return new ResponseEntity<>(medicalWorker,HttpStatus.OK);
-		}
+		else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
 	}
 	
-
-
-	@PostMapping(value="/updateMedicalWorker/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw, @PathVariable Long id) 
+	@PostMapping(value="/updateMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw, @PathVariable String email) 
 	{
-		MedicalWorker medWorker = medicalWorkerService.findOne(id);
-		medWorker.getUser().setName(mw.getUser().getName());
-		medWorker.getUser().setSurname(mw.getUser().getSurname());
-		medWorker.setPhone(mw.getPhone());
-		medWorker.getUser().setPassword(mw.getUser().getPassword());
-		medWorker = medicalWorkerService.update(medWorker);
-		if(medWorker == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-		}else
-			return new ResponseEntity<>(HttpStatus.OK);
+		User user = userService.findOneByEmail(email);
+		if(user!=null) {
+			MedicalWorker medWorker = medicalWorkerService.findByUser(user.getId());
+			medWorker.getUser().setName(mw.getUser().getName());
+			medWorker.getUser().setSurname(mw.getUser().getSurname());
+			medWorker.setPhone(medWorker.getPhone());
+			medWorker.getUser().setPassword(mw.getUser().getPassword());
+			medWorker.getUser().setEmail(medWorker.getUser().getEmail());
+			medWorker.setClinic(medWorker.getClinic());
+			medWorker.setEndHr(medWorker.getEndHr());
+			medWorker.setId(medWorker.getId());
+			medWorker.setRating(medWorker.getRating());
+			medWorker.setStartHr(medWorker.getStartHr());
+			medWorker.setType(medWorker.getType());
+			medWorker = medicalWorkerService.update(medWorker);
+			if(medWorker == null) {
+				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+			}else
+				return new ResponseEntity<>(medWorker, HttpStatus.OK);
+		}
+		else return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE); 
+		
 	}
 	
 }

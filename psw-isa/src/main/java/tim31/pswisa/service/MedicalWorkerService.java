@@ -13,7 +13,7 @@ public class MedicalWorkerService {
 	private MedicalWorkerRepository medicalWorkerRepository;
 
 	public MedicalWorker findByUser(Long id) {
-		return medicalWorkerRepository.findByUser(id);
+		return medicalWorkerRepository.findOneByUserId(id);
 	}
 
 	public MedicalWorker findOne(Long id) {

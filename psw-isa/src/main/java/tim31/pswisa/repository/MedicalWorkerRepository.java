@@ -7,8 +7,8 @@ import tim31.pswisa.model.MedicalWorker;
 public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Long> {
 
 
-	MedicalWorker findByUser(Long id);
-	MedicalWorker findOneById(Long id);
+	MedicalWorker findOneByUserId(Long id);
+	//MedicalWorker findOneById(Long id);
 
 	
 }
