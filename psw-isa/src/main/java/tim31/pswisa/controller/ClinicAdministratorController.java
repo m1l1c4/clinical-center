@@ -28,8 +28,7 @@ public class ClinicAdministratorController {
 	
 	@GetMapping(value="/getAdministrator/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicAdministrator> getAdministrator(@PathVariable String email) {
-		
-		
+			
 		User user = userService.findOneByEmail(email);
 		if(user!=null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
