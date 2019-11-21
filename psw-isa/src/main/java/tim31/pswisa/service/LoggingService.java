@@ -3,6 +3,11 @@ package tim31.pswisa.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.model.ClinicalCenterAdministrator;
@@ -13,7 +18,7 @@ import tim31.pswisa.repository.PatientRepository;
 import tim31.pswisa.repository.UserRepository;
 
 @Service
-public class LoggingService {
+public class LoggingService implements UserDetailsService {
 	
 	@Autowired
 	private UserRepository userRepo;
@@ -23,6 +28,12 @@ public class LoggingService {
 	
 	@Autowired
 	private PatientRepository patientRepo;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
 	
 	public Patient registerUser(Patient p)
 	{
@@ -44,24 +55,30 @@ public class LoggingService {
 	
 	public User loginUser(User u)
 	{
-		List<User> users = userRepo.findAll() ;
 		
-		for (User user : users) {
-			if (user.getEmail().equals(u.getEmail()))
+		User user = (User) loadUserByUsername(u.getEmail());
+		
+		if (user!= null && user.getType().equals("PACIJENT") && user.getActivated())
+			return user;
+		else if (!user.getFirstLogin() && !user.getType().equals("PACIJENT"))
 			{
-				if (user.getPassword().equals(u.getPassword()))
-				{
-					if (user.getType().equals("PACIJENT") && user.getActivated())
-						return user;
-					else if (!user.getFirstLogin() && !user.getType().equals("PACIJENT"))
-						user.setFirstLogin(true);
-						return user;
-				}
+				user.setFirstLogin(true);
+				return user;
 			}
-				
-		}
+			
+		else		
+			return null;	
 		
-		return null;
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String email)
+			throws UsernameNotFoundException {
+		User user = userRepo.findOneByEmail(email);
+		if (user == null) {			
+			throw new UsernameNotFoundException(String.format("No user found with email '%s'.", email));			
+		} 
+		return user;
 		
 	}
 }
