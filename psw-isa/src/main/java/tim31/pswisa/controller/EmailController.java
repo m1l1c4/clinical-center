@@ -19,10 +19,12 @@ public class EmailController {
 	@Autowired
 	private EmailService emailService;
 	
-	@PostMapping(value="/sendConfirm/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> sendConfirmationEmail(@RequestBody String text, @PathVariable String email)
+	@PostMapping(value="/sendConfirm", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> sendConfirmationEmail(@RequestBody String[] data)
 	{
-		
+		String email = data[1];
+		String text = data[0];
+				
 		try {
 			emailService.sendAccountConfirmationEmail(email, text);
 		} catch (MailException e) {

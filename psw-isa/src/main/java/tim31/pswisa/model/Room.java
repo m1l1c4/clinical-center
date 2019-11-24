@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Room {
 
@@ -22,10 +24,10 @@ public class Room {
 	@Column(name = "roomName", unique = true, nullable = false)
 	private String name;
 	
-	@Column(name = "type", unique = false, nullable = false)
+	@Column(name = "type", unique = false, nullable = true)
 	private String type;
 	
-	@Column(name = "isFree", unique = false, nullable = false)
+	@Column(name = "isFree", unique = false, nullable = true)
 	private boolean isFree;
 	
 	@Column(name = "roomNumber", unique = true, nullable = false)
@@ -34,6 +36,7 @@ public class Room {
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> bookedCheckups;
 	
+	@JsonBackReference(value="room_mov")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
@@ -87,6 +90,11 @@ public class Room {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public void setClinic(Clinic clinic2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

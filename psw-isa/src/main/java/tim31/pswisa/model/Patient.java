@@ -47,18 +47,18 @@ public class Patient {
 	private MedicalRecord medicalRecord; 	// zdravstveni karton	*/
 	
 	
-	@JsonManagedReference(value="cup_movement")
+	//@JsonManagedReference(value="cup_movement")
 	@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> appointments;
 	
 	/*@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ArrayList<Operation> operations;*/
 	
-	@JsonBackReference(value="clinic_movement")
+	//@JsonBackReference(value="clinic_movement")
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Clinic clinic;
 	
-	@JsonBackReference(value="mw_movement")
+	//@JsonBackReference(value="mw_movement")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker mw;
 	

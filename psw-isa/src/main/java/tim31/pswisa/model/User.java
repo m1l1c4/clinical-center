@@ -22,6 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -32,7 +33,7 @@ public class User implements UserDetails{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "email", nullable = false, unique = true)
+	@Column(name = "email", nullable = false)
 	private String email;
 	
 	@Column(name = "password", nullable = false)
@@ -68,13 +69,15 @@ public class User implements UserDetails{
 	public void setAuthorities(List<Authority> authorities) {
 		this.authorities = authorities;
 	}
-
-
-
-
+	@JsonBackReference(value="medworker_movement")
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker medicalWorker;
 	
+	@JsonBackReference(value="cadmin_movement")
+	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private ClinicAdministrator clinicAdministrator;
+	
+	//@JsonBackReference()
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ClinicalCenterAdministrator ccAdmin;
 	
@@ -98,8 +101,13 @@ public class User implements UserDetails{
 		return lastPasswordResetDate;
 	}
 
+	public ClinicAdministrator getClinicAdministrator() {
+		return clinicAdministrator;
+	}
 
-
+	public void setClinicAdministrator(ClinicAdministrator clinicAdministrator) {
+		this.clinicAdministrator = clinicAdministrator;
+	}
 
 	public void setLastPasswordResetDate(Timestamp lastPasswordResetDate) {
 		this.lastPasswordResetDate = lastPasswordResetDate;

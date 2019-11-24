@@ -40,14 +40,15 @@ public class Clinic {
 	/*@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<ClinicAdministrator> clAdmins;*/
 
-	@JsonManagedReference
+	@JsonManagedReference(value="clinic_movement")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<MedicalWorker> medicalStuff;
 
-	@JsonManagedReference(value="clinic_movement")
+	//@JsonManagedReference(value="clinic_movement")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Patient> patients;
 
+	@JsonManagedReference(value="room_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Room> rooms;
 
