@@ -33,7 +33,7 @@ public class Absence {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ClinicAdministrator clinicAdministrator;
 	
-	@JsonBackReference
+	//@JsonBackReference
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker mw;
 	

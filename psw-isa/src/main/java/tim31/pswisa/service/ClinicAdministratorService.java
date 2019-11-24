@@ -21,4 +21,7 @@ public class ClinicAdministratorService {
 		return clinicAdministratorRepository.save(ca);
 	}
 	
+	public ClinicAdministrator findOneById(Long id){
+		return clinicAdministratorRepository.findOneById(id);
+	}
 }

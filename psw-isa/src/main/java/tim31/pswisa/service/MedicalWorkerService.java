@@ -3,6 +3,7 @@ package tim31.pswisa.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.repository.MedicalWorkerRepository;
 
@@ -23,5 +24,9 @@ public class MedicalWorkerService {
 	
 	public MedicalWorker update(MedicalWorker mw) {
 		return medicalWorkerRepository.save(mw);
+	}
+	
+	public MedicalWorker findOneById(Long id){
+		return medicalWorkerRepository.findOneById(id);
 	}
 }

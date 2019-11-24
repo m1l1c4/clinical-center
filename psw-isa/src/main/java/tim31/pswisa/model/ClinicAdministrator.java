@@ -13,6 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class ClinicAdministrator {
 	
@@ -20,11 +23,13 @@ public class ClinicAdministrator {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@JsonManagedReference(value="cadmin_movement")
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private User user;
 	
 	@Column
 	private String clinic;
+	
 	
 	@OneToMany(mappedBy = "clinicAdministrator" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Absence> absences;

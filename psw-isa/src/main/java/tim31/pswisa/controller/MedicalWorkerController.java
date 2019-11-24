@@ -31,10 +31,10 @@ public class MedicalWorkerController {
 	
 	// method returns medical worker by email
 	
-	@GetMapping(value="/getMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> getMedicalWorker(@PathVariable String email) 
+	@GetMapping(value="/getMedicalWorker", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorker> getMedicalWorker() 
 	{
-		User user = userService.findOneByEmail(email);
+		/*User user = userService.findOneByEmail(email);
 		if(user!=null) {
 			MedicalWorker medicalWorker = medicalWorkerService.findByUser(user.getId());
 			if(medicalWorker == null) {
@@ -45,15 +45,18 @@ public class MedicalWorkerController {
 			}
 		}
 		else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		*/
+		MedicalWorker med = medicalWorkerService.findOneById((long) 1);
 		
+		return new ResponseEntity<>(med,HttpStatus.OK);
 	}
 	
 	// method updates medical worker by email, parameter of this method is MedicalWorker object
 	
-	@PostMapping(value="/updateMedicalWorker/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw, @PathVariable String email) 
+	@PostMapping(value="/updateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw) 
 	{
-		User user = userService.findOneByEmail(email);
+		/*User user = userService.findOneByEmail(email);
 		if(user!=null) {
 			MedicalWorker medWorker = medicalWorkerService.findByUser(user.getId());
 			medWorker.getUser().setName(mw.getUser().getName());
@@ -74,7 +77,14 @@ public class MedicalWorkerController {
 				return new ResponseEntity<>(medWorker, HttpStatus.OK);
 		}
 		else return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE); 
+		*/
 		
+		MedicalWorker med = medicalWorkerService.findOneById((long) 1);
+		med.getUser().setName(mw.getUser().getName());
+		med.getUser().setSurname(mw.getUser().getSurname());
+		med.getUser().setPassword(mw.getUser().getPassword());
+		med = medicalWorkerService.update(med);
+		return new ResponseEntity<>(med, HttpStatus.OK);
 	}
 	
 }

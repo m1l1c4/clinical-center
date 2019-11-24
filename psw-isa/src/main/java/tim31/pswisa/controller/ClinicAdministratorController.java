@@ -29,19 +29,21 @@ public class ClinicAdministratorController {
 	
 	// method returns administrator by email
 	
-	@GetMapping(value="/getAdministrator/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ClinicAdministrator> getAdministrator(@PathVariable String email) {
+	@GetMapping(value="/getAdministrator", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ClinicAdministrator> getAdministrator() {
 			
-		User user = userService.findOneByEmail(email);
-		if(user!=null) {
+		//User //user = userService.findOneByEmail(email);
+		/*if(user!=null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 		    if(clinicAdministrator == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		else return new ResponseEntity<>(clinicAdministrator,HttpStatus.OK);
-	    }
+	    }*/
+	
+	    ClinicAdministrator ca = clinicAdministratorService.findOneById((long) 1);
 		
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(ca,HttpStatus.OK);
 	}
 	
 	// method updates administrator by email, parameter of this method is ClinicAdministrator object
@@ -49,7 +51,7 @@ public class ClinicAdministratorController {
 	@PostMapping(value="/updateAdministrator/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicAdministrator> updateAdministrator(@RequestBody ClinicAdministrator ca, @PathVariable String email) 
 	{
-		User user = userService.findOneByEmail(email);
+		/*User user = userService.findOneByEmail(email);
 		if(user!=null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			clinicAdministrator.getUser().setName(ca.getUser().getName());
@@ -61,8 +63,13 @@ public class ClinicAdministratorController {
 			if(clinicAdministrator == null) {
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 			} else return new ResponseEntity<>(ca,HttpStatus.OK);
-		}
-		else return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);	
+		}*/
+		 ClinicAdministrator clinicAdministrator = clinicAdministratorService.findOneById((long) 1);
+			clinicAdministrator.getUser().setName(ca.getUser().getName());
+			clinicAdministrator.getUser().setSurname(ca.getUser().getSurname());
+			clinicAdministrator.getUser().setPassword(ca.getUser().getPassword());
+			clinicAdministrator = clinicAdministratorService.update(ca);
+		 return new ResponseEntity<>(clinicAdministrator,HttpStatus.OK);	
 	}
 	
 }
