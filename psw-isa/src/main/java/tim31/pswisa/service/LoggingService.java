@@ -43,6 +43,7 @@ public class LoggingService implements UserDetailsService {
 			return null;
 		else 
 		{
+			p.getUser().setPassword(passwordEncoder.encode(p.getUser().getPassword()));
 			p.getUser().setEnabled(true);;
 			p.getUser().setActivated(false);
 			p.getUser().setType("PACIJENT");
@@ -58,7 +59,10 @@ public class LoggingService implements UserDetailsService {
 		
 		User user = (User) loadUserByUsername(u.getEmail());
 		
-		if (user!= null && user.getType().equals("PACIJENT") && user.getActivated())
+		if (user == null)
+			return null;
+		
+		if (user!= null && user.getType().equals("PACIJENT") /*&& user.getActivated()*/)
 			return user;
 		else if (!user.getFirstLogin() && !user.getType().equals("PACIJENT"))
 			{

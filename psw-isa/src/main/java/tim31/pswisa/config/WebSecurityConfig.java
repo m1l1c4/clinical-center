@@ -82,7 +82,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-		web.ignoring().antMatchers(HttpMethod.POST, "/login", "/register");
+		web.ignoring().antMatchers(HttpMethod.POST, "/login", "/register", "/clinic", "/updateMedicalWorker", "/updateAdministrator/*" , "/sendConfirm");
+		web.ignoring().antMatchers(HttpMethod.GET, "/patientsRequests", "/getMedicalWorker", "/getAdministrator");
 		//web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
 			//	"/**/*.css", "/**/*.js");
 	}
