@@ -39,7 +39,7 @@ public class User implements UserDetails{
 	@Column(name = "password", nullable = false)
 	private String password;
 	
-	@Column(name = "active", nullable = true)
+	@Column(name = "active", nullable =true)
 	private boolean activated;		// if patient activated his account
 	
 	@Column(name = "firstLogin", nullable = true)		//default: false

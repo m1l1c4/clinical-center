@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import tim31.pswisa.model.ClinicalCenterAdministrator;
+import tim31.pswisa.model.Authority;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CCAdminRepository;
@@ -30,6 +29,9 @@ public class LoggingService implements UserDetailsService {
 	private PatientRepository patientRepo;
 	
 	@Autowired
+	private AuthorityService authService;
+	
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
@@ -47,6 +49,8 @@ public class LoggingService implements UserDetailsService {
 			p.getUser().setEnabled(true);;
 			p.getUser().setActivated(false);
 			p.getUser().setType("PACIJENT");
+			List<Authority> auth = authService.findByname("ROLE_USER");
+			p.getUser().setAuthorities(auth);
 			patientRepo.save(p);
 		}	
 		

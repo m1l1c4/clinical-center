@@ -2,6 +2,7 @@ package tim31.pswisa.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +26,7 @@ import tim31.pswisa.model.UserTokenState;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.security.auth.JwtAuthenticationRequest;
 import tim31.pswisa.service.LoggingService;
+import tim31.pswisa.service.UserService;
 
 
 @RestController
@@ -30,6 +34,9 @@ public class LoggingController {
 	
 	@Autowired
 	public LoggingService service;
+	
+	@Autowired
+	public UserService userService;
 	
 	@Autowired
 	TokenUtils tokenUtils;
@@ -75,6 +82,20 @@ public class LoggingController {
 			return new ResponseEntity<UserTokenState>(HttpStatus.NOT_FOUND);
 		}
 		
+	}
+	
+	@GetMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User>getUser(HttpServletRequest request){
+		String token = tokenUtils.getToken(request);
+		
+		String email = tokenUtils.getUsernameFromToken(token);   // email of logged user
+		User user = userService.findOneByEmail(email);
+			if(user!=null) {
+				return new ResponseEntity<>(user,HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 	}
 	
 }
