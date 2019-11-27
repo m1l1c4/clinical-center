@@ -20,6 +20,10 @@ public class ClinicService {
     public List<Clinic> findAll(){
         return clinicRepository.findAll();
     }
+    
+    public Clinic findOneByName(String clinic) {
+    	return clinicRepository.findOneByName(clinic);
+    }
    
     public Clinic save(Clinic clinic) {
         List<Clinic> clinics = clinicRepository.findAll();
