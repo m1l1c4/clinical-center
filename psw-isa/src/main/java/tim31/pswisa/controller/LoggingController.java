@@ -85,11 +85,11 @@ public class LoggingController {
 		
 	}
 	
-	@PostMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User>getUser(@RequestBody String token,HttpServletRequest request){
+	@GetMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User>getUser(HttpServletRequest request){
 		String jwt_token = tokenUtils.getToken(request);
 		//String token = tok.asText();
-		String email = tokenUtils.getUsernameFromToken(token);   // email of logged user
+		String email = tokenUtils.getUsernameFromToken(jwt_token);   // email of logged user
 		User user = userService.findOneByEmail(email);
 			if(user!=null) {
 				return new ResponseEntity<>(user,HttpStatus.OK);
