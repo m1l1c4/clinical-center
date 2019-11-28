@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +26,8 @@ import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.security.auth.JwtAuthenticationRequest;
 import tim31.pswisa.service.LoggingService;
 import tim31.pswisa.service.UserService;
+
+import com.fasterxml.jackson.databind.node.TextNode;
 
 
 @RestController
@@ -84,10 +85,10 @@ public class LoggingController {
 		
 	}
 	
-	@GetMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User>getUser(HttpServletRequest request){
-		String token = tokenUtils.getToken(request);
-		
+	@PostMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User>getUser(@RequestBody String token,HttpServletRequest request){
+		String jwt_token = tokenUtils.getToken(request);
+		//String token = tok.asText();
 		String email = tokenUtils.getUsernameFromToken(token);   // email of logged user
 		User user = userService.findOneByEmail(email);
 			if(user!=null) {

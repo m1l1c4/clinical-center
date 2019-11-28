@@ -49,7 +49,7 @@ public class LoggingService implements UserDetailsService {
 			p.getUser().setEnabled(true);;
 			p.getUser().setActivated(false);
 			p.getUser().setType("PACIJENT");
-			List<Authority> auth = authService.findByname("ROLE_USER");
+			List<Authority> auth = authService.findByname("PACIJENT");
 			p.getUser().setAuthorities(auth);
 			patientRepo.save(p);
 		}	
