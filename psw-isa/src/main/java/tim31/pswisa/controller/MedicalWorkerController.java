@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
  
 import tim31.pswisa.model.ClinicAdministrator;
@@ -25,6 +27,9 @@ import tim31.pswisa.service.MedicalWorkerService;
  
 @RestController
 public class MedicalWorkerController {
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
  
     @Autowired
     private MedicalWorkerService medicalWorkerService;
@@ -69,5 +74,19 @@ public class MedicalWorkerController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
+  
+  	@PostMapping(value="/addMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorker> addMedicalWorker(@RequestBody MedicalWorker mw) {
+		MedicalWorker medWorker = new MedicalWorker();
+		mw.getUser().setPassword(passwordEncoder.encode(mw.getUser().getPassword()));
+		mw.getUser().setEnabled(true);
+		mw.getUser().setActivated(true);
+		medWorker = medicalWorkerService.save(mw);
+		if(medWorker != null) {
+			return new ResponseEntity<>(medWorker,HttpStatus.CREATED);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+
+	}
  
 }
