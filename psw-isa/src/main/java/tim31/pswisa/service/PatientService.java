@@ -34,6 +34,10 @@ public class PatientService {
 		return patientRepository.findOneById(id);
 	}
     
+    public Patient findOneByUserId(Long id){
+		return patientRepository.findByUserId(id);
+	}
+    
     public Patient findOneByEmail(String id){
 		return patientRepository.findOneByEmail(id);
 	}
