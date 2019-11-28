@@ -70,10 +70,11 @@ public class LoggingService implements UserDetailsService {
 			return user;
 		else if (!user.getFirstLogin() && !user.getType().equals("PACIJENT"))
 			{
-				user.setFirstLogin(true);
+				//user.setFirstLogin(true);
 				return user;
 			}
-			
+		else if (!user.getType().equals("PACIJENT"))
+			return user;
 		else		
 			return null;	
 		
