@@ -19,7 +19,6 @@ public class MedicalWorkerService {
 
 	public MedicalWorker findOne(Long id) {
 		return medicalWorkerRepository.findById(id).orElseGet(null);
-
 	}
 	
 	public MedicalWorker update(MedicalWorker mw) {
