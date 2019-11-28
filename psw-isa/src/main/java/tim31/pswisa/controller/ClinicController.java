@@ -1,6 +1,8 @@
 package tim31.pswisa.controller;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.model.Clinic;
@@ -21,46 +24,49 @@ import tim31.pswisa.service.ClinicService;
 import tim31.pswisa.service.UserService;
 
 @RestController
+@RequestMapping(value="/clinic")
 public class ClinicController {
 	
 	@Autowired
 	private ClinicService clinicService;
 	
 	@Autowired
-	public ClinicAdministratorService clinicAdministratorService;
+	private ClinicAdministratorService clinicAdministratorService;
 	
 	@Autowired
-	public UserService userService;
+	private UserService userService;
 	
 	@Autowired
 	TokenUtils tokenUtils;
 	
-	@PostMapping(value="/upadateClinic/{token}", consumes=MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Clinic> upadateClinic(@RequestBody Clinic clinic, @PathVariable String token){
+	@PostMapping(value="/upadateClinic", consumes=MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Clinic> upadateClinic(@RequestBody Clinic clinic, HttpServletRequest request){
+		
+		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		List<Clinic>temp = clinicService.findAll();
 		String name1 = clinic.getName();
-		for(Clinic c : temp) {
-			if(c.getName().equals(name1)) {
-				return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
-			}
-		}
 		
 		if(user!=null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 		    if(clinicAdministrator != null) {
-		    	String nameOfClinic = clinicAdministrator.getClinic();
-		    	Clinic pom = clinicService.findOneByName(nameOfClinic);
-			    pom.setName(clinic.getName());
-			    pom.setAddress(clinic.getAddress());
-			    pom.setCity(clinic.getCity());
-			    pom.setRating(pom.getRating());
-			    pom.setMedicalStuff(pom.getMedicalStuff());
-			    pom.setAvailableAppointments(pom.getAvailableAppointments());
-			    pom.setPatients(pom.getPatients());
-			    pom.setRooms(pom.getRooms());
-			    pom = clinicService.save(pom);
+		    	Clinic nameOfClinic = clinicAdministrator.getClinic();
+		    	for(Clinic c : temp) {
+					if(c.getName().equals(name1) && c.getId()!=nameOfClinic.getId()) {
+						return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+					}
+				}
+				
+		    	nameOfClinic.setName(clinic.getName());
+		    	nameOfClinic.setAddress(clinic.getAddress());
+		    	nameOfClinic.setCity(clinic.getCity());
+			    nameOfClinic.setRating(nameOfClinic.getRating());
+			    nameOfClinic.setMedicalStuff(nameOfClinic.getMedicalStuff());
+			    nameOfClinic.setAvailableAppointments(nameOfClinic.getAvailableAppointments());
+			    nameOfClinic.setPatients(nameOfClinic.getPatients());
+			    nameOfClinic.setRooms(nameOfClinic.getRooms());
+			    nameOfClinic = clinicService.save(nameOfClinic);
 			    return new ResponseEntity<>(HttpStatus.OK);
 		    }
 		    else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -68,7 +74,7 @@ public class ClinicController {
 		 else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 }
 	
-	@PostMapping(value="/clinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Clinic> saveClinic(@RequestBody Clinic c)
 	{
 		Clinic clinic = new Clinic();
@@ -91,9 +97,8 @@ public class ClinicController {
 		if(user!=null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 		    if(clinicAdministrator != null) {
-		    	String nameOfClinic = clinicAdministrator.getClinic();
-		    	Clinic temp = clinicService.findOneByName(nameOfClinic);
-			    return new ResponseEntity<>(temp,HttpStatus.OK);
+		    	Clinic clinic = clinicAdministrator.getClinic();
+			    return new ResponseEntity<>(clinic,HttpStatus.OK);
 		    }
 		    else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}

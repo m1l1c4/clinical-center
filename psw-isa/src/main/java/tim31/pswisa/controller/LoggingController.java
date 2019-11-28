@@ -2,6 +2,7 @@ package tim31.pswisa.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ import tim31.pswisa.service.UserService;
 public class LoggingController {
 	
 	@Autowired
-	public LoggingService service;
+	private LoggingService service;
 	
 	@Autowired
 	TokenUtils tokenUtils;
@@ -41,14 +42,18 @@ public class LoggingController {
 	private AuthenticationManager authenticationManager;
 	
 	@Autowired
-	public UserService userService;
+	private UserService userService;
 	
 	
-	@GetMapping(value="/getUser/{token}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User>getUser(@PathVariable String token){
+	@GetMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User>getUser(HttpServletRequest request){
+		
+		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);   // email of logged user
 		User user = userService.findOneByEmail(email);
 			if(user!=null) {
+				user.setFirstLogin(false);
+				userService.save(user);
 				return new ResponseEntity<>(user,HttpStatus.OK);
 			}
 			else {
@@ -56,8 +61,10 @@ public class LoggingController {
 			}
 	}
 	
-	@PostMapping(value="/changePassword/{token}",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User>changePassword(@PathVariable String token,String data){
+	@PostMapping(value="/changePassword",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User>changePassword(@RequestBody String data,HttpServletRequest request){
+		
+		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		if(user!=null) {

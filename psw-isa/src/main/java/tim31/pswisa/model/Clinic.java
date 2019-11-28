@@ -37,8 +37,9 @@ public class Clinic {
 	@Column(name = "rating", unique = false, nullable = true)
 	private int rating;
 
-	/*@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ClinicAdministrator> clAdmins;*/
+	@JsonManagedReference(value="admin_clinic_mov")
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<ClinicAdministrator> clAdmins;
 
 	@JsonManagedReference(value="clinic_movement")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
