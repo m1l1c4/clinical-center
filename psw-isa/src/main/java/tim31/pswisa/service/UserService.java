@@ -25,7 +25,8 @@ public class UserService {
     public List<User> findAllByActivated(Boolean b){
         return userRepository.findAllByActivated(b);
     }
-   
+    
+       
     public User save(User user) {
         return userRepository.save(user);
     }

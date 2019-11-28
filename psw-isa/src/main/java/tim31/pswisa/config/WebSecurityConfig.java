@@ -64,7 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
 				// svim korisnicima dopusti da pristupe putanjama /auth/**, /h2-console/** i /api/foo
-				.authorizeRequests().antMatchers("/register").permitAll().antMatchers("/login").permitAll().antMatchers("/api/foo").permitAll()
+				.authorizeRequests().antMatchers("/register").permitAll().antMatchers("/login").permitAll().antMatchers("/api/foo").permitAll().antMatchers("/getUser").permitAll()
 				
 				// svaki zahtev mora biti autorizovan
 				.anyRequest().authenticated().and()
@@ -82,8 +82,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-		web.ignoring().antMatchers(HttpMethod.POST, "/login", "/register", "/clinic", "/updateMedicalWorker", "/updateAdministrator/*" , "/sendConfirm");
-		web.ignoring().antMatchers(HttpMethod.GET, "/patientsRequests", "/getMedicalWorker", "/getAdministrator");
+		web.ignoring().antMatchers(HttpMethod.POST, "/login", "/register", "/clinic", "/updateMedicalWorker", "/updateAdministrator/*" , "/sendConfirm", "/editPatient");
+		web.ignoring().antMatchers(HttpMethod.GET, "/patientsRequests", "/getMedicalWorker", "/getAdministrator", "/getUser", "/getPatientProfile");
+		//web.ignoring().antMatchers(HttpMethod.PUT, "/editPatient");
 		//web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
 			//	"/**/*.css", "/**/*.js");
 	}
