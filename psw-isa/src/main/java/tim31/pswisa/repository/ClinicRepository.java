@@ -10,4 +10,5 @@ public interface ClinicRepository extends JpaRepository<Clinic, Long> {
 	
 	List<Clinic> findAll();
 	Clinic findOneByName(String clinic);
+	Clinic findOneById(Long id);
 }

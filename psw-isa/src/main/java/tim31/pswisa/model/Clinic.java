@@ -36,6 +36,9 @@ public class Clinic {
 
 	@Column(name = "rating", unique = false, nullable = true)
 	private int rating;
+	
+	@Column(name="description", unique = false, nullable = false)
+	private String description;
 
 	@JsonManagedReference(value="admin_clinic_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -145,6 +148,24 @@ public class Clinic {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Set<ClinicAdministrator> getClAdmins() {
+		return clAdmins;
+	}
+
+	public void setClAdmins(Set<ClinicAdministrator> clAdmins) {
+		this.clAdmins = clAdmins;
+	}
+	
+	
 	
 	/*
 	 * public HashMap<String, Double> getPricelist() { return pricelist; }

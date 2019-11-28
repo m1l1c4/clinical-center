@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,37 +45,38 @@ public class LoggingController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	
 	@GetMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User>getUser(HttpServletRequest request){
-		
-		String token = tokenUtils.getToken(request);
-		String email = tokenUtils.getUsernameFromToken(token);   // email of logged user
-		User user = userService.findOneByEmail(email);
-			if(user!=null) {
-				user.setFirstLogin(false);
-				userService.save(user);
-				return new ResponseEntity<>(user,HttpStatus.OK);
-			}
-			else {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-	}
-	
-	@PostMapping(value="/changePassword",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User>changePassword(@RequestBody String data,HttpServletRequest request){
-		
-		String token = tokenUtils.getToken(request);
-		String email = tokenUtils.getUsernameFromToken(token);
-		User user = userService.findOneByEmail(email);
-		if(user!=null) {
-			user.setPassword(data);
-			user = userService.save(user);
-			return new ResponseEntity<>(user,HttpStatus.OK);
-		}
-		else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-	}
+    public ResponseEntity<User>getUser(HttpServletRequest request){
+        String jwt_token = tokenUtils.getToken(request);
+        //String token = tok.asText();
+        String email = tokenUtils.getUsernameFromToken(jwt_token);   // email of logged user
+        User user = userService.findOneByEmail(email);
+            if(user!=null) {
+                return new ResponseEntity<>(user,HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+    }
+ 
+    @PostMapping(value = "/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> changePassword(@RequestBody String[] data, HttpServletRequest request) {
+        String token = tokenUtils.getToken(request);
+        String email = tokenUtils.getUsernameFromToken(token);
+        User user = userService.findOneByEmail(email);
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(data[0]));
+            user.setFirstLogin(true);
+            user = userService.save(user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+ 
+    }
 	
 	
 	@PostMapping(value="/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

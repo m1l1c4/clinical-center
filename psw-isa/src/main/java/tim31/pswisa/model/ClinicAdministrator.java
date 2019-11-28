@@ -30,8 +30,7 @@ public class ClinicAdministrator {
 	
 	
 	@JsonBackReference(value="admin_clinic_mov")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@Column
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Clinic clinic;	
 	
 	@OneToMany(mappedBy = "clinicAdministrator" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
