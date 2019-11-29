@@ -6,6 +6,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.model.User;
@@ -41,5 +42,7 @@ public class EmailService {
 
         System.out.println("Email sent.");
 	}
+	
+	
 
 }
