@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -27,9 +28,10 @@ public class ClinicAdministrator {
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private User user;
 	
-	@Column
-	private String clinic;
 	
+	@JsonBackReference(value="admin_clinic_mov")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Clinic clinic;	
 	
 	@OneToMany(mappedBy = "clinicAdministrator" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Absence> absences;
@@ -37,7 +39,7 @@ public class ClinicAdministrator {
 	public ClinicAdministrator() {
 	}
 	
-	public ClinicAdministrator(String clinic, ArrayList<Absence> absences) {
+	public ClinicAdministrator(Clinic clinic, ArrayList<Absence> absences) {
 		super();
 		this.clinic = clinic;
 	}
@@ -50,10 +52,10 @@ public class ClinicAdministrator {
 		this.user = user;
 	}
 
-	public String getClinic() {
+	public Clinic getClinic() {
 		return clinic;
 	}
-	public void setClinic(String clinic) {
+	public void setClinic(Clinic clinic) {
 		this.clinic = clinic;
 	}
 	///public Set<Absence> getAbsences() {

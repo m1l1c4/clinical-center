@@ -14,7 +14,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.GetMapping;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,23 +33,45 @@ import tim31.pswisa.security.auth.JwtAuthenticationRequest;
 import tim31.pswisa.service.LoggingService;
 import tim31.pswisa.service.UserService;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 
 
 @RestController
 public class LoggingController {
 	
 	@Autowired
-	public LoggingService service;
+	private LoggingService service;
 	
-	@Autowired
-	public UserService userService;
-	
+		
 	@Autowired
 	TokenUtils tokenUtils;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	
+	
+ 
+    @PostMapping(value = "/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> changePassword(@RequestBody String[] data, HttpServletRequest request) {
+        String token = tokenUtils.getToken(request);
+        String email = tokenUtils.getUsernameFromToken(token);
+        User user = userService.findOneByEmail(email);
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(data[0]));
+            user.setFirstLogin(true);
+            user = userService.save(user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+ 
+    }
+	
 	
 	@PostMapping(value="/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Patient> registerUser(@RequestBody Patient p) throws Exception
@@ -77,6 +105,7 @@ public class LoggingController {
 			User user = (User) authentication.getPrincipal();
 			String jwt = tokenUtils.generateToken(user.getUsername());
 			int expiresIn = tokenUtils.getExpiredIn();
+			
 			return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
 		}
 		else {

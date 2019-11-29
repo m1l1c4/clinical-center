@@ -20,6 +20,14 @@ public class ClinicService {
     public List<Clinic> findAll(){
         return clinicRepository.findAll();
     }
+    
+    public Clinic findOneById(Long id) {
+    	return clinicRepository.findOneById(id);
+    }
+    
+    public Clinic findOneByName(String clinic) {
+    	return clinicRepository.findOneByName(clinic);
+    }
    
     public Clinic save(Clinic clinic) {
         List<Clinic> clinics = clinicRepository.findAll();
@@ -28,7 +36,7 @@ public class ClinicService {
             return null;
        
         for (Clinic c : clinics) {
-            if (c.getName().equals(clinic.getName()))
+            if (c.getName().equals(clinic.getName()) && c.getId()!=clinic.getId())
                 return null;
         }
        
