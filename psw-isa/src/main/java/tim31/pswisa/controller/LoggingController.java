@@ -49,27 +49,12 @@ public class LoggingController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private UserService userService;
+
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
 	
-	@GetMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User>getUser(HttpServletRequest request){
-        String jwt_token = tokenUtils.getToken(request);
-        //String token = tok.asText();
-        String email = tokenUtils.getUsernameFromToken(jwt_token);   // email of logged user
-        User user = userService.findOneByEmail(email);
-            if(user!=null) {
-                return new ResponseEntity<>(user,HttpStatus.OK);
-            }
-            else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-    }
  
     @PostMapping(value = "/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> changePassword(@RequestBody String[] data, HttpServletRequest request) {

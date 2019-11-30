@@ -33,7 +33,7 @@ public class Checkup {
 	private Date date; 
 	
 	// operation or appointment
-	@Column(name = "typeOfCheckup", nullable = false)
+	@Column(name = "type", nullable = false)
 	private String type; 
 	
 	@Column(name = "duration", nullable = false)
@@ -57,6 +57,11 @@ public class Checkup {
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker medicalworker;
+	
+
+	@JsonBackReference(value="checkup")
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private CheckUpType checkUpType;
 	
 	public Checkup() {
 		
