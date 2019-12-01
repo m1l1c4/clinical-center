@@ -61,6 +61,8 @@ public class Clinic {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<CheckUpType> checkUpTypes;
 
+	// appointment for one click
+	@JsonManagedReference(value="checkup_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Checkup> availableAppointments;
 

@@ -30,7 +30,10 @@ public class Checkup {
 	private boolean scheduled; 
 	
 	@Column(name = "DateOfCheckup", nullable = false)
-	private Date date; 
+	private String date; 
+	
+	@Column(name = "TimeOfCheckup", nullable = false)
+	private String time; 
 	
 	// operation or appointment
 	@Column(name = "type", nullable = false)
@@ -52,6 +55,7 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient patient;
 	
+	@JsonBackReference(value="checkup_mov")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;
 	
@@ -67,7 +71,7 @@ public class Checkup {
 		
 	}
 	
-	public Checkup(double discount, boolean scheduled, Date date, String type, int duration, double price, Room room) {
+	public Checkup(double discount, boolean scheduled, String date, String time, String type, int duration, double price, Room room) {
 		super();
 		this.discount = discount;
 		this.scheduled = scheduled;
@@ -76,6 +80,7 @@ public class Checkup {
 		this.duration = duration;
 		this.price = price;
 		this.room = room;
+		this.time = time;
 	}
 
 	
@@ -119,14 +124,52 @@ public class Checkup {
 		this.scheduled = scheduled;
 	}
 	
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 	
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 	
+	
+	
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public Clinic getClinic() {
+		return clinic;
+	}
+
+	public void setClinic(Clinic clinic) {
+		this.clinic = clinic;
+	}
+
+	public MedicalWorker getMedicalworker() {
+		return medicalworker;
+	}
+
+	public void setMedicalworker(MedicalWorker medicalworker) {
+		this.medicalworker = medicalworker;
+	}
+
+	public CheckUpType getCheckUpType() {
+		return checkUpType;
+	}
+
+	public void setCheckUpType(CheckUpType checkUpType) {
+		this.checkUpType = checkUpType;
+	}
+
+	public MedicalWorker getDoctor() {
+		return doctor;
+	}
+
 	public String getType() {
 		return type;
 	}
