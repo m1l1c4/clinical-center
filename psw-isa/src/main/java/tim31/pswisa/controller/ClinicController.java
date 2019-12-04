@@ -144,6 +144,7 @@ public class ClinicController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
+    
    
     @GetMapping(value="/getAllMedicalWorkers", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MedicalWorker>>getAllMedicalWorkers(HttpServletRequest request){

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,30 @@ public class CheckUpTypeController {
 	    TokenUtils tokenUtils;
 	    
 	    
+	    @PostMapping(value="/deleteType/{name}")
+		public ResponseEntity<String> deleteType(@PathVariable String name, HttpServletRequest request){
+	    	 String token = tokenUtils.getToken(request);
+		     String email = tokenUtils.getUsernameFromToken(token);
+		     User user = userService.findOneByEmail(email);
+		     if(user!=null) {
+		    	 ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		    	 if(clinicAdministrator != null) {
+		                Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+		                List<CheckUpType>tipovi = clinicService.findAllCheckUpTypeById(clinic.getId());
+		                for(CheckUpType t : tipovi) {
+		                	if(t.getName().equals(name)) {
+		                		clinic.getCheckUpTypes().remove(t);
+		                		clinic = clinicService.save(clinic); // delete type from clinic
+		                		return new ResponseEntity<>("Obrisano", HttpStatus.OK);
+		                	}
+		                }
+		               
+		            }
+		     }
+			return new ResponseEntity<>("Greska", HttpStatus.NOT_FOUND);
+		}
+	    
+	    
 	    @GetMapping(value="/getTypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	    public ResponseEntity<Set<CheckUpType>> getTypes(HttpServletRequest request) {
 	        String token = tokenUtils.getToken(request);
@@ -65,13 +90,14 @@ public class CheckUpTypeController {
 	        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    }
 	    
-	    @PostMapping(value="/addTypes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	    public ResponseEntity<Set<CheckUpType>> save(@RequestBody Set<CheckUpType> lista, HttpServletRequest request){
+	    @PostMapping(value="/addType", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	    public ResponseEntity<CheckUpType> addType(@RequestBody CheckUpType type, HttpServletRequest request){
 	    	
 		      String token = tokenUtils.getToken(request);
 		      String email = tokenUtils.getUsernameFromToken(token);
 	   	      User user = userService.findOneByEmail(email);
-	   	      Set<CheckUpType>temp = lista;
+	   	      CheckUpType tip = new CheckUpType();
+	   	      tip.setName(type.getName());
 	   	      List<CheckUpType>allTypes = checkUpTypeService.findAll();
 	   	      Clinic klinika = new Clinic();
 	   	      
@@ -79,36 +105,30 @@ public class CheckUpTypeController {
 	   	      if(user!=null) {
 	   	    	ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 	   	    	klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+	   	    	tip.getClinics().add(klinika);
+	   	    	int x = 0;
 	   	    	for(CheckUpType t : klinika.getCheckUpTypes()) {
-	   	    		for(CheckUpType c : temp) {
-	   	    			if(!c.getName().equals(t.getName())) {
-	   	    				CheckUpType cek = new CheckUpType();
-					   	    klinika.getCheckUpTypes().add(cek);
-					        klinika = clinicService.save(klinika);
-	   	    			}
-	   	    			else {
-	   	    				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // if there are types with same name in clinic
-	   	    			}
-			    	}
+	   	    		if(t.getName().equals(tip.getName())){
+	   	    			x = 1;
+	   	    		}
 	   	    	}
-	   	    	
+	   	    	if(x == 0) {
+	   	    		klinika.getCheckUpTypes().add(tip);
+	   	    	}
+	   	    
 	   	     // save types in all types of clinical center
+	   	    	x = 0;
 		   	      for(CheckUpType t : allTypes) {
-		   	    	  for(CheckUpType g : lista) {
-		   	    		  if(!g.getName().equals(t.getName())) {
-		   	    			  CheckUpType cut = new CheckUpType();
-		   	    			  cut.setName(g.getName());
-		   	    			  cut.getClinics().add(klinika);
-		   	    			  checkUpTypeService.save(g);
-		   	    		  }
-		   	    		  else {
-		   	    			 return new ResponseEntity<>(HttpStatus.NOT_FOUND); // if there are types with same name in clinical center
-		   	    		  }
-		   	    	  }
+		   	    		  if(type.getName().equals(t.getName())) {
+		   	    			  x = 1;
+		   	    		  }	  
 		   	      }
-		   	   return new  ResponseEntity<>(lista,HttpStatus.OK); 
-	   	      }    
-	   	   return new  ResponseEntity<>(HttpStatus.NOT_FOUND); // if there no administrator
+		   	      if(x == 0) {
+ 	    			  checkUpTypeService.save(tip);
+		   	      }
+		   	
+	   	      }   
+	   	   return new  ResponseEntity<>(tip,HttpStatus.OK); 
 	    }
 	
 }

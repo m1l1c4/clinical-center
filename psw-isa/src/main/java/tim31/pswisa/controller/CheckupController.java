@@ -78,7 +78,7 @@ public class CheckupController {
 	                clinic = clinicAdministrator.getClinic();
 	                if(clinic != null) {
 	                	checkup.setClinic(clinic);
-	                	Set<Checkup>pregledi = clinic.getAvailableAppointments();
+	                	List<Checkup>pregledi = checkupService.findAllByClinicId(clinic.getId());
 	                	for(Checkup pom : pregledi) {
 	                		if(c.getDate().equals(pom.getDate()) && c.getTime().equals(pom.getTime())) {
 	                			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
