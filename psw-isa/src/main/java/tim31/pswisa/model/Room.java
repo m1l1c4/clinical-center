@@ -92,14 +92,9 @@ public class Room {
 		this.id = id;
 	}
 
-	public Clinic getClinic() {
-		return clinic;
+	public void setClinic(Clinic clinic2) {
+		// TODO Auto-generated method stub
+		
 	}
-
-	public void setClinic(Clinic clinic) {
-		this.clinic = clinic;
-	}
-
-	
 
 }

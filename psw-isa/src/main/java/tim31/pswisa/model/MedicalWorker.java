@@ -31,7 +31,7 @@ public class MedicalWorker {
 	private Clinic clinic;	
 	
 	@Column(name="phone", unique=false, nullable=true)
-	private String phone;
+	private int phone;
 	
 	//@JsonManagedReference(value="mw_movement")
 	@OneToMany(mappedBy="mw", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
@@ -51,7 +51,7 @@ public class MedicalWorker {
 	@Column(name="endHr", unique=false, nullable=true)
 	private int endHr;		
 	
-	@Column(name="typeOfDoctor", unique=false, nullable=true)
+	@Column(name="typeOfDoctor", unique=false, nullable=false)
 	private String type;
 	
 	@OneToMany(mappedBy = "medicalworker", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
@@ -68,11 +68,35 @@ public class MedicalWorker {
 		super();
 	}
 
-	public String getPhone() {
+	public Set<Patient> getPatients() {
+		return patients;
+	}
+
+	public void setPatients(Set<Patient> patients) {
+		this.patients = patients;
+	}
+
+	public Set<Absence> getHollydays() {
+		return hollydays;
+	}
+
+	public void setHollydays(Set<Absence> hollydays) {
+		this.hollydays = hollydays;
+	}
+
+	public Set<Checkup> getCheckUps() {
+		return checkUps;
+	}
+
+	public void setCheckUps(Set<Checkup> checkUps) {
+		this.checkUps = checkUps;
+	}
+
+	public int getPhone() {
 		return phone;
 	}
 
-	public void setPhone(String phone) {
+	public void setPhone(int phone) {
 		this.phone = phone;
 	}
 

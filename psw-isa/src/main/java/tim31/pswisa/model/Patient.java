@@ -34,9 +34,6 @@ public class Patient {
 	@Column(name = "jbo", nullable = false)
 	private String jbo;
 	
-	@Column(name = "email", nullable = false)
-	private String email;
-	
 	@Column(name = "city", nullable = false)
 	private String city;
 	
@@ -164,14 +161,6 @@ public class Patient {
 
 	public void setMw(MedicalWorker mw) {
 		this.mw = mw;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 	
 	

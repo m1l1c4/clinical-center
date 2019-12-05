@@ -16,15 +16,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -41,7 +39,7 @@ public class User implements UserDetails{
 	@Column(name = "password", nullable = false)
 	private String password;
 	
-	@Column(name = "active", nullable =true)
+	@Column(name = "active", nullable = true)
 	private boolean activated;		// if patient activated his account
 	
 	@Column(name = "firstLogin", nullable = true)		//default: false
@@ -59,9 +57,7 @@ public class User implements UserDetails{
 	@Column(name = "enabled", nullable = true)
     private boolean enabled;		// authorization for accessing methods
 	
-	/*@Transient
-	@Autowired
-	private PasswordEncoder passwordEncoder;*/
+	
 
 	@Column(name = "last_password_reset_date", nullable = true)
     private Timestamp lastPasswordResetDate;
@@ -220,7 +216,6 @@ public class User implements UserDetails{
 	public void setPassword(String password) {
 		Timestamp now = new Timestamp(DateTime.now().getMillis());
         this.setLastPasswordResetDate( now );
-        //this.password = passwordEncoder.encode(password);
         this.password = password;
 	}
 	public String getName() {

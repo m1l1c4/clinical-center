@@ -10,23 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tim31.pswisa.model.Patient;
-import tim31.pswisa.model.User;
+import tim31.pswisa.model.Clinic;
 import tim31.pswisa.service.EmailService;
-import tim31.pswisa.service.PatientService;
-import tim31.pswisa.service.UserService;
 
 @RestController
 public class EmailController {
 
 	@Autowired
 	private EmailService emailService;
-	
-	@Autowired
-	private PatientService patientService;
-	
-	@Autowired
-	private UserService userService;
 	
 	@PostMapping(value="/sendConfirm", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> sendConfirmationEmail(@RequestBody String[] data)
@@ -44,17 +35,5 @@ public class EmailController {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<>("Email sent", HttpStatus.OK);
-	}
-	
-	@PostMapping(value="/activateEmail/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Patient> activateAccount(@PathVariable String id)
-	{
-		long p = Integer.parseInt(id);
-		User activeP = userService.findOneById(p);
-		Patient px = patientService.findOneByUserId(p);
-		px.getUser().setActivated(true);
-		patientService.save(px);
-		
-		return new ResponseEntity<>(px, HttpStatus.OK);
 	}
 }
