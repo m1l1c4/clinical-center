@@ -30,6 +30,12 @@ public class EmailController {
 	private UserService userService;
 	
 	@Autowired
+	private PatientService patientService;
+	
+	@Autowired
+	private UserService userService;
+  
+  @Autowired
 	private MedicalRecordService medicalRecordService;
 
 	@PostMapping(value = "/sendConfirm", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
