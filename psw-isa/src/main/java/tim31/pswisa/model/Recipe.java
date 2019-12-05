@@ -28,8 +28,6 @@ public class Recipe {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalRecord medicalRecord;
 
-	@JsonManagedReference(value = "recipe_nurse_mov")
-
 	@ManyToMany
 	@JoinTable(name = "workers", joinColumns = @JoinColumn(name = "recipe_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "medical_worker_id", referencedColumnName = "id"))
 	private Set<MedicalWorker> medicalWorkers;
