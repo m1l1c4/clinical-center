@@ -41,9 +41,7 @@ public class LoggingController {
 	@Autowired
 	private LoggingService service;
 	
-	@Autowired
-	public UserService userService;
-	
+		
 	@Autowired
 	TokenUtils tokenUtils;
 
@@ -54,7 +52,7 @@ public class LoggingController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	
+
  
     @PostMapping(value = "/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> changePassword(@RequestBody String[] data, HttpServletRequest request) {
