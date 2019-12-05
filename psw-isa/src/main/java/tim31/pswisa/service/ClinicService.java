@@ -1,7 +1,8 @@
 package tim31.pswisa.service;
  
 import java.util.List;
- 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +20,13 @@ public class ClinicService {
     @Autowired
     private ClinicRepository clinicRepository;
    
-    public List<MedicalWorker>findAllMedicalWorkerById(Long id){
-    	return clinicRepository.findAllMedicalWorkerById(id);
+  
+    public Room findRoomById(Long id) {
+    	return clinicRepository.findRoomById(id);
     }
     
-    public List<CheckUpType>findAllCheckUpTypeById(Long id){
-    	return clinicRepository.findAllCheckUpTypeById(id);
-    }
+  
+  
     
     public List<Clinic> findAll(){
         return clinicRepository.findAll();

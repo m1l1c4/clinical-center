@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -57,8 +58,8 @@ public class Clinic {
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Room> rooms;
 	
-	//@JsonManagedReference(value="type_mov")
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonBackReference(value="type_mov")
+	@ManyToMany(mappedBy="clinics")
 	private Set<CheckUpType> checkUpTypes;
 
 	// appointment for one click

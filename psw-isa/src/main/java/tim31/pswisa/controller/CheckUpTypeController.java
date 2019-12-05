@@ -58,18 +58,21 @@ public class CheckUpTypeController {
 		    	 ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 		    	 if(clinicAdministrator != null) {
 		                Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-		                List<CheckUpType>tipovi = clinicService.findAllCheckUpTypeById(clinic.getId());
+		                Set<CheckUpType>tipovi = clinic.getCheckUpTypes();
 		                for(CheckUpType t : tipovi) {
 		                	if(t.getName().equals(name)) {
 		                		clinic.getCheckUpTypes().remove(t);
 		                		clinic = clinicService.save(clinic); // delete type from clinic
+		                		CheckUpType temp = checkUpTypeService.findOneByName(name);
+		                		temp.getClinics().remove(clinic);
+		                		temp = checkUpTypeService.save(temp);
 		                		return new ResponseEntity<>("Obrisano", HttpStatus.OK);
 		                	}
 		                }
 		               
 		            }
 		     }
-			return new ResponseEntity<>("Greska", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
 		}
 	    
 	    
@@ -105,7 +108,6 @@ public class CheckUpTypeController {
 	   	      if(user!=null) {
 	   	    	ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 	   	    	klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-	   	    	tip.getClinics().add(klinika);
 	   	    	int x = 0;
 	   	    	for(CheckUpType t : klinika.getCheckUpTypes()) {
 	   	    		if(t.getName().equals(tip.getName())){
@@ -117,18 +119,21 @@ public class CheckUpTypeController {
 	   	    	}
 	   	    
 	   	     // save types in all types of clinical center
-	   	    	x = 0;
+	   	    	int y = 0;
 		   	      for(CheckUpType t : allTypes) {
-		   	    		  if(type.getName().equals(t.getName())) {
-		   	    			  x = 1;
+		   	    		  if(tip.getName().equals(t.getName())) {
+		   	    			  y = 1;
 		   	    		  }	  
 		   	      }
-		   	      if(x == 0) {
- 	    			  checkUpTypeService.save(tip);
+		   	      if(y == 0) {
+		   	    	  tip.getClinics().add(klinika);
+ 	    			  tip = checkUpTypeService.save(tip);
+ 	    			  klinika.getCheckUpTypes().add(tip);
+ 	    			 return new  ResponseEntity<>(tip,HttpStatus.OK); 
 		   	      }
 		   	
 	   	      }   
-	   	   return new  ResponseEntity<>(tip,HttpStatus.OK); 
+	   	   return new  ResponseEntity<>(tip,HttpStatus.NOT_FOUND); 
 	    }
 	
 }

@@ -18,6 +18,10 @@ public class CheckUpTypeService {
         return checkUpTypeRepository.findAll();
     }
     
+    public CheckUpType findOneByName(String name) {
+    	return checkUpTypeRepository.findOneByName(name);
+    }
+    
     public CheckUpType save(CheckUpType ct) {
         List<CheckUpType> cek = checkUpTypeRepository.findAll();
        

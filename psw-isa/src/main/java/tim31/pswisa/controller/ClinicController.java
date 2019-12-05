@@ -1,6 +1,8 @@
 package tim31.pswisa.controller;
+import java.util.HashSet;
 import java.util.List;
- 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
  
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class ClinicController {
    
     @Autowired
     private ClinicService clinicService;
+    
+    @Autowired
+    private MedicalWorkerService medicalWorkerService;
    
     @Autowired
     private ClinicAdministratorService clinicAdministratorService;
@@ -75,7 +80,7 @@ public class ClinicController {
             }
             else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 }
  
    
@@ -115,7 +120,7 @@ public class ClinicController {
     
     
     @GetMapping(value="/getFreeRooms", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Room>>getFreeRooms(HttpServletRequest request){
+    public ResponseEntity<Set<Room>>getFreeRooms(HttpServletRequest request){
         String token = tokenUtils.getToken(request);
         String email = tokenUtils.getUsernameFromToken(token);
         User user = userService.findOneByEmail(email);
@@ -124,20 +129,12 @@ public class ClinicController {
             if(clinicAdministrator != null) {
                 Clinic clinic = clinicAdministrator.getClinic();
                 if(clinic != null) {
-                	List<Room>returnValue = null;
                     List<Room>rooms = roomService.findAllByClinicId(clinic.getId());
+                    Set<Room>temp = new HashSet<Room>();
                     for(Room r : rooms) {
-                    	if(r.isFree()) {
-                    		returnValue.add(r);
-                    	}
+                    	temp.add(r);
                     }
-                    if(returnValue.size() == 0) {
-                    	return new ResponseEntity<>(HttpStatus.CHECKPOINT);
-                    }
-                    else{
-                    	return new ResponseEntity<>(returnValue,HttpStatus.OK);
-                    }
-                    
+                    return new ResponseEntity<>(temp,HttpStatus.OK);  
                 }
             }
         }
@@ -146,8 +143,8 @@ public class ClinicController {
     
     
    
-    @GetMapping(value="/getAllMedicalWorkers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MedicalWorker>>getAllMedicalWorkers(HttpServletRequest request){
+    @GetMapping(value="/getDoctors", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<MedicalWorker>>getAllMedicalWorkers(HttpServletRequest request){
         String token = tokenUtils.getToken(request);
         String email = tokenUtils.getUsernameFromToken(token);
         User user = userService.findOneByEmail(email);
@@ -156,19 +153,8 @@ public class ClinicController {
             if(clinicAdministrator != null) {
                 Clinic clinic = clinicAdministrator.getClinic();
                 if(clinic != null) {
-                	List<MedicalWorker>temp = null;
-                    List<MedicalWorker>workers = clinicService.findAllMedicalWorkerById(clinic.getId());
-                    for(MedicalWorker mw : workers) {
-                    	if(mw.getType().equals("DOKTOR")) {
-                    		temp.add(mw);
-                    	}
-                    }
-                    if(temp!=null) {
-                    	return new ResponseEntity<>(workers,HttpStatus.OK);
-                    }
-                    else {
-                    	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                    } 
+                    Set<MedicalWorker>workers = medicalWorkerService.findAllByClinicId(clinic.getId());
+                    return new ResponseEntity<>(workers,HttpStatus.OK);
                 }
             }
         }
@@ -176,7 +162,7 @@ public class ClinicController {
     }
     
     @GetMapping(value="/getAllTypes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CheckUpType>>getAllTypes(HttpServletRequest request){
+    public ResponseEntity<Set<CheckUpType>>getAllTypes(HttpServletRequest request){
         String token = tokenUtils.getToken(request);
         String email = tokenUtils.getUsernameFromToken(token);
         User user = userService.findOneByEmail(email);
@@ -185,8 +171,8 @@ public class ClinicController {
             if(clinicAdministrator != null) {
                 Clinic clinic = clinicAdministrator.getClinic();
                 if(clinic != null) {
-                    List<CheckUpType>types = clinicService.findAllCheckUpTypeById(clinic.getId());
-                    return new ResponseEntity<>(types,HttpStatus.OK);
+                   Set<CheckUpType> tmp = clinic.getCheckUpTypes();
+                    return new ResponseEntity<>(tmp,HttpStatus.OK);
                 }
             }
         }

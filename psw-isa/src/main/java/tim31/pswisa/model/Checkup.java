@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -48,7 +49,8 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private MedicalWorker doctor;
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonBackReference(value="soba_mov")
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Room room;
 	
 	//@JsonBackReference(value="cup_movement")
@@ -59,8 +61,9 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private MedicalWorker medicalworker;
+	@JsonBackReference(value="doktor_mov")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private MedicalWorker medicalWorker;
 	
 
 	@JsonBackReference(value="checkup")
@@ -150,12 +153,12 @@ public class Checkup {
 		this.clinic = clinic;
 	}
 
-	public MedicalWorker getMedicalworker() {
-		return medicalworker;
+	public MedicalWorker getMedicalWorker() {
+		return medicalWorker;
 	}
 
-	public void setMedicalworker(MedicalWorker medicalworker) {
-		this.medicalworker = medicalworker;
+	public void setMedicalWorker(MedicalWorker medicalWorker) {
+		this.medicalWorker = medicalWorker;
 	}
 
 	public CheckUpType getCheckUpType() {

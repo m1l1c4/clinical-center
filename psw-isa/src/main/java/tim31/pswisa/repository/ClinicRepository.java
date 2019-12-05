@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.Room;
 import tim31.pswisa.model.MedicalWorker;
 
 public interface ClinicRepository extends JpaRepository<Clinic, Long> {
@@ -14,8 +15,6 @@ public interface ClinicRepository extends JpaRepository<Clinic, Long> {
 	Clinic findOneByName(String clinic);
 	Clinic findOneById(Long id);
 	
-	List<MedicalWorker> findAllMedicalWorkerById(Long id);
-	
-	List<CheckUpType> findAllCheckUpTypeById(Long id);
+	Room findRoomById(Long id);
 }
 	

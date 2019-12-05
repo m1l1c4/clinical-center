@@ -1,5 +1,6 @@
 package tim31.pswisa.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -25,25 +26,27 @@ public class CheckUpType {
 	@Column(name = "typeName", unique = true, nullable = false)
 	private String name;
 
+	//@JsonManagedReference(value="type_mov")
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "CLINIC_AND_TYPE", joinColumns = { @JoinColumn(name = "check_up_type_id") }, inverseJoinColumns = { @JoinColumn(name = "clinic_id") })
-	private Set<Clinic> clinics;
+	private Set<Clinic> clinics = new HashSet<Clinic>();
 	
 	
 	@JsonManagedReference(value="checkup")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Checkup>checkups;
+	private Set<Checkup>checkups = new HashSet<Checkup>();
 
 	public CheckUpType() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-	public CheckUpType(Long id, String name, Set<Checkup> checkups) {
+	public CheckUpType(Long id, String name, Set<Checkup> checkups, Set<Clinic> clinics) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.checkups = checkups;
+		this.clinics = clinics;
 	}
 
 	public Long getId() {

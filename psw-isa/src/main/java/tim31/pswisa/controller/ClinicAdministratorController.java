@@ -53,9 +53,11 @@ public class ClinicAdministratorController {
     // ClinicAdministrator object
  
     @PostMapping(value = "/updateAdministrator", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClinicAdministrator> updateAdministrator(@RequestBody ClinicAdministrator ca) {
+    public ResponseEntity<ClinicAdministrator> updateAdministrator(@RequestBody ClinicAdministrator ca ,HttpServletRequest request) {
  
-        User user = userService.findOneByEmail(ca.getUser().getEmail());
+    	 String token = tokenUtils.getToken(request);
+         String email = tokenUtils.getUsernameFromToken(token);
+         User user = userService.findOneByEmail(email);
         if (user != null) {
             ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
             clinicAdministrator.getUser().setName(ca.getUser().getName());

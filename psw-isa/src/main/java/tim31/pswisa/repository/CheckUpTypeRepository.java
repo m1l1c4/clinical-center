@@ -10,4 +10,5 @@ public interface CheckUpTypeRepository  extends JpaRepository<CheckUpType, Long>
 
 	List<CheckUpType> findAll();
 	
+	CheckUpType findOneByName(String name);
 }
