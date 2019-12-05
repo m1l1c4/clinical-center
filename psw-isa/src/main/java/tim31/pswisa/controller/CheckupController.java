@@ -59,7 +59,8 @@ public class CheckupController {
 	    @Autowired
 	    private MedicalWorkerService medicalWorkerService;
 	    
-	    // have to modify just for doctors and to save doctor after adding appointment
+	    // have to modify just for doctors 
+	    // This method adding new appointment created by clinic administrator. Patients can booked this with one click
 	    @PostMapping(value = "/addAppointment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	    public ResponseEntity<Checkup> addAppointment(@RequestBody Checkup c,  HttpServletRequest request)
 	    {
@@ -117,6 +118,7 @@ public class CheckupController {
 		            room.getBookedCheckups().add(checkup);
 		            checkup.setType(c.getType());
 		            checkup = checkupService.save(checkup);
+		            System.out.println(checkup.getMedicalWorker().getUser().getName());
 		            doctorOne1.getCheckUps().add(checkup);
 	                
 			        doctorOne1 = medicalWorkerService.update(doctorOne1);

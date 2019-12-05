@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +50,8 @@ public class ClinicController {
  
     @Autowired
     TokenUtils tokenUtils;
- 
+    
+    // This method updates clinic by administrator who is using application at the moment, gets administrator and his clinic
     @PostMapping(value="/updateClinic", consumes=MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Clinic> upadateClinic(@RequestBody Clinic clinic, HttpServletRequest request){
         String token = tokenUtils.getToken(request);
@@ -72,7 +74,7 @@ public class ClinicController {
                 nameOfClinic.setCity(clinic.getCity());
                 nameOfClinic.setDescription(clinic.getDescription());
                 nameOfClinic.setRooms(clinic.getRooms());
-                nameOfClinic = clinicService.save(nameOfClinic);
+                nameOfClinic = clinicService.update(nameOfClinic);
                 if(nameOfClinic != null)
                     return new ResponseEntity<>(nameOfClinic, HttpStatus.OK);
                 else
@@ -100,6 +102,7 @@ public class ClinicController {
         return new ResponseEntity<>(clinic, HttpStatus.CREATED);
     }
    
+    // This method returns all rooms in clinic and its administrator is logged user at the moment
     @GetMapping(value="/getRooms", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Room>>getRooms(HttpServletRequest request){
         String token = tokenUtils.getToken(request);
@@ -118,7 +121,7 @@ public class ClinicController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
-    
+    // This method is not used at the moment
     @GetMapping(value="/getFreeRooms", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<Room>>getFreeRooms(HttpServletRequest request){
         String token = tokenUtils.getToken(request);
@@ -142,7 +145,7 @@ public class ClinicController {
     }
     
     
-   
+   // This method returns doctors of clinic for create new medical appointment by clinic administrator
     @GetMapping(value="/getDoctors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<MedicalWorker>>getAllMedicalWorkers(HttpServletRequest request){
         String token = tokenUtils.getToken(request);
@@ -179,6 +182,7 @@ public class ClinicController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
+    // This method returns clinic of administrator who is logged at the moment
     @GetMapping(value="/getClinic", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Clinic> getClinic(HttpServletRequest request) {
         String token = tokenUtils.getToken(request);
@@ -194,5 +198,68 @@ public class ClinicController {
         }
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+    
+    // This method deletes room by name in clinic, used by administrator of clinic
+    @PostMapping(value="/deleteRoom/{name}")
+		public ResponseEntity<String> deleteRoom(@PathVariable String name, HttpServletRequest request){
+	    	 String token = tokenUtils.getToken(request);
+		     String email = tokenUtils.getUsernameFromToken(token);
+		     User user = userService.findOneByEmail(email);
+		     if(user!=null) {
+		    	 ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		    	 if(clinicAdministrator != null) {
+		                Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+		                Set<Room>sobe = clinic.getRooms();
+		                for(Room r : sobe) {
+		                	if(r.getName().equals(name)) {
+		                		clinic.getRooms().remove(r);
+		                		clinic = clinicService.save(clinic); // delete room from clinic
+		                		return new ResponseEntity<>("Obrisano", HttpStatus.OK);
+		                	}
+		                }
+		               
+		            }
+		     }
+			return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
+		}
+    
+    // This method adds new room in clinic, already save some data such as type and isFree
+    @PostMapping(value="/addRoom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Room> addRoom(@RequestBody Room room, HttpServletRequest request){
+    	
+	      String token = tokenUtils.getToken(request);
+	      String email = tokenUtils.getUsernameFromToken(token);
+   	      User user = userService.findOneByEmail(email);
+   	      Room room1 = new Room();
+   	      room1.setName(room.getName());
+   	      room1.setNumber(room.getNumber());
+   	      
+   	      Clinic klinika = new Clinic();
+   	      
+   	      // save types in clinic
+   	      if(user!=null) {
+   	    	ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+   	    	klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+   	    	List<Room>allRooms = roomService.findAllByClinicId(klinika.getId());
+   	    	for(Room r : allRooms) {
+   	    		if(r.getName().equals(room.getName()) || r.getNumber() == room.getNumber()) {
+   	    			return new  ResponseEntity<>(room,HttpStatus.ALREADY_REPORTED); 
+   	    		}
+   	    	}
+   	    	room1.setClinic(klinika);
+   	    	room1.setFree(true);
+   	    	room1.setType("PREGLED");
+   	    	klinika.getRooms().add(room1);
+   	    	klinika = clinicService.save(klinika);
+   	    	return new  ResponseEntity<>(room1,HttpStatus.CREATED); 
+	   	  }
+	   	
+   	   return new  ResponseEntity<>(room1,HttpStatus.NOT_FOUND); 
+   	 
+    }
+
+    
+    
+    
  
 }

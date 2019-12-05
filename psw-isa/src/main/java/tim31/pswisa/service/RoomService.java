@@ -28,6 +28,10 @@ public class RoomService {
 		return roomRepository.findOneById(id);
 	}
 	
+	public Room save(Room room) {
+		return roomRepository.save(room);
+	}
+	
 	 public Room update(Room ct) {   
 		 return roomRepository.save(ct);
 	    }

@@ -48,7 +48,7 @@ public class CheckUpTypeController {
 	    @Autowired
 	    TokenUtils tokenUtils;
 	    
-	    
+	    // This method delete type from clinic but type won't be deleted from all types in clinical center
 	    @PostMapping(value="/deleteType/{name}")
 		public ResponseEntity<String> deleteType(@PathVariable String name, HttpServletRequest request){
 	    	 String token = tokenUtils.getToken(request);
@@ -76,6 +76,7 @@ public class CheckUpTypeController {
 		}
 	    
 	    
+	    // This method returs all types in clinic center of administrator who is logged in system
 	    @GetMapping(value="/getTypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	    public ResponseEntity<Set<CheckUpType>> getTypes(HttpServletRequest request) {
 	        String token = tokenUtils.getToken(request);
@@ -93,6 +94,7 @@ public class CheckUpTypeController {
 	        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    }
 	    
+	    // This method adding new type in all type of clinic, checking if there is a type with same name
 	    @PostMapping(value="/addType", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	    public ResponseEntity<CheckUpType> addType(@RequestBody CheckUpType type, HttpServletRequest request){
 	    	

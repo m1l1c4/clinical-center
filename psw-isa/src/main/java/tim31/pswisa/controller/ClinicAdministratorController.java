@@ -32,8 +32,7 @@ public class ClinicAdministratorController {
     @Autowired
     private TokenUtils tokenUtils;
  
-    // method returns administrator by email
- 
+    // This method returns administrator who is using application at the moment
     @GetMapping(value = "/getAdministrator", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ClinicAdministrator> getAdministrator(HttpServletRequest request) {
  
@@ -49,9 +48,7 @@ public class ClinicAdministratorController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
  
-    // method updates administrator by email, parameter of this method is
-    // ClinicAdministrator object
- 
+    // This method updates administrator who is using application at the moment
     @PostMapping(value = "/updateAdministrator", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ClinicAdministrator> updateAdministrator(@RequestBody ClinicAdministrator ca ,HttpServletRequest request) {
  

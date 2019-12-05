@@ -41,6 +41,7 @@ public class MedicalWorkerController {
     private TokenUtils tokenUtils;
     // method returns medical worker by email
  
+    // This method returns medical worker for update
     @GetMapping(value = "/getMedicalWorker", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MedicalWorker> getMedicalWorker(HttpServletRequest request) {
         String token = tokenUtils.getToken(request);
@@ -55,9 +56,7 @@ public class MedicalWorkerController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
  
-    // method updates medical worker by email, parameter of this method is
-    // MedicalWorker object
- 
+    // This method updates medical worker who sends request for that
     @PostMapping(value = "/updateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw) {
         User user = userService.findOneByEmail(mw.getUser().getEmail());
