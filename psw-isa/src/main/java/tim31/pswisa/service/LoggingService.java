@@ -42,7 +42,6 @@ public class LoggingService implements UserDetailsService {
 		else {
 			p.getUser().setPassword(passwordEncoder.encode(p.getUser().getPassword()));
 			p.getUser().setEnabled(true);
-			;
 			p.getUser().setActivated(false);
 			p.getUser().setType("PACIJENT");
 			List<Authority> auth = authService.findByname("PACIJENT");
