@@ -28,7 +28,7 @@ public class ClinicAdministrator {
 	private User user;
 	
 	@Column
-	private String clinic;
+	private Clinic clinic;
 	
 	
 	@OneToMany(mappedBy = "clinicAdministrator" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -37,7 +37,7 @@ public class ClinicAdministrator {
 	public ClinicAdministrator() {
 	}
 	
-	public ClinicAdministrator(String clinic, ArrayList<Absence> absences) {
+	public ClinicAdministrator(Clinic clinic, ArrayList<Absence> absences) {
 		super();
 		this.clinic = clinic;
 	}
@@ -50,10 +50,10 @@ public class ClinicAdministrator {
 		this.user = user;
 	}
 
-	public String getClinic() {
+	public Clinic getClinic() {
 		return clinic;
 	}
-	public void setClinic(String clinic) {
+	public void setClinic(Clinic clinic) {
 		this.clinic = clinic;
 	}
 	///public Set<Absence> getAbsences() {

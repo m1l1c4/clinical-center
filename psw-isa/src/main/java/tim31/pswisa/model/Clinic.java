@@ -9,12 +9,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
@@ -36,9 +34,17 @@ public class Clinic {
 
 	@Column(name = "rating", unique = false, nullable = true)
 	private int rating;
+	
+	@Column(name="description", unique = false, nullable = false)
+	private String description;
+	
+	@JsonBackReference(value="type_mov")
+	@ManyToMany(mappedBy="clinics")
+	private Set<CheckUpType> checkUpTypes;
 
-	/*@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ClinicAdministrator> clAdmins;*/
+	@JsonManagedReference(value="admin_clinic_mov")
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<ClinicAdministrator> clAdmins;
 
 	@JsonManagedReference(value="clinic_movement")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -144,6 +150,32 @@ public class Clinic {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Set<ClinicAdministrator> getClAdmins() {
+		return clAdmins;
+	}
+
+	public void setClAdmins(Set<ClinicAdministrator> clAdmins) {
+		this.clAdmins = clAdmins;
+	}
+
+	public Set<CheckUpType> getCheckUpTypes() {
+		return checkUpTypes;
+	}
+
+	public void setCheckUpTypes(Set<CheckUpType> checkUpTypes) {
+		this.checkUpTypes = checkUpTypes;
+	}
+	
+	
 	
 	/*
 	 * public HashMap<String, Double> getPricelist() { return pricelist; }

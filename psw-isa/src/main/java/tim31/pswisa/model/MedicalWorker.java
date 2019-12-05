@@ -1,4 +1,5 @@
 package tim31.pswisa.model;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -54,8 +55,9 @@ public class MedicalWorker {
 	@Column(name="typeOfDoctor", unique=false, nullable=false)
 	private String type;
 	
-	@OneToMany(mappedBy = "medicalworker", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Checkup> checkUps;		
+	@JsonManagedReference(value="doktor_mov")
+	@OneToMany(mappedBy = "medicalWorker", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Checkup> checkUps = new HashSet<Checkup>();
 	
 	// just for nurse
 	
@@ -84,14 +86,7 @@ public class MedicalWorker {
 		this.hollydays = hollydays;
 	}
 
-	public Set<Checkup> getCheckUps() {
-		return checkUps;
-	}
-
-	public void setCheckUps(Set<Checkup> checkUps) {
-		this.checkUps = checkUps;
-	}
-
+	
 	public int getPhone() {
 		return phone;
 	}
@@ -108,13 +103,13 @@ public class MedicalWorker {
 		this.id = id;
 	}
 
-//	public Set<Checkup> getCheckUps() {
-	//	return checkUps;
-	//}
+	public Set<Checkup> getCheckUps() {
+		return checkUps;
+	}
 
-	//public void setCheckUps(Set<Checkup> checkUps) {
-//	this.checkUps = checkUps;
-//	}
+	public void setCheckUps(Set<Checkup> checkUps) {
+		this.checkUps = checkUps;
+	}
 
 	public User getUser() {
 		return user;

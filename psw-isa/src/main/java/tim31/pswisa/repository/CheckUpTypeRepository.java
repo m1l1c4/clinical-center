@@ -8,6 +8,7 @@ import tim31.pswisa.model.CheckUpType;
 
 public interface CheckUpTypeRepository extends JpaRepository<CheckUpType, Long> {
 	List<CheckUpType> findAll();
-	CheckUpType findByName(String name);
-	
+	CheckUpType findOneByName(String name);
+
+
 }

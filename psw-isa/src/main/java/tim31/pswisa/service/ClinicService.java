@@ -27,6 +27,14 @@ public class ClinicService {
     public List<Clinic> findAll(){
         return clinicRepository.findAll();
     }
+    
+    public Clinic findOneById(Long id) {
+    	return clinicRepository.findOneById(id);
+    }
+    
+    public Clinic findOneByName(String clinic) {
+    	return clinicRepository.findOneByName(clinic);
+    }
    
     public Clinic save(Clinic clinic) {
         List<Clinic> clinics = clinicRepository.findAll();
@@ -35,7 +43,7 @@ public class ClinicService {
             return null;
        
         for (Clinic c : clinics) {
-            if (c.getName().equals(clinic.getName()))
+            if (c.getName().equals(clinic.getName()) && c.getId()!=clinic.getId())
                 return null;
         }
        
@@ -48,7 +56,7 @@ public class ClinicService {
     {
     	List<Clinic> retClinics = new ArrayList<Clinic>();
     	List<Clinic> result = new ArrayList<Clinic>();    	
-    	CheckUpType srchType = chTypeRepository.findByName(params[0]);
+    	CheckUpType srchType = chTypeRepository.findOneByName(params[0]);
     	int counter = 0 ;	// assuming there is 7 checkups in one day
     	
     	for (Clinic cl : srchType.getClinics()) {
@@ -106,8 +114,5 @@ public class ClinicService {
         
         return (List<Clinic>) filtered.values();
     }
-    
-    
-    
  
 }
