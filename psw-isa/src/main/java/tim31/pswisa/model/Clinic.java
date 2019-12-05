@@ -1,5 +1,6 @@
 package tim31.pswisa.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -56,7 +57,7 @@ public class Clinic {
 
 	@JsonManagedReference(value="room_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Room> rooms;
+	private Set<Room> rooms = new HashSet<Room>();
 	
 	@JsonBackReference(value="type_mov")
 	@ManyToMany(mappedBy="clinics")

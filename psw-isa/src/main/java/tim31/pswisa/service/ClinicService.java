@@ -55,5 +55,10 @@ public class ClinicService {
             r.setClinic(clinic);
         return clinicRepository.save(clinic);
     }
+    public Clinic update(Clinic clinic) {
+    	 for (Room r: clinic.getRooms())
+             r.setClinic(clinic);
+         return clinicRepository.save(clinic);
+    }
  
 }
