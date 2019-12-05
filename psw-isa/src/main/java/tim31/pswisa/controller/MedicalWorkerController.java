@@ -18,7 +18,6 @@ import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.MedicalWorkerService;
 import tim31.pswisa.service.UserService;
 
-
 @RestController
 public class MedicalWorkerController {
 
@@ -71,7 +70,8 @@ public class MedicalWorkerController {
 	@PostMapping(value = "/addMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorker> addMedicalWorker(@RequestBody MedicalWorker mw) {
 		MedicalWorker medWorker = new MedicalWorker();
-		mw.getUser().setPassword(passwordEncoder.encode(mw.getUser().getPassword()));
+		mw.getUser().setPassword(passwordEncoder.encode("sifra123"));
+		mw.getUser().setFirstLogin(false);
 		mw.getUser().setEnabled(true);
 		mw.getUser().setActivated(true);
 		medWorker = medicalWorkerService.save(mw);

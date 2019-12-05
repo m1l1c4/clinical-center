@@ -30,6 +30,8 @@ import tim31.pswisa.service.ClinicService;
 import tim31.pswisa.service.MedicalWorkerService;
 import tim31.pswisa.service.RoomService;
 import tim31.pswisa.service.UserService;
+import tim31.pswisa.model.Report;
+import tim31.pswisa.service.ReportService;
 
 @RestController
 @RequestMapping(value = "/checkup")
@@ -58,6 +60,18 @@ public class CheckupController {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
+  
+  @Autowired
+	private ReportService reportService;
+  
+  @PostMapping(value = "/addReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Report> saveClinic(@RequestBody Report r) {
+		Report report = reportService.add(r);
+
+		if (report == null)
+			return new ResponseEntity<>(report, HttpStatus.NOT_ACCEPTABLE);
+		return new ResponseEntity<>(report, HttpStatus.CREATED);
+	}
 
 	// have to modify just for doctors
 	// This method adding new appointment created by clinic administrator. Patients
