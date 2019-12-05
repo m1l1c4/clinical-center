@@ -1,6 +1,8 @@
 package tim31.pswisa.controller;
+import java.util.HashSet;
 import java.util.List;
- 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
  
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +14,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
- 
+
+import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
+import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.ClinicService;
+import tim31.pswisa.service.MedicalWorkerService;
 import tim31.pswisa.service.RoomService;
 import tim31.pswisa.service.UserService;
  
@@ -29,6 +34,9 @@ public class ClinicController {
    
     @Autowired
     private ClinicService clinicService;
+    
+    @Autowired
+    private MedicalWorkerService medicalWorkerService;
    
     @Autowired
     private ClinicAdministratorService clinicAdministratorService;
@@ -72,7 +80,7 @@ public class ClinicController {
             }
             else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 }
  
    
@@ -109,7 +117,68 @@ public class ClinicController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+    
+    
+    @GetMapping(value="/getFreeRooms", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<Room>>getFreeRooms(HttpServletRequest request){
+        String token = tokenUtils.getToken(request);
+        String email = tokenUtils.getUsernameFromToken(token);
+        User user = userService.findOneByEmail(email);
+        if(user != null) {
+            ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+            if(clinicAdministrator != null) {
+                Clinic clinic = clinicAdministrator.getClinic();
+                if(clinic != null) {
+                    List<Room>rooms = roomService.findAllByClinicId(clinic.getId());
+                    Set<Room>temp = new HashSet<Room>();
+                    for(Room r : rooms) {
+                    	temp.add(r);
+                    }
+                    return new ResponseEntity<>(temp,HttpStatus.OK);  
+                }
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
+    
    
+    @GetMapping(value="/getDoctors", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<MedicalWorker>>getAllMedicalWorkers(HttpServletRequest request){
+        String token = tokenUtils.getToken(request);
+        String email = tokenUtils.getUsernameFromToken(token);
+        User user = userService.findOneByEmail(email);
+        if(user != null) {
+            ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+            if(clinicAdministrator != null) {
+                Clinic clinic = clinicAdministrator.getClinic();
+                if(clinic != null) {
+                    Set<MedicalWorker>workers = medicalWorkerService.findAllByClinicId(clinic.getId());
+                    return new ResponseEntity<>(workers,HttpStatus.OK);
+                }
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
+    @GetMapping(value="/getAllTypes", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<CheckUpType>>getAllTypes(HttpServletRequest request){
+        String token = tokenUtils.getToken(request);
+        String email = tokenUtils.getUsernameFromToken(token);
+        User user = userService.findOneByEmail(email);
+        if(user != null) {
+            ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+            if(clinicAdministrator != null) {
+                Clinic clinic = clinicAdministrator.getClinic();
+                if(clinic != null) {
+                   Set<CheckUpType> tmp = clinic.getCheckUpTypes();
+                    return new ResponseEntity<>(tmp,HttpStatus.OK);
+                }
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
     @GetMapping(value="/getClinic", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Clinic> getClinic(HttpServletRequest request) {
         String token = tokenUtils.getToken(request);

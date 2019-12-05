@@ -47,15 +47,12 @@ public class LoggingController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private UserService userService;
+
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	
-	
+
  
     @PostMapping(value = "/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> changePassword(@RequestBody String[] data, HttpServletRequest request) {

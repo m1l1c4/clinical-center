@@ -1,5 +1,6 @@
 package tim31.pswisa.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Room {
@@ -33,8 +35,9 @@ public class Room {
 	@Column(name = "roomNumber", unique = true, nullable = false)
 	private int number; 
 	
+	@JsonManagedReference(value="soba_mov")
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Checkup> bookedCheckups;
+	private Set<Checkup> bookedCheckups = new HashSet<Checkup>();
 	
 	@JsonBackReference(value="room_mov")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -42,7 +45,23 @@ public class Room {
 
 	public Room() {
 		super();
+		bookedCheckups = new HashSet<Checkup>();
 	}
+	
+	
+
+	public Room(Long id, String name, String type, boolean isFree, int number,
+			Clinic clinic) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.isFree = isFree;
+		this.number = number;
+		this.clinic = clinic;
+	}
+
+
 
 	public String getName() {
 		return name;

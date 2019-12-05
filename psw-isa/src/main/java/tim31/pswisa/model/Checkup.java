@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -30,10 +31,13 @@ public class Checkup {
 	private boolean scheduled; 
 	
 	@Column(name = "DateOfCheckup", nullable = false)
-	private Date date; 
+	private String date; 
+	
+	@Column(name = "TimeOfCheckup", nullable = false)
+	private String time; 
 	
 	// operation or appointment
-	@Column(name = "typeOfCheckup", nullable = false)
+	@Column(name = "type", nullable = false)
 	private String type; 
 	
 	@Column(name = "duration", nullable = false)
@@ -45,24 +49,32 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private MedicalWorker doctor;
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonBackReference(value="soba_mov")
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Room room;
 	
 	//@JsonBackReference(value="cup_movement")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient patient;
 	
+	@JsonBackReference(value="checkup_mov")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;
 	
+	@JsonBackReference(value="doktor_mov")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private MedicalWorker medicalWorker;
+	
+
+	@JsonBackReference(value="checkup")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private MedicalWorker medicalworker;
+	private CheckUpType checkUpType;
 	
 	public Checkup() {
 		
 	}
 	
-	public Checkup(double discount, boolean scheduled, Date date, String type, int duration, double price, Room room) {
+	public Checkup(double discount, boolean scheduled, String date, String time, String type, int duration, double price, Room room) {
 		super();
 		this.discount = discount;
 		this.scheduled = scheduled;
@@ -71,6 +83,7 @@ public class Checkup {
 		this.duration = duration;
 		this.price = price;
 		this.room = room;
+		this.time = time;
 	}
 
 	
@@ -114,14 +127,52 @@ public class Checkup {
 		this.scheduled = scheduled;
 	}
 	
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 	
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 	
+	
+	
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public Clinic getClinic() {
+		return clinic;
+	}
+
+	public void setClinic(Clinic clinic) {
+		this.clinic = clinic;
+	}
+
+	public MedicalWorker getMedicalWorker() {
+		return medicalWorker;
+	}
+
+	public void setMedicalWorker(MedicalWorker medicalWorker) {
+		this.medicalWorker = medicalWorker;
+	}
+
+	public CheckUpType getCheckUpType() {
+		return checkUpType;
+	}
+
+	public void setCheckUpType(CheckUpType checkUpType) {
+		this.checkUpType = checkUpType;
+	}
+
+	public MedicalWorker getDoctor() {
+		return doctor;
+	}
+
 	public String getType() {
 		return type;
 	}

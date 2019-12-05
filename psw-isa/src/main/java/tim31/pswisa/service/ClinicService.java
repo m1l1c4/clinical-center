@@ -1,12 +1,15 @@
 package tim31.pswisa.service;
  
 import java.util.List;
- 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
- 
+
+import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicalCenterAdministrator;
+import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.ClinicRepository;
@@ -17,6 +20,14 @@ public class ClinicService {
     @Autowired
     private ClinicRepository clinicRepository;
    
+  
+    public Room findRoomById(Long id) {
+    	return clinicRepository.findRoomById(id);
+    }
+    
+  
+  
+    
     public List<Clinic> findAll(){
         return clinicRepository.findAll();
     }
