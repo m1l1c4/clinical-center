@@ -16,55 +16,59 @@ import javax.persistence.OneToOne;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-
 @Entity
 public class Patient {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@JsonManagedReference(value="user_movement")
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private User user;	
-	
+
+	@JsonManagedReference(value = "user_movement")
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private User user;
+
 	@Column(name = "phoneNumber", nullable = false)
 	private String phoneNumber;
-	
+
 	@Column(name = "jbo", nullable = false)
-	private String jbo;
-	
+	private String jbo;	
+
+	@Column(name = "email", nullable = false)
+	private String email;
+
 	@Column(name = "city", nullable = false)
 	private String city;
-	
+
 	@Column(name = "state", nullable = false)
 	private String state;
-	
+
 	@Column(name = "address", nullable = false)
-	private String address;	// ulica i broj
-	
-	/*@OneToOne(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private MedicalRecord medicalRecord; 	// zdravstveni karton	*/
-	
-	
-	//@JsonManagedReference(value="cup_movement")
-	@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private String address; // ulica i broj
+
+	@JsonManagedReference(value = "patient_record_movement")
+	@OneToOne(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private MedicalRecord medicalRecord;
+
+	// @JsonManagedReference(value="cup_movement")
+	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> appointments;
-	
-	/*@OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private ArrayList<Operation> operations;*/
-	
-	//@JsonBackReference(value="clinic_movement")
+
+	/*
+	 * @OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade =
+	 * CascadeType.ALL) private ArrayList<Operation> operations;
+	 */
+
+	// @JsonBackReference(value="clinic_movement")
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Clinic clinic;
-	
-	//@JsonBackReference(value="mw_movement")
+
+	// @JsonBackReference(value="mw_movement")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker mw;
-	
+
 	public Patient() {
-		super();		
-		//this.operations = new ArrayList<Operation>();
+		super();
+		// this.operations = new ArrayList<Operation>();
 	}
 
 	public User getUser() {
@@ -75,13 +79,12 @@ public class Patient {
 		this.user = user;
 	}
 
-	/*public MedicalRecord getMedicalRecord() {
-		return medicalRecord;
-	}
-
-	public void setMedicalRecord(MedicalRecord medicalRecord) {
-		this.medicalRecord = medicalRecord;
-	}*/
+	/*
+	 * public MedicalRecord getMedicalRecord() { return medicalRecord; }
+	 * 
+	 * public void setMedicalRecord(MedicalRecord medicalRecord) {
+	 * this.medicalRecord = medicalRecord; }
+	 */
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -131,13 +134,12 @@ public class Patient {
 		this.appointments = appointments;
 	}
 
-	/*public ArrayList<Operation> getOperations() {
-		return operations;
-	}
-
-	public void setOperations(ArrayList<Operation> operations) {
-		this.operations = operations;
-	}*/
+	/*
+	 * public ArrayList<Operation> getOperations() { return operations; }
+	 * 
+	 * public void setOperations(ArrayList<Operation> operations) { this.operations
+	 * = operations; }
+	 */
 
 	public Clinic getClinic() {
 		return clinic;
@@ -153,7 +155,7 @@ public class Patient {
 
 	public void setId(Long id) {
 		this.id = id;
-	}	
+	}
 
 	public MedicalWorker getMw() {
 		return mw;
@@ -162,8 +164,23 @@ public class Patient {
 	public void setMw(MedicalWorker mw) {
 		this.mw = mw;
 	}
-	
-	
-	
-	
+
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public MedicalRecord getMedicalRecord() {
+		return medicalRecord;
+	}
+
+	public void setMedicalRecord(MedicalRecord medicalRecord) {
+		this.medicalRecord = medicalRecord;
+	}
+
+
 }

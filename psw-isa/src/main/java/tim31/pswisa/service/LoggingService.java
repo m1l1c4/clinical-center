@@ -3,12 +3,13 @@ package tim31.pswisa.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import tim31.pswisa.model.Authority;
 
 import tim31.pswisa.model.ClinicalCenterAdministrator;
 import tim31.pswisa.model.Patient;
@@ -19,70 +20,79 @@ import tim31.pswisa.repository.UserRepository;
 
 @Service
 public class LoggingService implements UserDetailsService {
-	
+
 	@Autowired
 	private UserRepository userRepo;
-	
+
 	@Autowired
 	private CCAdminRepository adminRepo;
-	
+
 	@Autowired
 	private PatientRepository patientRepo;
-	
+
+	@Autowired
+	private AuthorityService authService;
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	public Patient registerUser(Patient p)
-	{
+	public Patient registerUser(Patient p) {
 		User user = (User) loadUserByUsername(p.getUser().getEmail());
-		
-		if (user != null)	// there is already user with that email
+
+		if (user != null) // there is already user with that email
 			return null;
-		else 
-		{
+		else {
 			p.getUser().setPassword(passwordEncoder.encode(p.getUser().getPassword()));
-			p.getUser().setEnabled(true);;
+			p.getUser().setEnabled(true);
 			p.getUser().setActivated(false);
 			p.getUser().setType("PACIJENT");
 			patientRepo.save(p);
-		}	
-		
+		}
+
 		return p;
-		
+
 	}
-	
-	public User loginUser(User u)
-	{
-		
+
+	public ClinicalCenterAdministrator save(ClinicalCenterAdministrator admin) {
+		List<User> users = userRepo.findAll();
+		for (User u : users) {
+			if (u.getEmail().equals(admin.getUser().getEmail())) {
+				return null;
+			}
+		}
+		return adminRepo.save(admin);
+	}
+
+	public User loginUser(User u) {
+
 		User user = (User) loadUserByUsername(u.getEmail());
-		
+
 		if (user == null)
 			return null;
-		
-		if (user!= null && user.getType().equals("PACIJENT") /*&& user.getActivated()*/)
+
+		if (user != null && user.getType().equals("PACIJENT") /* && user.getActivated() */)
 			return user;
-		else if (!user.getFirstLogin() && !user.getType().equals("PACIJENT"))
-			{
-				//user.setFirstLogin(true);
-				return user;
-			}
-			
-		else		
+
+		else if (!user.getFirstLogin() && !user.getType().equals("PACIJENT")) {
+			// user.setFirstLogin(true);
+			return user;
+		} else if (!user.getType().equals("PACIJENT"))
+			return user;
+		else
 			return null;	
 		
+
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String email)
-			 {
+	public UserDetails loadUserByUsername(String email) {
 		User user = userRepo.findOneByEmail(email);
-		/*if (user == null) {			
-			throw new UsernameNotFoundException(String.format("No user found with email '%s'.", email));			
-		} */
+		/*
+		 * if (user == null) { throw new
+		 * UsernameNotFoundException(String.format("No user found with email '%s'.",
+		 * email)); }
+		 */
 		return user;
-		
+
 	}
 }

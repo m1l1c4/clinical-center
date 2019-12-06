@@ -98,13 +98,19 @@ public class ClinicService {
     	ranging = Integer.parseInt(parametar) ;    	
     	
         for (Clinic clinic : clinics) {
-			if (clinic.getRating() >= ranging) {
-				filtered.add(clinic);
-			}
-			
-		}
+              if (clinic.getRating() >= ranging) {
+                filtered.add(clinic);
+              }			
+		    }
         
         return filtered;
+    }
+  
+    public Clinic update(Clinic clinic) {
+    	 for (Room r: clinic.getRooms())
+             r.setClinic(clinic);
+         return clinicRepository.save(clinic);
+
     }
  
 }

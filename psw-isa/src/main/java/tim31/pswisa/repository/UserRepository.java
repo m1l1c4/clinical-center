@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import tim31.pswisa.model.User;
 
-public interface UserRepository extends JpaRepository<User, Long>{
-	
+public interface UserRepository extends JpaRepository<User, Long> {
+
 	List<User> findAll();
 	User findOneByEmail(String email);
-	List<User> findAllByActivated(boolean b);
+	User findOneById(Long id);
+  List<User> findAllByActivated(boolean b);
 }

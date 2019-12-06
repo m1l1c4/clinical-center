@@ -1,56 +1,68 @@
 package tim31.pswisa.model;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+@Entity
 public class MedicalRecord {
-	
-	/*@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Patient patient;*/
-	
-	private ArrayList<Report> reports;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@JsonBackReference(value = "patient_record_movement")
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Patient patient;
+
+	@JsonManagedReference(value = "record_mov")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Report> reports;
+
+	@Column(name = "bloodType", unique = false, nullable = true)
 	private String bloodType;
+
+	@Column(name = "diopter", unique = false, nullable = true)
 	private Double diopter;
+
+	@Column(name = "height", unique = false, nullable = true)
 	private Double height;
+
+	@Column(name = "weight", unique = false, nullable = true)
 	private Double weight;
-	private ArrayList<String> allergies;
-	
+
+	// private ArrayList<String> allergies;
+
 	public MedicalRecord() {
-		reports = new ArrayList<Report>();
-		allergies = new ArrayList<String>();
-	}
-	
-	public MedicalRecord(Patient patient, ArrayList<Report> reports, String bloodType, Double diopter, Double height,
-			Double weight, ArrayList<String> allergies) {
 		super();
-		//this.patient = patient;
-		this.reports = reports;
+	}
+
+	public MedicalRecord(Patient patient, String bloodType, Double diopter, Double height, Double weight) {
+		super();
+		this.patient = patient;
 		this.bloodType = bloodType;
 		this.diopter = diopter;
 		this.height = height;
 		this.weight = weight;
-		this.allergies = allergies;
 	}
 
-	/*public Patient getPatient() {
+	public Patient getPatient() {
 		return patient;
 	}
 
 	public void setPatient(Patient patient) {
 		this.patient = patient;
-	}*/
-
-	public ArrayList<Report> getReports() {
-		return reports;
-	}
-
-	public void setReports(ArrayList<Report> reports) {
-		this.reports = reports;
 	}
 
 	public String getBloodType() {
@@ -85,13 +97,19 @@ public class MedicalRecord {
 		this.weight = weight;
 	}
 
-	public ArrayList<String> getAllergies() {
-		return allergies;
+	public Set<Report> getReports() {
+		return reports;
 	}
 
-	public void setAllergies(ArrayList<String> allergies) {
-		this.allergies = allergies;
+	public void setReports(Set<Report> reports) {
+		this.reports = reports;
 	}
-	
+
+	/*
+	 * public ArrayList<String> getAllergies() { return allergies; }
+	 * 
+	 * public void setAllergies(ArrayList<String> allergies) { this.allergies =
+	 * allergies; }
+	 */
 
 }
