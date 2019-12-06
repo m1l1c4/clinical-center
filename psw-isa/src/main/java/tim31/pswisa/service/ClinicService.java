@@ -55,64 +55,56 @@ public class ClinicService {
     public List<Clinic> searchClinics(String[] params)
     {
     	List<Clinic> retClinics = new ArrayList<Clinic>();
-    	List<Clinic> result = new ArrayList<Clinic>();    	
-    	CheckUpType srchType = chTypeRepository.findOneByName(params[0]);
+    	List<Clinic> result = new ArrayList<Clinic>();   
     	int counter = 0 ;	// assuming there is 7 checkups in one day
+    	CheckUpType srchType = chTypeRepository.findOneByName(params[0]);
     	
-    	for (Clinic cl : srchType.getClinics()) {
-			retClinics.add(cl);			//all clinics of specified type of checkup
-		}
+    	if (params[0].equals("") || params[1].equals("") || srchType == null)
+    		return null;		// nothing to search     	
     	
-    	// check if clinc has available doctor, if not remove that clinic from list
-    	for (Clinic cl : retClinics)
-    	{
-    		for (MedicalWorker mw : cl.getMedicalStuff()) {
-    			if (mw.getUser().getType().equals("DOKTOR") && mw.getType().equals(params[0])) {
-    				for (Checkup c : mw.getCheckUps()) {
-    					if (c.getDate().toString().equals(params[1])) {
-    						counter++;
-    					}
-    						
-    				}
-    				if (counter < 7) {
-    					result.add(cl);
-    					break;
-    				}
-    			}
+    	else {
+    		for (Clinic cl : srchType.getClinics()) {
+    			retClinics.add(cl);			//all clinics of specified type of checkup
     		}
+        	
+        	// check if clinc has available doctor, if not remove that clinic from list
+        	for (Clinic cl : retClinics)
+        	{
+        		for (MedicalWorker mw : cl.getMedicalStuff()) {
+        			if (mw.getUser().getType().equals("DOKTOR") && mw.getType().equals(params[0])) {
+        				for (Checkup c : mw.getCheckUps()) {
+        					if (c.getDate().toString().equals(params[1])) {
+        						counter++;
+        					}
+        						
+        				}
+        				if (counter < 7) {
+        					result.add(cl);
+        					break;
+        				}
+        			}
+        		}
+        	}
+        	
+        	return result;
+    	 	
     	}
-    	
-    	
-    	return result;
     	
     }
 
-    public List<Clinic> filterClinics(String[] parametri, ArrayList<Clinic> clinics){    	
-    	int ranging = -1;
-    	double price = -1;
-    	HashMap<Long, Clinic> filtered = new HashMap<Long, Clinic>();
-    	
-    	if( parametri[0] != "") {
-    		ranging = Integer.parseInt(parametri[0])  ;
-    	}
-    	
-    	if (parametri[1] != "") {
-    		price = Double.parseDouble(parametri[1]) ;
-    	}
+    public List<Clinic> filterClinics(String parametar, ArrayList<Clinic> clinics){    	
+    	int ranging = -1;    	
+    	List<Clinic> filtered = new ArrayList<Clinic>();    	
+    	ranging = Integer.parseInt(parametar) ;    	
     	
         for (Clinic clinic : clinics) {
-			if (ranging != -1 && clinic.getRating() >= ranging && !filtered.containsKey(clinic.getId())) {
-				filtered.put(clinic.getId(), clinic);
+			if (clinic.getRating() >= ranging) {
+				filtered.add(clinic);
 			}
-			/*else if (price != -1 && clinic.getpr() >= ranging && !filtered.containsKey(clinic.getId())) {
-				
-			}*/
+			
 		}
         
-        
-        
-        
-        return (List<Clinic>) filtered.values();
+        return filtered;
     }
  
 }

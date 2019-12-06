@@ -25,8 +25,8 @@ public class EmailService {
 	@Async
 	public void sendAccountConfirmationEmail(String email, String text) throws MailException, InterruptedException{
 		System.out.println("Sending email...");
-		
-		String path = "localhost:8099/activateEmail/" + email;
+		User u = userService.findOneByEmail(email);
+		String path = "http://localhost:3000/activateAccount/" + u.getId()  ;
 		
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo("pswisa.tim31.2019@gmail.com");

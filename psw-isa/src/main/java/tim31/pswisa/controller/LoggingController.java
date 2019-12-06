@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -99,6 +100,19 @@ public class LoggingController {
 			return new ResponseEntity<UserTokenState>(HttpStatus.NOT_FOUND);
 		}
 		
+	}
+	
+	@GetMapping(value="/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User>getUser(HttpServletRequest request){
+		String jwt_token = tokenUtils.getToken(request);		
+		String email = tokenUtils.getUsernameFromToken(jwt_token);   // email of logged user
+		User user = userService.findOneByEmail(email);
+			if(user!=null) {
+				return new ResponseEntity<>(user,HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 	}
 	
 }

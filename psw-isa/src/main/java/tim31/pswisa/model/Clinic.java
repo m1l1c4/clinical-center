@@ -10,9 +10,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
@@ -37,10 +41,6 @@ public class Clinic {
 	
 	@Column(name="description", unique = false, nullable = false)
 	private String description;
-	
-	@JsonBackReference(value="type_mov")
-	@ManyToMany(mappedBy="clinics")
-	private Set<CheckUpType> checkUpTypes;
 
 	@JsonManagedReference(value="admin_clinic_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -57,7 +57,13 @@ public class Clinic {
 	@JsonManagedReference(value="room_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Room> rooms;
+	
+	@JsonBackReference(value="type_mov")
+	@ManyToMany(mappedBy="clinics")
+	private Set<CheckUpType> checkUpTypes;
 
+	// appointment for one click
+	@JsonManagedReference(value="checkup_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Checkup> availableAppointments;
 
@@ -106,7 +112,6 @@ public class Clinic {
 	/*public Set<ClinicAdministrator> getClAdmins() {
 		return clAdmins;
 	}
-
 	public void setClAdmins(Set<ClinicAdministrator> clAdmins) {
 		this.clAdmins = clAdmins;
 	}*/

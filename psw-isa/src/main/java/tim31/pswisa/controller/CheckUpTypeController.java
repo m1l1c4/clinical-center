@@ -135,5 +135,14 @@ public class CheckUpTypeController {
 	   	      }   
 	   	   return new  ResponseEntity<>(tip,HttpStatus.NOT_FOUND); 
 	    }
+	   
+	    @GetMapping(value="/allTypes",produces = MediaType.APPLICATION_JSON_VALUE)
+	    public ResponseEntity<List<CheckUpType>> allTypes() {
+	    	List<CheckUpType> chTypes = checkUpTypeService.findAll() ;
+	    	if (chTypes != null) {
+	    		return new  ResponseEntity<>(chTypes,HttpStatus.OK); 
+	    	}
+	    	return new  ResponseEntity<>(HttpStatus.NOT_FOUND); 
+	    }
 	
 }
