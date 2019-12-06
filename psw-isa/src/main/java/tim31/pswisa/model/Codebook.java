@@ -1,5 +1,9 @@
 package tim31.pswisa.model;
 
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,8 +16,14 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-@Entity
+
 public class Codebook {
+
+	
+	private HashMap<String, String> codebook;
+	private ArrayList<String> type; // type moze imati vrijednosti D(diagnosis) ili M(medicine)
+	
+
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +38,21 @@ public class Codebook {
 	@Column(name = "code_type", unique = false, nullable = false)
 	private String type;
 
-	public Codebook() {
 
+	public Codebook() {
+		codebook = new HashMap<String, String>();
+		type = new ArrayList<String>();
 	}
+
+	
+	public Codebook(HashMap<String, String> codebook, ArrayList<String> type) {
+		super();
+		this.codebook = codebook;
+		this.type = type;
+	}
+	public HashMap<String, String> getCodebook() {
+		return codebook;
+
 
 	public String getName() {
 		return name;
@@ -38,21 +60,15 @@ public class Codebook {
 
 	public void setName(String name) {
 		this.name = name;
-	}
 
-	public String getCode() {
-		return code;
 	}
-
-	public void setCode(String code) {
-		this.code = code;
+	public void setCodebook(HashMap<String, String> codebook) {
+		this.codebook = codebook;
 	}
-
-	public String getType() {
+	public ArrayList<String> getType() {
 		return type;
 	}
-
-	public void setType(String type) {
+	public void setType(ArrayList<String> type) {
 		this.type = type;
 	}
 

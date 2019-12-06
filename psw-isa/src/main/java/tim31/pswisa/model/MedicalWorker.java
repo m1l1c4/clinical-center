@@ -31,7 +31,18 @@ public class MedicalWorker {
 
 	@JsonBackReference(value = "clinic_movement")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Clinic clinic;
+	private Clinic clinic;	
+	
+	@Column(name="phone", unique=false, nullable=true)
+	private int phone;
+	
+	//@JsonManagedReference(value="mw_movement")
+	@OneToMany(mappedBy="mw", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Patient> patients;	
+	
+	/*@OneToMany(mappedBy="mw", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+=======
+	private Clinic clinic;*/
 
 	@Column(name = "phone", unique = false, nullable = true)
 	private String phone;
@@ -48,6 +59,13 @@ public class MedicalWorker {
 	@Column(name = "rating", unique = false, nullable = true)
 	private int rating;
 
+	
+	@Column(name="startHr", unique=false, nullable=true)
+	private int startHr;	
+	
+	@Column(name="endHr", unique=false, nullable=true)
+	private int endHr;		
+	
 	@Column(name = "startHr", unique = false, nullable = true)
 	private int startHr;
 
@@ -69,11 +87,28 @@ public class MedicalWorker {
 		super();
 	}
 
-	public String getPhone() {
+	public Set<Patient> getPatients() {
+		return patients;
+	}
+
+	public void setPatients(Set<Patient> patients) {
+		this.patients = patients;
+	}
+
+	public Set<Absence> getHollydays() {
+		return hollydays;
+	}
+
+	public void setHollydays(Set<Absence> hollydays) {
+		this.hollydays = hollydays;
+	}
+
+	
+	public int getPhone() {
 		return phone;
 	}
 
-	public void setPhone(String phone) {
+	public void setPhone(int phone) {
 		this.phone = phone;
 	}
 

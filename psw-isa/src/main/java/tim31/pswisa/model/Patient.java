@@ -31,7 +31,7 @@ public class Patient {
 	private String phoneNumber;
 
 	@Column(name = "jbo", nullable = false)
-	private String jbo;
+	private String jbo;	
 
 	@Column(name = "email", nullable = false)
 	private String email;
@@ -165,6 +165,7 @@ public class Patient {
 		this.mw = mw;
 	}
 
+
 	public String getEmail() {
 		return email;
 	}
@@ -180,5 +181,6 @@ public class Patient {
 	public void setMedicalRecord(MedicalRecord medicalRecord) {
 		this.medicalRecord = medicalRecord;
 	}
+
 
 }

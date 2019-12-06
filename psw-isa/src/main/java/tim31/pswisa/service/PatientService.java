@@ -38,10 +38,7 @@ public class PatientService {
 		return patientRepository.findByUserId(id);
 	}
     
-    public Patient findOneByEmail(String id){
-		return patientRepository.findOneByEmail(id);
-	}
-    
+        
     public Patient save(Patient p){
 		return patientRepository.save(p);
 	}

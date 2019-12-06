@@ -26,10 +26,10 @@ public class PatientController {
 	private PatientService patientService;
 	
 	@Autowired
-	private UserService userService;
+	TokenUtils tokenUtils;
 	
 	@Autowired
-	TokenUtils tokenUtils;
+	private UserService userService;
 	
 	@GetMapping(value="/patientsRequests", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Patient>> saveClinic()

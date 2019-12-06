@@ -113,7 +113,6 @@ public class Clinic {
 	/*public Set<ClinicAdministrator> getClAdmins() {
 		return clAdmins;
 	}
-
 	public void setClAdmins(Set<ClinicAdministrator> clAdmins) {
 		this.clAdmins = clAdmins;
 	}*/

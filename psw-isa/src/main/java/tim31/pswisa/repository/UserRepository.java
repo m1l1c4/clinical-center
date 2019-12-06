@@ -9,10 +9,7 @@ import tim31.pswisa.model.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	List<User> findAll();
-
 	User findOneByEmail(String email);
-
 	User findOneById(Long id);
-
-	List<User> findAllByActivated(boolean b);
+  List<User> findAllByActivated(boolean b);
 }
