@@ -26,6 +26,14 @@ public class ClinicAdministratorService {
 	public ClinicAdministrator update(ClinicAdministrator ca) {
 		return clinicAdministratorRepository.save(ca);
 	}
+	
+	public ClinicAdministrator updateAdministrator(ClinicAdministrator clinicAdministrator, ClinicAdministrator ca) {
+		clinicAdministrator.getUser().setName(ca.getUser().getName());
+		clinicAdministrator.getUser().setSurname(ca.getUser().getSurname());
+		clinicAdministrator.getUser().setPassword(ca.getUser().getPassword());
+		clinicAdministrator = update(clinicAdministrator);
+		return clinicAdministrator;
+	}
 
 	public ClinicAdministrator findOneById(Long id) {
 		return clinicAdministratorRepository.findOneById(id);

@@ -24,6 +24,15 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllByClinicId(id);
 	}
 
+	public MedicalWorker updateMedicalWorker(MedicalWorker medWorker, MedicalWorker mw) {
+		medWorker.getUser().setName(mw.getUser().getName());
+		medWorker.getUser().setSurname(mw.getUser().getSurname());
+		medWorker.setPhone(mw.getPhone());
+		medWorker.getUser().setPassword(mw.getUser().getPassword());
+		medWorker = update(medWorker);
+		return medWorker;
+	}
+	
 	public MedicalWorker findByUser(Long id) {
 		return medicalWorkerRepository.findOneByUserId(id);
 	}

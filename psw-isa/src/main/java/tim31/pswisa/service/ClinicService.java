@@ -2,13 +2,17 @@ package tim31.pswisa.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.repository.CheckUpTypeRepository;
@@ -20,6 +24,9 @@ public class ClinicService {
 	@Autowired
 	private ClinicRepository clinicRepository;
 
+	@Autowired
+	private RoomService roomService;
+	
 	@Autowired
 	private CheckUpTypeRepository checkupTypeRepository;
 
@@ -54,7 +61,62 @@ public class ClinicService {
 			r.setClinic(clinic);
 		return clinicRepository.save(clinic);
 	}
+	
+	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, Clinic clinic) {
+		Clinic nameOfClinic = clinicAdministrator.getClinic();
+		List<Clinic> temp = findAll();
+		String name1 = clinic.getName();
+		for (Clinic c : temp) {
+			if (c.getName().equals(name1) && c.getId() != nameOfClinic.getId()) {
+				return null;
+			}
+		}
+		nameOfClinic.setName(clinic.getName());
+		nameOfClinic.setAddress(clinic.getAddress());
+		nameOfClinic.setCity(clinic.getCity());
+		nameOfClinic.setDescription(clinic.getDescription());
+		nameOfClinic.setRooms(clinic.getRooms());
+		nameOfClinic = update(nameOfClinic);
+		if (nameOfClinic != null)
+			return nameOfClinic;
+		else
+			return null;
+	}
+	
+	public String deleteRoom(String name, ClinicAdministrator clinicAdministrator) {
+		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
+		Set<Room> sobe = clinic.getRooms();
+		for (Room r : sobe) {
+			if (r.getName().equals(name)) {
+				clinic.getRooms().remove(r);
+				clinic = save(clinic); // delete room from clinic
+				return "Obrisano";
+			}
+		}
+		return "";
+	}
+	
 
+	public Room addRoom(Room room, ClinicAdministrator clinicAdministrator) {
+		Room room1 = new Room();
+		room1.setName(room.getName());
+		room1.setNumber(room.getNumber());
+		Clinic klinika = new Clinic();
+		klinika = findOneById(clinicAdministrator.getClinic().getId());
+		List<Room> allRooms = roomService.findAllByClinicId(klinika.getId());
+		for (Room r : allRooms) {
+			if (r.getName().equals(room.getName()) || r.getNumber() == room.getNumber()) {
+				return null;
+			}
+		}
+		room1.setClinic(klinika);
+		room1.setFree(true);
+		room1.setType("PREGLED");
+		klinika.getRooms().add(room1);
+		klinika = save(klinika);
+		return room1;
+	}
+	
 	public List<Clinic> searchClinics(String[] params) {
 		List<Clinic> retClinics = new ArrayList<Clinic>();
 		List<Clinic> result = new ArrayList<Clinic>();
