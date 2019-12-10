@@ -28,10 +28,10 @@ import tim31.pswisa.model.ClinicalCenterAdministrator;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
 import tim31.pswisa.model.UserTokenState;
-import tim31.pswisa.repository.CCAdminRepository;
-import tim31.pswisa.repository.ClinicAdministratorRepository;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.security.auth.JwtAuthenticationRequest;
+import tim31.pswisa.service.CCAdminService;
+import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.LoggingService;
 import tim31.pswisa.service.UserService;
 
@@ -51,10 +51,10 @@ public class LoggingController {
 	private UserService userService;
 
 	@Autowired
-	private ClinicAdministratorRepository clinicAdministratorRepository;
+	private ClinicAdministratorService clinicAdministratorService;
 
 	@Autowired
-	private CCAdminRepository ccAdminRepository;
+	private CCAdminService ccAdminService;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -125,26 +125,15 @@ public class LoggingController {
 	}
 
 	@PostMapping(value = "/addAdmin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User> addMedicalWorker(@RequestBody User u) {
-		if (u.getType().equals("ADMINISTRATOR")) {
-			ClinicAdministrator worker = new ClinicAdministrator();
-			worker.setUser(u);
-			worker.getUser().setPassword(passwordEncoder.encode("admin"));
-			worker.getUser().setFirstLogin(false);
-			worker.getUser().setEnabled(true);
-			worker.getUser().setActivated(true);
-			worker = clinicAdministratorRepository.save(worker);
-			if (worker != null) {
-				return new ResponseEntity<>(worker.getUser(), HttpStatus.CREATED);
+	public ResponseEntity<User> addMedicalWorker(@RequestBody User user) {
+		if (user.getType().equals("ADMINISTRATOR")) {
+
+			ClinicAdministrator admin = clinicAdministratorService.save(user);
+			if (admin != null) {
+				return new ResponseEntity<>(admin.getUser(), HttpStatus.CREATED);
 			}
 		} else {
-			ClinicalCenterAdministrator worker = new ClinicalCenterAdministrator();
-			worker.setUser(u);
-			worker.getUser().setPassword(passwordEncoder.encode("admin"));
-			worker.getUser().setFirstLogin(false);
-			worker.getUser().setEnabled(true);
-			worker.getUser().setActivated(true);
-			worker = ccAdminRepository.save(worker);
+			ClinicalCenterAdministrator worker = ccAdminService.save(user);
 			if (worker != null) {
 				return new ResponseEntity<>(worker.getUser(), HttpStatus.CREATED);
 			}

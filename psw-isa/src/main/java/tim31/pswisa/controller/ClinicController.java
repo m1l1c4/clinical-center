@@ -130,14 +130,7 @@ public class ClinicController {
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Clinic> saveClinic(@RequestBody Clinic c) {
-		Clinic clinic = new Clinic();
-		clinic.setName(c.getName());
-		clinic.setCity(c.getCity());
-		clinic.setAddress(c.getAddress());
-		clinic.setDescription(c.getDescription());
-		clinic.setRooms(c.getRooms());
-
-		clinic = clinicService.save(clinic);
+		Clinic clinic = clinicService.save(c);
 		if (clinic == null)
 			return new ResponseEntity<>(clinic, HttpStatus.NOT_ACCEPTABLE);
 		return new ResponseEntity<>(clinic, HttpStatus.CREATED);

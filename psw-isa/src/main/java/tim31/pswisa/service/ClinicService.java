@@ -39,15 +39,21 @@ public class ClinicService {
 		return clinicRepository.findOneByName(clinic);
 	}
 
-	public Clinic save(Clinic clinic) {
-		List<Clinic> clinics = clinicRepository.findAll();
+	public Clinic save(Clinic c) {
+		Clinic clinic = new Clinic();
+		clinic.setName(c.getName());
+		clinic.setCity(c.getCity());
+		clinic.setAddress(c.getAddress());
+		clinic.setDescription(c.getDescription());
+		clinic.setRooms(c.getRooms());
 
-		if (clinic.getRooms().size() == 0)
+		if (clinic.getRooms().size() == 0) {
 			return null;
+		}
 
-		for (Clinic c : clinics) {
-			if (c.getName().equals(clinic.getName()) && c.getId() != clinic.getId())
-				return null;
+		Clinic cl = findOneByName(clinic.getName());
+		if (cl != null && cl.getId() != clinic.getId()) {
+			return null;
 		}
 
 		for (Room r : clinic.getRooms())

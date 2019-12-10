@@ -47,7 +47,6 @@ public class PatientService {
 		patient.getUser().setName(editp.getUser().getName());
 		patient.getUser().setSurname(editp.getUser().getSurname());
 		patient.setAddress(editp.getAddress());
-		;
 		patient.setCity(editp.getCity());
 		patient.setPhoneNumber(editp.getPhoneNumber());
 		patient.setState(editp.getState());

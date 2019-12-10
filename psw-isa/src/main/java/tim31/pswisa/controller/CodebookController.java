@@ -24,13 +24,8 @@ public class CodebookController {
 	private CodebookService codebookService;
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> saveClinic(@RequestBody Codebook c) {
-		Codebook codebook = new Codebook();
-		codebook.setName(c.getName());
-		codebook.setCode(c.getCode());
-		codebook.setType(c.getType());
-
-		codebook = codebookService.save(codebook);
+	public ResponseEntity<String> saveCodebook(@RequestBody Codebook c) {
+		Codebook codebook = codebookService.save(c);
 		if (codebook == null)
 			return new ResponseEntity<>("Sifra mora biti jedinstvena.", HttpStatus.NOT_ACCEPTABLE);
 		return new ResponseEntity<>("Uspjesno dodata nova stavka.", HttpStatus.CREATED);

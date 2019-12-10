@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +19,6 @@ import tim31.pswisa.service.UserService;
 
 @RestController
 public class MedicalWorkerController {
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
@@ -69,14 +65,9 @@ public class MedicalWorkerController {
 
 	@PostMapping(value = "/addMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorker> addMedicalWorker(@RequestBody MedicalWorker mw) {
-		MedicalWorker medWorker = new MedicalWorker();
-		mw.getUser().setPassword(passwordEncoder.encode("sifra123"));
-		mw.getUser().setFirstLogin(false);
-		mw.getUser().setEnabled(true);
-		mw.getUser().setActivated(true);
-		medWorker = medicalWorkerService.save(mw);
-		if (medWorker != null) {
-			return new ResponseEntity<>(medWorker, HttpStatus.CREATED);
+		MedicalWorker medicalWorker = medicalWorkerService.save(mw);
+		if (medicalWorker != null) {
+			return new ResponseEntity<>(medicalWorker, HttpStatus.CREATED);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
