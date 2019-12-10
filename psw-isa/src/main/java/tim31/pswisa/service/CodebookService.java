@@ -17,19 +17,26 @@ public class CodebookService {
 	public List<Codebook> findAll() {
 		return codebookRepository.findAll();
 	}
+	
+	public Codebook findOneByCode(String code) {
+		return codebookRepository.findOneByCode(code);
+	}
 
-	public Codebook save(Codebook codebook) {
-		List<Codebook> codebooks = codebookRepository.findAll();
+	public Codebook save(Codebook c) {
+		Codebook codebook = new Codebook();
+		codebook.setName(c.getName());
+		codebook.setCode(c.getCode());
+		codebook.setType(c.getType());
 
-		for (Codebook c : codebooks) {
-			if (c.getCode().equals(codebook.getCode()))
-				return null;
+		Codebook code = findOneByCode(codebook.getCode());
+		if (code != null) {
+			return null;
 		}
 
 		return codebookRepository.save(codebook);
 	}
 
 	public void remove(String code) {
-		codebookRepository.delete(codebookRepository.findOneByCode(code));
+		codebookRepository.delete(findOneByCode(code));
 	}
 }
