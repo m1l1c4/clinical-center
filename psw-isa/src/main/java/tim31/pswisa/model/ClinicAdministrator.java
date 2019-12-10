@@ -46,6 +46,14 @@ public class ClinicAdministrator {
 		return user;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public void setUser(User user) {
 		this.user = user;
 	}
@@ -57,11 +65,13 @@ public class ClinicAdministrator {
 	public void setClinic(Clinic clinic) {
 		this.clinic = clinic;
 	}
-	/// public Set<Absence> getAbsences() {
-	// return absences;
-	// }
-	// public void setAbsences(Set<Absence> absences) {
-	// this.absences = absences;
-	// }
+
+	public Set<Absence> getAbsences() {
+		return absences;
+	}
+
+	public void setAbsences(Set<Absence> absences) {
+		this.absences = absences;
+	}
 
 }

@@ -62,8 +62,8 @@ public class MedicalWorker {
 	private Set<Checkup> checkUps = new HashSet<Checkup>();
 
 	// just for nurse
-	@ManyToMany(mappedBy = "medicalWorkers")
-	private Set<Recipe> receipts = new HashSet<Recipe>();
+	// @ManyToMany(mappedBy = "medicalWorkers")
+	// private Set<Recipe> receipts = new HashSet<Recipe>();
 
 	public MedicalWorker() {
 		super();
@@ -113,25 +113,25 @@ public class MedicalWorker {
 		this.clinic = clinic;
 	}
 
-//	public Set<Patient> getPatients() {
-//		return patients;
-//	}
+	public Set<Patient> getPatients() {
+		return patients;
+	}
 
-	// public void setPatients(Set<Patient> patients) {
-	// this.patients = patients;
-//	}
+	public void setPatients(Set<Patient> patients) {
+		this.patients = patients;
+	}
 
-	// public Set<Absence> getHollydays() {
-	// return hollydays;
-	// }
+	public Set<Absence> getHollydays() {
+		return hollydays;
+	}
 
 	public void setType(String type) {
 		this.type = type;
 	}
 
-	// public void setHollydays(Set<Absence> hollydays) {
-	// this.hollydays = hollydays;
-	// }
+	public void setHollydays(Set<Absence> hollydays) {
+		this.hollydays = hollydays;
+	}
 
 	public int getRating() {
 		return rating;
@@ -156,11 +156,5 @@ public class MedicalWorker {
 	public void setEndHr(int endHr) {
 		this.endHr = endHr;
 	}
-
-	/*
-	 * public Set<Recipe> getReceipts() { return receipts; }
-	 * 
-	 * public void setReceipts(Set<Recipe> receipts) { this.receipts = receipts; }
-	 */
 
 }

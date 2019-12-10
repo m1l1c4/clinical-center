@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.ClinicDTO;
+import tim31.pswisa.dto.RoomDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
@@ -68,7 +70,7 @@ public class ClinicService {
 		return clinicRepository.save(clinic);
 	}
 	
-	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, Clinic clinic) {
+	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, ClinicDTO clinic) {
 		Clinic nameOfClinic = clinicAdministrator.getClinic();
 		List<Clinic> temp = findAll();
 		String name1 = clinic.getName();
@@ -103,7 +105,7 @@ public class ClinicService {
 	}
 	
 
-	public Room addRoom(Room room, ClinicAdministrator clinicAdministrator) {
+	public Room addRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Room room1 = new Room();
 		room1.setName(room.getName());
 		room1.setNumber(room.getNumber());

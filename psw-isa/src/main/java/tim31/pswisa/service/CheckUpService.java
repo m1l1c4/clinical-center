@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
@@ -40,7 +42,7 @@ public class CheckUpService {
 		return checkupRepository.save(c);
 	}
 	
-	public Checkup addAppointment(Checkup c, MedicalWorker mw, ClinicAdministrator clinicAdministrator) {
+	public Checkup addAppointment(CheckupDTO c, MedicalWorker mw, ClinicAdministrator clinicAdministrator) {
 		Checkup checkup = new Checkup();
 		checkup.setMedicalWorker(mw);
 		CheckUpType typeC = checkUpTypeService.findOneByName(c.getCheckUpType().getName());

@@ -1,5 +1,6 @@
 package tim31.pswisa.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
@@ -55,13 +57,12 @@ public class CheckUpTypeController {
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			if (clinicAdministrator != null) {
-				 String returnVal = checkUpTypeService.deleteType(name,clinicAdministrator);
-				 if(returnVal.equals("Obrisano")) {
-					 return new ResponseEntity<>("Obrisano",HttpStatus.OK);
-				 }
-				 else {
-					 return new ResponseEntity<>("Greska",HttpStatus.ALREADY_REPORTED);
-				 }
+				String returnVal = checkUpTypeService.deleteType(name, clinicAdministrator);
+				if (returnVal.equals("Obrisano")) {
+					return new ResponseEntity<>("Obrisano", HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
+				}
 			}
 		}
 		return new ResponseEntity<>("Greska", HttpStatus.BAD_REQUEST);
@@ -70,7 +71,7 @@ public class CheckUpTypeController {
 	// This method returs all types in clinic center of administrator who is logged
 	// in system
 	@GetMapping(value = "/getTypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Set<CheckUpType>> getTypes(HttpServletRequest request) {
+	public ResponseEntity<ArrayList<CheckUpTypeDTO>> getTypes(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
@@ -79,7 +80,11 @@ public class CheckUpTypeController {
 			if (clinicAdministrator != null) {
 				Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
 				Set<CheckUpType> lista = clinic.getCheckUpTypes();
-				return new ResponseEntity<>(lista, HttpStatus.OK);
+				ArrayList<CheckUpTypeDTO> dtos = new ArrayList<CheckUpTypeDTO>();
+				for (CheckUpType c : lista) {
+					dtos.add(new CheckUpTypeDTO(c));
+				}
+				return new ResponseEntity<>(dtos, HttpStatus.OK);
 			} else
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} else
@@ -89,25 +94,25 @@ public class CheckUpTypeController {
 	// This method adding new type in all type of clinic, checking if there is a
 	// type with same name
 	@PostMapping(value = "/addType", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CheckUpType> addTypeController(@RequestBody CheckUpType type, HttpServletRequest request) {
+	public ResponseEntity<CheckUpTypeDTO> addTypeController(@RequestBody CheckUpTypeDTO type,
+			HttpServletRequest request) {
 
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		
 
 		// save types in clinic
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-			if(clinicAdministrator!= null) {
-				CheckUpType temp = checkUpTypeService.addType(type,clinicAdministrator);
-				if(temp == null) {
-					return new ResponseEntity<>(type,HttpStatus.NOT_FOUND);
-				}
-				else return new ResponseEntity<>(type,HttpStatus.OK);
+			if (clinicAdministrator != null) {
+				CheckUpType temp = checkUpTypeService.addType(type, clinicAdministrator);
+				if (temp == null) {
+					return new ResponseEntity<>(new CheckUpTypeDTO(temp), HttpStatus.NOT_FOUND);
+				} else
+					return new ResponseEntity<>(new CheckUpTypeDTO(temp), HttpStatus.OK);
 			}
 		}
-		return new ResponseEntity<>(type, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@GetMapping(value = "/allTypes", produces = MediaType.APPLICATION_JSON_VALUE)

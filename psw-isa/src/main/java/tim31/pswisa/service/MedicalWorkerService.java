@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.Authority;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
@@ -32,7 +33,7 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllByClinicId(id);
 	}
 
-	public MedicalWorker updateMedicalWorker(MedicalWorker medWorker, MedicalWorker mw) {
+	public MedicalWorker updateMedicalWorker(MedicalWorker medWorker, MedicalWorkerDTO mw) {
 		medWorker.getUser().setName(mw.getUser().getName());
 		medWorker.getUser().setSurname(mw.getUser().getSurname());
 		medWorker.setPhone(mw.getPhone());

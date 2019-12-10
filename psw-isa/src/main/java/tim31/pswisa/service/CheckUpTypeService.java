@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
@@ -58,7 +59,7 @@ public class CheckUpTypeService {
 		return checkUpTypeRepository.save(ct);
 	}
 	
-	public CheckUpType addType(CheckUpType type, ClinicAdministrator clinicAdministrator) {
+	public CheckUpType addType(CheckUpTypeDTO type, ClinicAdministrator clinicAdministrator) {
 		CheckUpType tip = new CheckUpType();
 		tip.setName(type.getName());
 		List<CheckUpType> allTypes = findAll();
@@ -88,7 +89,7 @@ public class CheckUpTypeService {
 		if (y == 0) {
 			tip.getClinics().add(klinika);
 			tip = save(tip);
-			return type;
+			return tip;
 		}
 		else return null;
 	}

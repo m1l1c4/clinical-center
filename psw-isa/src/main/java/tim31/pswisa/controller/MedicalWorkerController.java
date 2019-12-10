@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
@@ -32,14 +33,14 @@ public class MedicalWorkerController {
 
 	// This method returns medical worker for update
 	@GetMapping(value = "/getMedicalWorker", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> getMedicalWorker(HttpServletRequest request) {
+	public ResponseEntity<MedicalWorkerDTO> getMedicalWorker(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		if (user != null) {
 			MedicalWorker medicalWorker = medicalWorkerService.findByUser(user.getId());
 			if (medicalWorker != null) {
-				return new ResponseEntity<>(medicalWorker, HttpStatus.OK);
+				return new ResponseEntity<>(new MedicalWorkerDTO(medicalWorker), HttpStatus.OK);
 			}
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -47,13 +48,13 @@ public class MedicalWorkerController {
 
 	// This method updates medical worker who sends request for that
 	@PostMapping(value = "/updateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> updateMedicalWorkerController(@RequestBody MedicalWorker mw) {
+	public ResponseEntity<MedicalWorkerDTO> updateMedicalWorkerController(@RequestBody MedicalWorkerDTO mw) {
 		User user = userService.findOneByEmail(mw.getUser().getEmail());
 		if (user != null) {
 			MedicalWorker medWorker = medicalWorkerService.findByUser(user.getId());
 			if (medWorker != null) {
-				medWorker = medicalWorkerService.updateMedicalWorker(medWorker,mw);
-				return new ResponseEntity<>(medWorker, HttpStatus.OK);
+				medWorker = medicalWorkerService.updateMedicalWorker(medWorker, mw);
+				return new ResponseEntity<>(new MedicalWorkerDTO(medWorker), HttpStatus.OK);
 			}
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);

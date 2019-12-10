@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.ClinicAdministratorDTO;
 import tim31.pswisa.model.Authority;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.User;
@@ -35,7 +36,7 @@ public class ClinicAdministratorService {
 		return clinicAdministratorRepository.save(ca);
 	}
 	
-	public ClinicAdministrator updateAdministrator(ClinicAdministrator clinicAdministrator, ClinicAdministrator ca) {
+	public ClinicAdministrator updateAdministrator(ClinicAdministrator clinicAdministrator, ClinicAdministratorDTO ca) {
 		clinicAdministrator.getUser().setName(ca.getUser().getName());
 		clinicAdministrator.getUser().setSurname(ca.getUser().getSurname());
 		clinicAdministrator.getUser().setPassword(ca.getUser().getPassword());
