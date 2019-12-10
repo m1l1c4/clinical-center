@@ -24,7 +24,6 @@ import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.ClinicService;
-import tim31.pswisa.service.RoomService;
 import tim31.pswisa.service.UserService;
 
 @RestController
@@ -135,76 +134,16 @@ public class CheckUpTypeController {
 			}
 
 		}
-	    
-	    
-	    @GetMapping(value="/getTypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	    public ResponseEntity<Set<CheckUpType>> getTypes(HttpServletRequest request) {
-	        String token = tokenUtils.getToken(request);
-	        String email = tokenUtils.getUsernameFromToken(token);
-	        User user = userService.findOneByEmail(email);
-	        if(user!=null) {
-	            ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-	            if(clinicAdministrator != null) {
-	                Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-	                Set<CheckUpType>lista = clinic.getCheckUpTypes();
-	                return new ResponseEntity<>(lista,HttpStatus.OK);
-	            }
-	            else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	        }
-	        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	    }
-	    
-	    @PostMapping(value="/addType", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	    public ResponseEntity<CheckUpType> addType(@RequestBody CheckUpType type, HttpServletRequest request){
-	    	
-		      String token = tokenUtils.getToken(request);
-		      String email = tokenUtils.getUsernameFromToken(token);
-	   	      User user = userService.findOneByEmail(email);
-	   	      CheckUpType tip = new CheckUpType();
-	   	      tip.setName(type.getName());
-	   	      List<CheckUpType>allTypes = checkUpTypeService.findAll();
-	   	      Clinic klinika = new Clinic();
-	   	      
-	   	      // save types in clinic
-	   	      if(user!=null) {
-	   	    	ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-	   	    	klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-	   	    	int x = 0;
-	   	    	for(CheckUpType t : klinika.getCheckUpTypes()) {
-	   	    		if(t.getName().equals(tip.getName())){
-	   	    			x = 1;
-	   	    		}
-	   	    	}
-	   	    	if(x == 0) {
-	   	    		klinika.getCheckUpTypes().add(tip);
-	   	    	}
-	   	    
-	   	     // save types in all types of clinical center
-	   	    	int y = 0;
-		   	      for(CheckUpType t : allTypes) {
-		   	    		  if(tip.getName().equals(t.getName())) {
-		   	    			  y = 1;
-		   	    		  }	  
-		   	      }
-		   	      if(y == 0) {
-		   	    	  tip.getClinics().add(klinika);
- 	    			  tip = checkUpTypeService.save(tip);
- 	    			  klinika.getCheckUpTypes().add(tip);
- 	    			 return new  ResponseEntity<>(tip,HttpStatus.OK); 
-		   	      }
-		   	
-	   	      }   
-	   	   return new  ResponseEntity<>(tip,HttpStatus.NOT_FOUND); 
-	    }
-	   
-	    @GetMapping(value="/allTypes",produces = MediaType.APPLICATION_JSON_VALUE)
-	    public ResponseEntity<List<CheckUpType>> allTypes() {
-	    	List<CheckUpType> chTypes = checkUpTypeService.findAll() ;
-	    	if (chTypes != null) {
-	    		return new  ResponseEntity<>(chTypes,HttpStatus.OK); 
-	    	}
-	    	return new  ResponseEntity<>(HttpStatus.NOT_FOUND); 
-	    }
-	
+		return new ResponseEntity<>(tip, HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping(value = "/allTypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<CheckUpType>> allTypes() {
+		List<CheckUpType> chTypes = checkUpTypeService.findAll();
+		if (chTypes != null) {
+			return new ResponseEntity<>(chTypes, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
 
 }

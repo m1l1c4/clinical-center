@@ -185,9 +185,7 @@ public class TokenUtils {
 		Claims claims;
 		try {
 			claims = Jwts.parser()
-					.setSigningKey(SECRET)
-					.parseClaimsJws(token)
-					.getBody();
+					.setSigningKey(SECRET).parseClaimsJws(token).getBody();
 		} catch (Exception e) {
 			claims = null;
 		}

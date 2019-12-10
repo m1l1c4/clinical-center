@@ -12,24 +12,24 @@ import tim31.pswisa.repository.CheckUpTypeRepository;
 public class CheckUpTypeService {
 
 	@Autowired
-    private CheckUpTypeRepository checkUpTypeRepository;
-   
-    public List<CheckUpType> findAll(){
-        return checkUpTypeRepository.findAll();
-    }
-    
-    public CheckUpType findOneByName(String name) {
-    	return checkUpTypeRepository.findOneByName(name);
-    }
-    
-    public CheckUpType save(CheckUpType ct) {
-        List<CheckUpType> cek = checkUpTypeRepository.findAll();
-       
-        for(CheckUpType c : cek) {
-        	if(c.getName().equals(ct.getName())) {
-        		return null;
-        	}
-        }
-        return checkUpTypeRepository.save(ct);
-    }
+	private CheckUpTypeRepository checkUpTypeRepository;
+
+	public List<CheckUpType> findAll() {
+		return checkUpTypeRepository.findAll();
+	}
+
+	public CheckUpType findOneByName(String name) {
+		return checkUpTypeRepository.findOneByName(name);
+	}
+
+	public CheckUpType save(CheckUpType ct) {
+		List<CheckUpType> cek = checkUpTypeRepository.findAll();
+
+		for (CheckUpType c : cek) {
+			if (c.getName().equals(ct.getName())) {
+				return null;
+			}
+		}
+		return checkUpTypeRepository.save(ct);
+	}
 }

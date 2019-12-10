@@ -63,13 +63,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// za neautorizovane zahteve posalji 401 gresku
 				.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
-
-								
 				// svim korisnicima dopusti da pristupe putanjama /auth/**, /h2-console/** i
 				// /api/foo
 				.authorizeRequests().antMatchers("/register").permitAll().antMatchers("/login").permitAll()
 				.antMatchers("/api/foo").permitAll().antMatchers("/getUser").permitAll()
-
 
 				// svaki zahtev mora biti autorizovan
 				.anyRequest().authenticated().and()
@@ -87,16 +84,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-
-		web.ignoring().antMatchers(HttpMethod.POST, "/login", "/register", "/clinic", "/updateMedicalWorker", "/updateAdministrator/*" ,"/addAdmin", "/codebook",
+		web.ignoring().antMatchers(HttpMethod.POST, "/login", "/register", "/clinic", "/addAdmin", "/codebook",
 				"/codebook/*", "/updateMedicalWorker", "/updateAdministrator", "/clinic/updateClinic", "/sendConfirm",
 				"/addMedicalWorker", "/activateEmail/*", "/checkup/addReport", "/clinic/addRoom", "/clinic/deleteRoom",
-        "/checkUpType/deleteType/*", "/checkup/addAppointment", "/checkUpType/addType", "/searchClinic", "/sendConfirm", "/filterClinic/**");
-		web.ignoring().antMatchers(HttpMethod.GET, "/patientsRequests", "/getMedicalWorker", "/codebook", "/getAdministrator", "/getUser", "/clinic/getClinic", "/clinic/getDoctors", "/getClinics",  "/getAllClinics" ,  "/getUser" , "/getTypes", "/checkUpType/allTypes" , "/getPatientProfile", "/clinic/getAllTypes", "/clinic/getRooms");
-		//web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
-			//	"/**/*.css", "/**/*.js");
-		
-		
+				"/checkUpType/deleteType/*", "/checkup/addAppointment", "/checkUpType/addType", "/clinic/searchClinic",
+				"/clinic/filterClinic/**");
+		web.ignoring().antMatchers(HttpMethod.GET, "/patientsRequests", "/getMedicalWorker", "/codebook",
+				"/getAdministrator", "/getUser", "/clinic/getClinic", "/clinic/getDoctors", "/getPatientProfile",
+				"/clinic/getAllTypes", "/clinic/getRooms", "/patientsRequests", "/checkUpType/addTypes",
+				"/clinic/getClinics", "/getTypes", "/checkUpType/allTypes");
+
+		// web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html",
+		// "/favicon.ico", "/**/*.html",
+		// "/**/*.css", "/**/*.js");
 	}
 
 }

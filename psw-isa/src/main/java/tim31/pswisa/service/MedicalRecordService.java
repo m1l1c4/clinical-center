@@ -9,8 +9,8 @@ import tim31.pswisa.repository.MedicalRecordRepository;
 
 @Service
 public class MedicalRecordService {
-	
-	@Autowired 
+
+	@Autowired
 	private MedicalRecordRepository medicalRecordRepository;
 
 	public MedicalRecord add(Patient p) {

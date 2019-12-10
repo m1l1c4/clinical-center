@@ -5,12 +5,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import tim31.pswisa.model.Room;
-import tim31.pswisa.model.User;
 
-public interface RoomRepository  extends JpaRepository<Room, Long> {
+public interface RoomRepository extends JpaRepository<Room, Long> {
 
-	List<Room>findAll();
-	List<Room>findAllByClinicId(Long id);
-	
+	List<Room> findAll();
+
+	List<Room> findAllByClinicId(Long id);
+
 	Room findOneById(Long id);
 }

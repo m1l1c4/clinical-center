@@ -8,9 +8,10 @@ import tim31.pswisa.model.Patient;
 @Service
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
-
 	Patient findByUserId(Long id);
+
 	Patient findOneById(Long id);
-	Patient save(Patient p);
-		
+
+	Patient findOneByEmail(String id);
+
 }

@@ -14,14 +14,14 @@ public class CheckUpService {
 	@Autowired
 	private CheckUpRepository checkupRepository;
 
-   public List<Checkup>findAll(){
-	   return checkupRepository.findAll();
-	 }
-  
-   public List<Checkup>findAllByClinicId(Long id){
-	   return checkupRepository.findAllByClinicId(id);
-	 }
-  
+	public List<Checkup> findAll() {
+		return checkupRepository.findAll();
+	}
+
+	public List<Checkup> findAllByClinicId(Long id) {
+		return checkupRepository.findAllByClinicId(id);
+	}
+
 	public Checkup save(Checkup c) {
 		return checkupRepository.save(c);
 	}

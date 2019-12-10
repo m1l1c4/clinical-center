@@ -2,41 +2,34 @@ package tim31.pswisa.model;
 
 import java.util.ArrayList;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-
-
 public class Operation {
 
-	/*@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Patient patient;*/
-	
-	private ArrayList<MedicalWorker>doctors;
+	/*
+	 * @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) private Patient
+	 * patient;
+	 */
+
+	private ArrayList<MedicalWorker> doctors;
 	private Room room;
 	private int duration; // minutes
-	
+
 	public Operation() {
 		setDoctors(new ArrayList<MedicalWorker>());
 	}
 
 	public Operation(Patient patient, Room room, int duration) {
 		super();
-		//this.patient = patient;
+		// this.patient = patient;
 		this.room = room;
 		this.duration = duration;
 	}
 
-	/*public Patient getPatient() {
-		return patient;
-	}
+	/*
+	 * public Patient getPatient() { return patient; }
+	 * 
+	 * public void setPatient(Patient patient) { this.patient = patient; }
+	 */
 
-	public void setPatient(Patient patient) {
-		this.patient = patient;
-	}*/
-
-	
 	public Room getRoom() {
 		return room;
 	}
@@ -60,7 +53,5 @@ public class Operation {
 	public void setDoctors(ArrayList<MedicalWorker> doctors) {
 		this.doctors = doctors;
 	}
-	
-	
-	
+
 }

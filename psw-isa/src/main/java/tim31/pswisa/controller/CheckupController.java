@@ -1,7 +1,6 @@
 package tim31.pswisa.controller;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +25,6 @@ import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.CheckUpService;
 import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
-import tim31.pswisa.service.ClinicService;
 import tim31.pswisa.service.MedicalWorkerService;
 import tim31.pswisa.service.RoomService;
 import tim31.pswisa.service.UserService;
@@ -36,9 +34,6 @@ import tim31.pswisa.service.ReportService;
 @RestController
 @RequestMapping(value = "/checkup")
 public class CheckupController {
-
-	@Autowired
-	private ClinicService clinicService;
 
 	@Autowired
 	private ClinicAdministratorService clinicAdministratorService;
@@ -60,11 +55,11 @@ public class CheckupController {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
-  
-  @Autowired
+
+	@Autowired
 	private ReportService reportService;
-  
-  @PostMapping(value = "/addReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@PostMapping(value = "/addReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Report> saveClinic(@RequestBody Report r) {
 		Report report = reportService.add(r);
 

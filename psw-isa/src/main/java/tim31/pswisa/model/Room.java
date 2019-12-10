@@ -25,21 +25,21 @@ public class Room {
 
 	@Column(name = "roomName", unique = true, nullable = false)
 	private String name;
-	
+
 	@Column(name = "type", unique = false, nullable = true)
 	private String type;
-	
+
 	@Column(name = "isFree", unique = false, nullable = true)
 	private boolean isFree;
-	
+
 	@Column(name = "roomNumber", unique = true, nullable = false)
-	private int number; 
-	
-	@JsonManagedReference(value="soba_mov")
+	private int number;
+
+	@JsonManagedReference(value = "soba_mov")
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> bookedCheckups = new HashSet<Checkup>();
-	
-	@JsonBackReference(value="room_mov")
+
+	@JsonBackReference(value = "room_mov")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
@@ -47,11 +47,8 @@ public class Room {
 		super();
 		bookedCheckups = new HashSet<Checkup>();
 	}
-	
-	
 
-	public Room(Long id, String name, String type, boolean isFree, int number,
-			Clinic clinic) {
+	public Room(Long id, String name, String type, boolean isFree, int number, Clinic clinic) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -60,8 +57,6 @@ public class Room {
 		this.number = number;
 		this.clinic = clinic;
 	}
-
-
 
 	public String getName() {
 		return name;
@@ -111,9 +106,12 @@ public class Room {
 		this.id = id;
 	}
 
-	public void setClinic(Clinic clinic2) {
-		// TODO Auto-generated method stub
-		
+	public Clinic getClinic() {
+		return clinic;
+	}
+
+	public void setClinic(Clinic clinic) {
+		this.clinic = clinic;
 	}
 
 }

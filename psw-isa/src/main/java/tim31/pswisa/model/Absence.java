@@ -11,9 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 @Entity
 public class Absence {
 
@@ -23,22 +20,22 @@ public class Absence {
 
 	@Column(name = "email", nullable = false, unique = true)
 	private String email; // to know who sends request
-	
+
 	@Column(name = "start", nullable = false)
 	private Date start;
-	
+
 	@Column(name = "duration", nullable = false)
 	private int duration;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ClinicAdministrator clinicAdministrator;
-	
-	//@JsonBackReference
+
+	// @JsonBackReference
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker mw;
-	
+
 	public Absence() {
-		
+
 	}
 
 	public Absence(String email, Date start, int duration) {
@@ -79,8 +76,5 @@ public class Absence {
 	public void setClinicAdministrator(ClinicAdministrator clinicAdministrator) {
 		this.clinicAdministrator = clinicAdministrator;
 	}
-	
-	
-	
-	
+
 }
