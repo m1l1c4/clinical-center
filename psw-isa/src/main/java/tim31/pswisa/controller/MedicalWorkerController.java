@@ -51,16 +51,12 @@ public class MedicalWorkerController {
 
 	// This method updates medical worker who sends request for that
 	@PostMapping(value = "/updateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> updateMedicalWorker(@RequestBody MedicalWorker mw) {
+	public ResponseEntity<MedicalWorker> updateMedicalWorkerController(@RequestBody MedicalWorker mw) {
 		User user = userService.findOneByEmail(mw.getUser().getEmail());
 		if (user != null) {
 			MedicalWorker medWorker = medicalWorkerService.findByUser(user.getId());
-			medWorker.getUser().setName(mw.getUser().getName());
-			medWorker.getUser().setSurname(mw.getUser().getSurname());
-			medWorker.setPhone(mw.getPhone());
-			medWorker.getUser().setPassword(mw.getUser().getPassword());
-			medWorker = medicalWorkerService.update(medWorker);
 			if (medWorker != null) {
+				medWorker = medicalWorkerService.updateMedicalWorker(medWorker,mw);
 				return new ResponseEntity<>(medWorker, HttpStatus.OK);
 			}
 		}

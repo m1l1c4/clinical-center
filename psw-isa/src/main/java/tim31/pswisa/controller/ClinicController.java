@@ -58,32 +58,21 @@ public class ClinicController {
 	// This method updates clinic by administrator who is using application at the
 	// moment, gets administrator and his clinic
 	@PostMapping(value = "/updateClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Clinic> upadateClinic(@RequestBody Clinic clinic, HttpServletRequest request) {
+	public ResponseEntity<Clinic> upadateClinicController(@RequestBody Clinic clinic, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		List<Clinic> temp = clinicService.findAll();
-		String name1 = clinic.getName();
 
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			if (clinicAdministrator != null) {
-				Clinic nameOfClinic = clinicAdministrator.getClinic();
-				for (Clinic c : temp) {
-					if (c.getName().equals(name1) && c.getId() != nameOfClinic.getId()) {
-						return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
-					}
+				Clinic temp = clinicService.updateClinic(clinicAdministrator, clinic);
+				if(temp != null) {
+					return new ResponseEntity<>(temp,HttpStatus.OK);
 				}
-				nameOfClinic.setName(clinic.getName());
-				nameOfClinic.setAddress(clinic.getAddress());
-				nameOfClinic.setCity(clinic.getCity());
-				nameOfClinic.setDescription(clinic.getDescription());
-				nameOfClinic.setRooms(clinic.getRooms());
-				nameOfClinic = clinicService.update(nameOfClinic);
-				if (nameOfClinic != null)
-					return new ResponseEntity<>(nameOfClinic, HttpStatus.OK);
-				else
+				else {
 					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				}
 			} else
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} else
@@ -243,23 +232,17 @@ public class ClinicController {
 
 	// This method deletes room by name in clinic, used by administrator of clinic
 	@PostMapping(value = "/deleteRoom/{name}")
-	public ResponseEntity<String> deleteRoom(@PathVariable String name, HttpServletRequest request) {
+	public ResponseEntity<String> deleteRoomController(@PathVariable String name, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			if (clinicAdministrator != null) {
-				Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-				Set<Room> sobe = clinic.getRooms();
-				for (Room r : sobe) {
-					if (r.getName().equals(name)) {
-						clinic.getRooms().remove(r);
-						clinic = clinicService.save(clinic); // delete room from clinic
-						return new ResponseEntity<>("Obrisano", HttpStatus.OK);
-					}
+				String retVal = clinicService.deleteRoom(name, clinicAdministrator);
+				if( retVal.equals("Obrisano")) {
+					return new ResponseEntity<>("Obrisano",HttpStatus.OK);
 				}
-
 			}
 		}
 		return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
@@ -268,37 +251,31 @@ public class ClinicController {
 	// This method adds new room in clinic, already save some data such as type and
 	// isFree
 	@PostMapping(value = "/addRoom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Room> addRoom(@RequestBody Room room, HttpServletRequest request) {
+	public ResponseEntity<Room> addRoomController(@RequestBody Room room, HttpServletRequest request) {
 
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		Room room1 = new Room();
-		room1.setName(room.getName());
-		room1.setNumber(room.getNumber());
-
-		Clinic klinika = new Clinic();
-
+		
 		// save types in clinic
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-			klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-			List<Room> allRooms = roomService.findAllByClinicId(klinika.getId());
-			for (Room r : allRooms) {
-				if (r.getName().equals(room.getName()) || r.getNumber() == room.getNumber()) {
-					return new ResponseEntity<>(room, HttpStatus.ALREADY_REPORTED);
+			if(clinicAdministrator!=null) {
+				Room room1 = clinicService.addRoom(room,clinicAdministrator);
+				if(room1 == null) {
+					return new ResponseEntity<>(room,HttpStatus.ALREADY_REPORTED);
+				}
+				else {
+					return new ResponseEntity<>(room1, HttpStatus.OK);
 				}
 			}
-			room1.setClinic(klinika);
-			room1.setFree(true);
-			room1.setType("PREGLED");
-			klinika.getRooms().add(room1);
-			klinika = clinicService.save(klinika);
-			return new ResponseEntity<>(room1, HttpStatus.CREATED);
+			else {
+				return new ResponseEntity<>(room,HttpStatus.NOT_FOUND);
+			}
 		}
-
-		return new ResponseEntity<>(room1, HttpStatus.NOT_FOUND);
-
+		else {
+			return new ResponseEntity<>(room,HttpStatus.NOT_FOUND);
+		}
 	}
 
 }
