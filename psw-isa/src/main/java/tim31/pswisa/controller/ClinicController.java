@@ -30,6 +30,7 @@ import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
+import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.ClinicService;
 import tim31.pswisa.service.MedicalWorkerService;
@@ -81,7 +82,7 @@ public class ClinicController {
 		} else
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
-
+	
 	@GetMapping(value = "/getClinics", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ClinicDTO>> getAllClinics() {
 		List<Clinic> clinics = clinicService.findAll();
@@ -103,6 +104,60 @@ public class ClinicController {
 			return new ResponseEntity<>(retDto, HttpStatus.OK);
 		}
 
+	}
+
+	//'http://localhost:8099/clinic/changeNameOfType/'+ before + '/' + now,
+	
+	@PostMapping(value="/changeNameOfType", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<CheckUpTypeDTO>changeTypeNameController(@RequestBody String[] params, HttpServletRequest request){
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		
+		if(user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());	
+			if(clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if(clinic != null) {
+					CheckUpType temp = new CheckUpType();
+					temp = clinicService.editType(clinic, params[0], params[1]);
+					if(temp == null) {
+						return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+					}
+					else {
+						return new ResponseEntity<>(new CheckUpTypeDTO(temp),HttpStatus.OK);
+					}
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+	}
+		
+	
+	@PostMapping(value = "/searchOneType/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<CheckUpTypeDTO>> getOneTypeController(@PathVariable String name, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+
+		if (user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if (clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if (clinic != null) {
+					Set<CheckUpType> temps = clinic.getCheckUpTypes();
+					for (CheckUpType c : temps) {
+						if (c.getName().equals(name)) {
+							ArrayList<CheckUpTypeDTO>temp = new ArrayList<CheckUpTypeDTO>();
+							temp.add(new CheckUpTypeDTO(c));
+							return new ResponseEntity<>(temp, HttpStatus.OK);
+						}
+					}
+					return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 
 	@PostMapping(value = "/searchClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

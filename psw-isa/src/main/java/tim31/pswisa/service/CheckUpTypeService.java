@@ -62,9 +62,9 @@ public class CheckUpTypeService {
 		CheckUpType tip = new CheckUpType();
 		tip.setName(type.getName());
 		List<CheckUpType> allTypes = findAll();
-		Clinic klinika = new Clinic();
-				
+		Clinic klinika = new Clinic();	
 		klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+		tip.getClinics().add(klinika);
 		int x = 0;
 		for (CheckUpType t : klinika.getCheckUpTypes()) {
 			if (t.getName().equals(tip.getName())) {

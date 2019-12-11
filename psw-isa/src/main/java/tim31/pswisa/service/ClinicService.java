@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.dto.RoomDTO;
 import tim31.pswisa.model.CheckUpType;
@@ -26,6 +27,9 @@ public class ClinicService {
 
 	@Autowired
 	private RoomService roomService;
+	
+	@Autowired
+	private CheckUpTypeService checkUpTypeService;
 
 	@Autowired
 	private CheckUpTypeRepository checkupTypeRepository;
@@ -89,6 +93,22 @@ public class ClinicService {
 			return nameOfClinic;
 		else
 			return null;
+	}
+	
+	public CheckUpType editType(Clinic clinic, String before, String after) {
+		CheckUpType retVal = new CheckUpType();
+		retVal = checkUpTypeService.findOneByName(before);
+		if(clinic.getAvailableAppointments()!=null) {
+			for(Checkup c : clinic.getAvailableAppointments()) {
+				if(c.getType().equals(before)) {
+					return null; // returns null if can't change name of type
+				}
+			}
+		}
+		retVal.setName(after);
+		retVal = checkUpTypeService.save(retVal);
+		return retVal;
+		
 	}
 
 	public String deleteRoom(String name, ClinicAdministrator clinicAdministrator) {
