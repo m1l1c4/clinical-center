@@ -120,11 +120,11 @@ public class ClinicController {
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Clinic> saveClinic(@RequestBody Clinic c) {
+	public ResponseEntity<ClinicDTO> saveClinic(@RequestBody ClinicDTO c) {
 		Clinic clinic = clinicService.save(c);
 		if (clinic == null)
-			return new ResponseEntity<>(clinic, HttpStatus.NOT_ACCEPTABLE);
-		return new ResponseEntity<>(clinic, HttpStatus.CREATED);
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		return new ResponseEntity<>(new ClinicDTO(clinic), HttpStatus.CREATED);
 	}
 
 	// This method returns all rooms in clinic and its administrator is logged user

@@ -33,7 +33,7 @@ public class CheckUpType {
 	private Set<Clinic> clinics = new HashSet<Clinic>();
 
 	@JsonManagedReference(value = "checkup")
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> checkups = new HashSet<Checkup>();
 
 	public CheckUpType() {

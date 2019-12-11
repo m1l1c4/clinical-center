@@ -39,7 +39,7 @@ public class ClinicAdministratorService {
 	public ClinicAdministrator updateAdministrator(ClinicAdministrator clinicAdministrator, ClinicAdministratorDTO ca) {
 		clinicAdministrator.getUser().setName(ca.getUser().getName());
 		clinicAdministrator.getUser().setSurname(ca.getUser().getSurname());
-		clinicAdministrator.getUser().setPassword(ca.getUser().getPassword());
+		clinicAdministrator.getUser().setPassword(passwordEncoder.encode(ca.getUser().getPassword()));
 		clinicAdministrator = update(clinicAdministrator);
 		return clinicAdministrator;
 	}

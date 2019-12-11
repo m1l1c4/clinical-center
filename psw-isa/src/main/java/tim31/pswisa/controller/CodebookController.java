@@ -1,5 +1,6 @@
 package tim31.pswisa.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.CodebookDTO;
 import tim31.pswisa.model.Codebook;
 import tim31.pswisa.service.CodebookService;
 
@@ -24,7 +26,7 @@ public class CodebookController {
 	private CodebookService codebookService;
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> saveCodebook(@RequestBody Codebook c) {
+	public ResponseEntity<String> saveCodebook(@RequestBody CodebookDTO c) {
 		Codebook codebook = codebookService.save(c);
 		if (codebook == null)
 			return new ResponseEntity<>("Sifra mora biti jedinstvena.", HttpStatus.NOT_ACCEPTABLE);
@@ -32,9 +34,13 @@ public class CodebookController {
 	}
 
 	@GetMapping()
-	public ResponseEntity<List<Codebook>> getCodebook() {
+	public ResponseEntity<List<CodebookDTO>> getCodebook() {
 		List<Codebook> codebook = codebookService.findAll();
-		return new ResponseEntity<>(codebook, HttpStatus.OK);
+		List<CodebookDTO> codebooksDTO = new ArrayList<CodebookDTO>();
+		for (Codebook c : codebook) {
+			codebooksDTO.add(new CodebookDTO(c));
+		}
+		return new ResponseEntity<>(codebooksDTO, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/{code}")

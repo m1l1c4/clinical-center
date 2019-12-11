@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.CheckUpTypeDTO;
+import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
@@ -19,7 +18,7 @@ public class CheckUpTypeService {
 
 	@Autowired
 	private ClinicService clinicService;
-	
+
 	@Autowired
 	private CheckUpTypeRepository checkUpTypeRepository;
 
@@ -30,14 +29,14 @@ public class CheckUpTypeService {
 	public CheckUpType findOneByName(String name) {
 		return checkUpTypeRepository.findOneByName(name);
 	}
-	
+
 	public String deleteType(String name, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
 		Set<CheckUpType> tipovi = clinic.getCheckUpTypes();
 		for (CheckUpType t : tipovi) {
 			if (t.getName().equals(name)) {
 				clinic.getCheckUpTypes().remove(t);
-				clinic = clinicService.save(clinic); // delete type from clinic
+				clinic = clinicService.save(new ClinicDTO(clinic)); // delete type from clinic
 				CheckUpType temp = findOneByName(name);
 				temp.getClinics().remove(clinic);
 				temp = save(temp);
@@ -45,7 +44,7 @@ public class CheckUpTypeService {
 			}
 		}
 		return "";
-	 
+
 	}
 
 	public CheckUpType save(CheckUpType ct) {
@@ -58,12 +57,13 @@ public class CheckUpTypeService {
 		}
 		return checkUpTypeRepository.save(ct);
 	}
-	
+
 	public CheckUpType addType(CheckUpTypeDTO type, ClinicAdministrator clinicAdministrator) {
 		CheckUpType tip = new CheckUpType();
 		tip.setName(type.getName());
 		List<CheckUpType> allTypes = findAll();
 		Clinic klinika = new Clinic();
+				
 		klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
 		int x = 0;
 		for (CheckUpType t : klinika.getCheckUpTypes()) {
@@ -73,10 +73,9 @@ public class CheckUpTypeService {
 		}
 		if (x == 0) {
 			klinika.getCheckUpTypes().add(tip);
-			klinika = clinicService.save(klinika);
-		}
-		else {
-			return null; //already exist
+			klinika = clinicService.updateClinic(clinicAdministrator, new ClinicDTO(klinika));
+		} else {
+			return null; // already exist
 		}
 
 		// save types in all types of clinical center
@@ -89,8 +88,9 @@ public class CheckUpTypeService {
 		if (y == 0) {
 			tip.getClinics().add(klinika);
 			tip = save(tip);
+			//klinika.getCheckUpTypes().add(tip);
 			return tip;
-		}
-		else return null;
+		} else
+			return null;
 	}
 }

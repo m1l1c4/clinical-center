@@ -44,15 +44,15 @@ public class Clinic {
 	private Set<ClinicAdministrator> clAdmins;
 
 	@JsonManagedReference(value = "clinic_movement")
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<MedicalWorker> medicalStuff;
 
 	// @JsonManagedReference(value="clinic_movement")
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Patient> patients;
 
 	@JsonManagedReference(value = "room_mov")
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Room> rooms = new HashSet<Room>();
 
 	@JsonBackReference(value = "type_mov")
@@ -61,7 +61,7 @@ public class Clinic {
 
 	// appointment for one click
 	@JsonManagedReference(value = "checkup_mov")
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Checkup> availableAppointments;
 
 	/*

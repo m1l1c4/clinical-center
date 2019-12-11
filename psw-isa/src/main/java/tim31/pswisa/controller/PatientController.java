@@ -32,7 +32,7 @@ public class PatientController {
 	TokenUtils tokenUtils;
 
 	@GetMapping(value = "/patientsRequests", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Patient>> saveClinic() {
+	public ResponseEntity<List<Patient>> getNewUserRequests() {
 		List<Patient> patients = patientService.findAllByActive(userService.findAllByActivated(false));
 
 		return new ResponseEntity<>(patients, HttpStatus.OK);

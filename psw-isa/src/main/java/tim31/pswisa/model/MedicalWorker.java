@@ -30,17 +30,17 @@ public class MedicalWorker {
 	private User user;
 
 	@JsonBackReference(value = "clinic_movement")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
 	@Column(name = "phone", unique = false, nullable = true)
 	private String phone;
 
 	// @JsonManagedReference(value="mw_movement")
-	@OneToMany(mappedBy = "mw", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "mw", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Patient> patients;
 
-	@OneToMany(mappedBy = "mw", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "mw", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Absence> hollydays;
 
 	// just for doctors

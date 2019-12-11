@@ -43,7 +43,7 @@ public class MedicalWorkerController {
 				return new ResponseEntity<>(new MedicalWorkerDTO(medicalWorker), HttpStatus.OK);
 			}
 		}
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	// This method updates medical worker who sends request for that
@@ -61,10 +61,10 @@ public class MedicalWorkerController {
 	}
 
 	@PostMapping(value = "/addMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalWorker> addMedicalWorker(@RequestBody MedicalWorker mw) {
+	public ResponseEntity<MedicalWorkerDTO> addMedicalWorker(@RequestBody MedicalWorkerDTO mw) {
 		MedicalWorker medicalWorker = medicalWorkerService.save(mw);
 		if (medicalWorker != null) {
-			return new ResponseEntity<>(medicalWorker, HttpStatus.CREATED);
+			return new ResponseEntity<>(new MedicalWorkerDTO(medicalWorker), HttpStatus.CREATED);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 

@@ -22,10 +22,10 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private AuthorityService authorityService;
 
@@ -37,11 +37,11 @@ public class MedicalWorkerService {
 		medWorker.getUser().setName(mw.getUser().getName());
 		medWorker.getUser().setSurname(mw.getUser().getSurname());
 		medWorker.setPhone(mw.getPhone());
-		medWorker.getUser().setPassword(mw.getUser().getPassword());
+		medWorker.getUser().setPassword(passwordEncoder.encode(mw.getUser().getPassword()));
 		medWorker = update(medWorker);
 		return medWorker;
 	}
-	
+
 	public MedicalWorker findByUser(Long id) {
 		return medicalWorkerRepository.findOneByUserId(id);
 	}
@@ -54,16 +54,21 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.save(mw);
 	}
 
-	public MedicalWorker save(MedicalWorker medicalWorker) {
+	public MedicalWorker save(MedicalWorkerDTO mw) {
+		MedicalWorker medicalWorker = new MedicalWorker();
+		medicalWorker.setUser(mw.getUser());
+		medicalWorker.setPhone(mw.getPhone());
+		medicalWorker.setEndHr(mw.getEndHr());
+		medicalWorker.setStartHr(mw.getStartHr());
 		medicalWorker.getUser().setPassword(passwordEncoder.encode("sifra123"));
 		medicalWorker.getUser().setFirstLogin(false);
 		medicalWorker.getUser().setEnabled(true);
 		medicalWorker.getUser().setActivated(true);
 		List<Authority> auth = authorityService.findByname(medicalWorker.getType());
 		medicalWorker.getUser().setAuthorities(auth);
-		
+
 		User user = userRepository.findOneByEmail(medicalWorker.getUser().getEmail());
-		if(user != null) {
+		if (user != null) {
 			return null;
 		}
 

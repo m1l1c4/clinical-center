@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.ClinicDTO;
@@ -28,7 +26,7 @@ public class ClinicService {
 
 	@Autowired
 	private RoomService roomService;
-	
+
 	@Autowired
 	private CheckUpTypeRepository checkupTypeRepository;
 
@@ -48,7 +46,7 @@ public class ClinicService {
 		return clinicRepository.findOneByName(clinic);
 	}
 
-	public Clinic save(Clinic c) {
+	public Clinic save(ClinicDTO c) {
 		Clinic clinic = new Clinic();
 		clinic.setName(c.getName());
 		clinic.setCity(c.getCity());
@@ -65,11 +63,13 @@ public class ClinicService {
 			return null;
 		}
 
-		for (Room r : clinic.getRooms())
+		for (Room r : clinic.getRooms()) {
 			r.setClinic(clinic);
+			r.setFree(true);
+		}
 		return clinicRepository.save(clinic);
 	}
-	
+
 	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, ClinicDTO clinic) {
 		Clinic nameOfClinic = clinicAdministrator.getClinic();
 		List<Clinic> temp = findAll();
@@ -90,20 +90,19 @@ public class ClinicService {
 		else
 			return null;
 	}
-	
+
 	public String deleteRoom(String name, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
 		for (Room r : sobe) {
 			if (r.getName().equals(name)) {
 				clinic.getRooms().remove(r);
-				clinic = save(clinic); // delete room from clinic
+				clinic = save(new ClinicDTO(clinic)); // delete room from clinic
 				return "Obrisano";
 			}
 		}
 		return "";
 	}
-	
 
 	public Room addRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Room room1 = new Room();
@@ -121,10 +120,10 @@ public class ClinicService {
 		room1.setFree(true);
 		room1.setType("PREGLED");
 		klinika.getRooms().add(room1);
-		klinika = save(klinika);
+		room1 = roomService.save(room1);
 		return room1;
 	}
-	
+
 	public List<Clinic> searchClinics(String[] params) {
 		List<Clinic> retClinics = new ArrayList<Clinic>();
 		List<Clinic> result = new ArrayList<Clinic>();

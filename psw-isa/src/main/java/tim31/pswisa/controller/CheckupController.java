@@ -12,18 +12,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Report;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.CheckUpService;
 import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.MedicalWorkerService;
-import tim31.pswisa.service.UserService;
-import tim31.pswisa.model.Report;
 import tim31.pswisa.service.ReportService;
+import tim31.pswisa.service.UserService;
 
 @RestController
 @RequestMapping(value = "/checkup")
@@ -51,12 +52,12 @@ public class CheckupController {
 	private ReportService reportService;
 
 	@PostMapping(value = "/addReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Report> saveClinic(@RequestBody Report r) {
+	public ResponseEntity<ReportDTO> saveReport(@RequestBody ReportDTO r) {
 		Report report = reportService.add(r);
 
 		if (report == null)
-			return new ResponseEntity<>(report, HttpStatus.NOT_ACCEPTABLE);
-		return new ResponseEntity<>(report, HttpStatus.CREATED);
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		return new ResponseEntity<>(new ReportDTO(report), HttpStatus.CREATED);
 	}
 
 	// have to modify just for doctors
