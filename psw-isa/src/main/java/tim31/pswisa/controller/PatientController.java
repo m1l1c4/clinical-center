@@ -21,54 +21,50 @@ import tim31.pswisa.service.UserService;
 
 @RestController
 public class PatientController {
-	
+
 	@Autowired
 	private PatientService patientService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	TokenUtils tokenUtils;
-	
-	@GetMapping(value="/patientsRequests", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Patient>> saveClinic()
-	{
+
+	@GetMapping(value = "/patientsRequests", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Patient>> getNewUserRequests() {
 		List<Patient> patients = patientService.findAllByActive(userService.findAllByActivated(false));
 
 		return new ResponseEntity<>(patients, HttpStatus.OK);
 	}
-	
-	@GetMapping(value="/getPatientProfile", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Patient> getPatient(HttpServletRequest request)
-	{
+
+	@GetMapping(value = "/getPatientProfile", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Patient> getPatient(HttpServletRequest request) {
 		String jwt_token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(jwt_token);
-		ResponseEntity<Patient> ret ;
-		User up = userService.findOneByEmail(email) ;
+		ResponseEntity<Patient> ret;
+		User up = userService.findOneByEmail(email);
 		Patient p = patientService.findOneByUserId(up.getId());
-		if (p!=null)
-			ret = new ResponseEntity<>(p, HttpStatus.OK);			
+		if (p != null)
+			ret = new ResponseEntity<>(p, HttpStatus.OK);
 		else
-			ret =  new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			
+			ret = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
 		return ret;
 	}
-	
-	@PostMapping(value="/editPatient", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
-	public ResponseEntity<Patient> editPatient(@RequestBody Patient p)
-	{
+
+	@PostMapping(value = "/editPatient", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Patient> editPatient(@RequestBody Patient p) {
 		User temp = userService.findOneByEmail(p.getUser().getEmail());
 		Patient patient = patientService.findOneByUserId(temp.getId());
-		
-		if (patient != null)
-			{
-				patientService.editP(patient, p);
-				patientService.save(patient);
-				return new ResponseEntity<>(patient, HttpStatus.OK);
-			}
+
+		if (patient != null) {
+			patientService.editP(patient, p);
+			patientService.save(patient);
+			return new ResponseEntity<>(patient, HttpStatus.OK);
+		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		
+
 	}
 
 }

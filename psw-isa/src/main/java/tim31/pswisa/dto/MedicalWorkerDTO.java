@@ -14,7 +14,7 @@ public class MedicalWorkerDTO {
 
 	private Long id;
 	private User user;
-	private Clinic clinic;
+	private ClinicDTO clinic;
 	private String phone;
 	private Set<Patient> patients;
 	private Set<Absence> hollydays;
@@ -25,7 +25,7 @@ public class MedicalWorkerDTO {
 	private Set<Checkup> checkUps = new HashSet<Checkup>();
 
 	public MedicalWorkerDTO(MedicalWorker m) {
-		this(m.getId(), m.getUser(), m.getClinic(), m.getPhone(), m.getPatients(), m.getHollydays(), m.getRating(),
+		this(m.getId(), m.getUser(), new ClinicDTO(m.getClinic()), m.getPhone(), m.getPatients(), m.getHollydays(), m.getRating(),
 				m.getStartHr(), m.getEndHr(), m.getType(), m.getCheckUps());
 	}
 
@@ -34,7 +34,7 @@ public class MedicalWorkerDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MedicalWorkerDTO(Long id, User user, Clinic clinic, String phone, Set<Patient> patients,
+	public MedicalWorkerDTO(Long id, User user, ClinicDTO clinic, String phone, Set<Patient> patients,
 			Set<Absence> hollydays, int rating, int startHr, int endHr, String type, Set<Checkup> checkUps) {
 		super();
 		this.id = id;
@@ -66,11 +66,11 @@ public class MedicalWorkerDTO {
 		this.user = user;
 	}
 
-	public Clinic getClinic() {
+	public ClinicDTO getClinic() {
 		return clinic;
 	}
 
-	public void setClinic(Clinic clinic) {
+	public void setClinic(ClinicDTO clinic) {
 		this.clinic = clinic;
 	}
 

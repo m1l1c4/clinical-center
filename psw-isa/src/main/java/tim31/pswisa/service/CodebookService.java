@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.CodebookDTO;
 import tim31.pswisa.model.Codebook;
 import tim31.pswisa.repository.CodebookRepository;
 
@@ -17,12 +18,12 @@ public class CodebookService {
 	public List<Codebook> findAll() {
 		return codebookRepository.findAll();
 	}
-	
+
 	public Codebook findOneByCode(String code) {
 		return codebookRepository.findOneByCode(code);
 	}
 
-	public Codebook save(Codebook c) {
+	public Codebook save(CodebookDTO c) {
 		Codebook codebook = new Codebook();
 		codebook.setName(c.getName());
 		codebook.setCode(c.getCode());
