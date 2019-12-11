@@ -15,22 +15,15 @@ public class Codebook {
 
 	@Column(name = "name", unique = false, nullable = false)
 	private String name;
-	
+
 	@Column(name = "code", unique = true, nullable = false)
 	private String code;
-	
+
 	@Column(name = "code_type", unique = false, nullable = false)
 	private String type;
 
 	public Codebook() {
 
-	}
-
-	public Codebook(String name, String code, String type) {
-		super();
-		this.name = name;
-		this.code = code;
-		this.type = type;
 	}
 
 	public String getName() {
@@ -55,6 +48,14 @@ public class Codebook {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }

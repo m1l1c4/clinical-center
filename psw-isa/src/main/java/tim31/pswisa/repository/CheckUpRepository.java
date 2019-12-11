@@ -6,10 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import tim31.pswisa.model.Checkup;
 
-
 public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 
 	List<Checkup> findAll();
-	
-	List<Checkup>findAllByClinicId(Long id);
+
+	List<Checkup> findAllByClinicId(Long id);
 }

@@ -13,23 +13,30 @@ public class CodebookService {
 
 	@Autowired
 	private CodebookRepository codebookRepository;
-	
-    public List<Codebook> findAll(){
-        return codebookRepository.findAll();
-    }
-    
-    public Codebook save(Codebook codebook) {
-        List<Codebook> codebooks = codebookRepository.findAll();
-       
-        for (Codebook c : codebooks) {
-            if (c.getCode().equals(codebook.getCode()))
-                return null;
-        }
 
-        return codebookRepository.save(codebook);
-    }
-    
-    public void remove(String code) {
-    	codebookRepository.delete(codebookRepository.findOneByCode(code));
-    }
+	public List<Codebook> findAll() {
+		return codebookRepository.findAll();
+	}
+	
+	public Codebook findOneByCode(String code) {
+		return codebookRepository.findOneByCode(code);
+	}
+
+	public Codebook save(Codebook c) {
+		Codebook codebook = new Codebook();
+		codebook.setName(c.getName());
+		codebook.setCode(c.getCode());
+		codebook.setType(c.getType());
+
+		Codebook code = findOneByCode(codebook.getCode());
+		if (code != null) {
+			return null;
+		}
+
+		return codebookRepository.save(codebook);
+	}
+
+	public void remove(String code) {
+		codebookRepository.delete(findOneByCode(code));
+	}
 }
