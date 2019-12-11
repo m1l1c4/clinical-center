@@ -41,6 +41,9 @@ public class LoggingController {
 	@Autowired
 	private LoggingService service;
 	
+	@Autowired
+	private UserService userService;
+	
 		
 	@Autowired
 	TokenUtils tokenUtils;
