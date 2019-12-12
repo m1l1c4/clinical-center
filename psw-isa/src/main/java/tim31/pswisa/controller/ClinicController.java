@@ -195,7 +195,7 @@ public class ClinicController {
 				Clinic clinic = clinicAdministrator.getClinic();
 				if (clinic != null) {
 					List<Room> rooms = roomService.findAllByClinicId(clinic.getId());
-					ArrayList<RoomDTO> dtos = new ArrayList<RoomDTO>();
+					List<RoomDTO> dtos = new ArrayList<RoomDTO>();
 					for (Room r : rooms) {
 						dtos.add(new RoomDTO(r));
 					}

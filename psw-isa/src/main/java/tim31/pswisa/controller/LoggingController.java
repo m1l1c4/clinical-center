@@ -40,7 +40,7 @@ public class LoggingController {
 
 	@Autowired
 	private LoggingService service;
-
+		
 	@Autowired
 	private TokenUtils tokenUtils;
 

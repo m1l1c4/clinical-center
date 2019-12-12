@@ -96,7 +96,7 @@ public class ClinicService {
 	}
 
 	// can't edit the name of type if there is just one appointment with that type
-	// in just one clinic od clinical center
+	// in just one clinic of clinical center
 	public CheckUpType editType(Clinic clinic, String before, String after) {
 		CheckUpType retVal = new CheckUpType();
 		List<Clinic> clinics = findAll();
@@ -210,3 +210,4 @@ public class ClinicService {
 	}
 
 }
+
