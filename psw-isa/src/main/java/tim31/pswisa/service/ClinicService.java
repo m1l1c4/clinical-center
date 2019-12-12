@@ -1,6 +1,7 @@
 package tim31.pswisa.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.ClinicDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RoomDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
@@ -127,7 +129,7 @@ public class ClinicService {
 	public List<Clinic> searchClinics(String[] params) {
 		List<Clinic> retClinics = new ArrayList<Clinic>();
 		List<Clinic> result = new ArrayList<Clinic>();
-		int counter = 0; // assuming there is 7 checkups in one day
+		int counter = 0; // assuming there are 7 checkups in one day
 		CheckUpType srchType = checkupTypeRepository.findOneByName(params[0]);
 
 		if (params[0].equals("") || params[1].equals("") || srchType == null)
@@ -174,6 +176,50 @@ public class ClinicService {
 		}
 
 		return filtered;
+	}
+	
+	public List<MedicalWorkerDTO> doctorsInClinic(String name, String type, String date) {
+		Clinic cl = clinicRepository.findOneByName(name);
+		List<MedicalWorkerDTO> doctors = new ArrayList<MedicalWorkerDTO>();
+		List<String> temp = new ArrayList<String>();		// list of times of appointments for specific date
+		int counter = 0 ;
+		if (cl != null) {
+			 for (MedicalWorker medicalWorker : cl.getMedicalStuff()) {
+				if (medicalWorker.getType().equals(type)) {					
+							for (Checkup c : medicalWorker.getCheckUps()) {
+								if (c.getDate().toString().equals(date)) {
+									counter++;
+								}
+							}
+							if (counter < 7) {
+								MedicalWorkerDTO mw = new MedicalWorkerDTO(medicalWorker);
+								doctors.add(mw);
+								break;
+							}
+						}
+					}
+			 boolean taken = false;
+			 ArrayList<String> pom = new ArrayList<String>();
+			 for (MedicalWorkerDTO mw : doctors) {
+				 for (int i = mw.getStartHr(); i < mw.getEndHr() ; i++) {
+					 for (Checkup ch : mw.getCheckUps()) {
+						 if (Integer.parseInt(ch.getTime()) ==  i) {
+							 taken = true;
+							 break;
+						 }
+					 }
+					 if (!taken) {
+						 pom.add(Integer.toString(i));						 
+					 }
+				 }
+				 
+				 mw.getAvailableCheckups().put(date,  pom);
+					
+			}
+			return doctors; 
+		}
+		return null;
+			
 	}
 
 	public Clinic update(Clinic clinic) {

@@ -51,14 +51,14 @@ public class CheckupController {
 	@Autowired
 	private ReportService reportService;
 
-	@PostMapping(value = "/addReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@PostMapping(value = "/addReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReportDTO> saveReport(@RequestBody ReportDTO r) {
 		Report report = reportService.add(r);
 
 		if (report == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		return new ResponseEntity<>(new ReportDTO(report), HttpStatus.CREATED);
-	}
+	}*/
 
 	// have to modify just for doctors
 	// This method adding new appointment created by clinic administrator. Patients

@@ -118,6 +118,20 @@ public class ClinicController {
 
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
+	
+	/* find all doctors in one clinic by clinic id
+	 * input - string, clinic id
+	 * return value - List<MedicalWorker> , list of all doctors in clinic 
+	 */
+	@PostMapping(value = "/clinicDoctors/{name}/{type}/{date}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> getDoctorsByClinicId(@PathVariable String name, @PathVariable String type, @PathVariable String date) {
+		List<MedicalWorkerDTO> ret = clinicService.doctorsInClinic(name, type, date);
+		if (ret == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<>(ret, HttpStatus.OK);
+		}
+	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicDTO> saveClinic(@RequestBody ClinicDTO c) {
