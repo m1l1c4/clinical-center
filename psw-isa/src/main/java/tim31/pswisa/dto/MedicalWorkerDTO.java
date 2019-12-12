@@ -1,6 +1,8 @@
 package tim31.pswisa.dto;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import tim31.pswisa.model.Absence;
@@ -23,6 +25,7 @@ public class MedicalWorkerDTO {
 	private int endHr;
 	private String type;
 	private Set<Checkup> checkUps = new HashSet<Checkup>();
+	private HashMap<String, List<String>> availableCheckups = new HashMap<String, List<String>>();
 
 	public MedicalWorkerDTO(MedicalWorker m) {
 		this(m.getId(), m.getUser(), new ClinicDTO(m.getClinic()), m.getPhone(), m.getPatients(), m.getHollydays(), m.getRating(),
@@ -136,6 +139,14 @@ public class MedicalWorkerDTO {
 
 	public void setCheckUps(Set<Checkup> checkUps) {
 		this.checkUps = checkUps;
+	}
+
+	public HashMap<String, List<String>> getAvailableCheckups() {
+		return availableCheckups;
+	}
+
+	public void setAvailableCheckups(HashMap<String, List<String>> availableCheckups) {
+		this.availableCheckups = availableCheckups;
 	}
 
 }
