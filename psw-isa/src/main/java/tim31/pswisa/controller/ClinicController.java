@@ -123,9 +123,9 @@ public class ClinicController {
 	 * input - string, clinic id
 	 * return value - List<MedicalWorker> , list of all doctors in clinic 
 	 */
-	@PostMapping(value = "/clinicDoctors/{name}/{type}/{date}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MedicalWorkerDTO>> getDoctorsByClinicId(@PathVariable String name, @PathVariable String type, @PathVariable String date) {
-		List<MedicalWorkerDTO> ret = clinicService.doctorsInClinic(name, type, date);
+	@PostMapping(value = "/clinicDoctors", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> getDoctorsByClinicId(@RequestBody String[] params) {
+		List<MedicalWorkerDTO> ret = clinicService.doctorsInClinic(params[0], params[1], params[2]);
 		if (ret == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} else {
