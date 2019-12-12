@@ -105,11 +105,13 @@ public class CheckUpTypeController {
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			if (clinicAdministrator != null) {
-				CheckUpType temp = checkUpTypeService.addType(type, clinicAdministrator);
+				CheckUpType temp = new CheckUpType();
+				temp = checkUpTypeService.addType(type, clinicAdministrator);
 				if (temp == null) {
-					return new ResponseEntity<>(new CheckUpTypeDTO(temp), HttpStatus.NOT_FOUND);
-				} else
+					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+				} else {
 					return new ResponseEntity<>(new CheckUpTypeDTO(temp), HttpStatus.OK);
+				}
 			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
