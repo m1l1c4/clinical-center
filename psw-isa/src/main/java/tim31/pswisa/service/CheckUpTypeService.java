@@ -36,10 +36,10 @@ public class CheckUpTypeService {
 		for (CheckUpType t : tipovi) {
 			if (t.getName().equals(name)) {
 				clinic.getCheckUpTypes().remove(t);
-				clinic = clinicService.save(new ClinicDTO(clinic)); // delete type from clinic
+				clinic = clinicService.update(clinic); // delete type from clinic
 				CheckUpType temp = findOneByName(name);
 				temp.getClinics().remove(clinic);
-				temp = save(temp);
+				temp = saveTwo(temp);
 				return "Obrisano";
 			}
 		}
@@ -58,38 +58,54 @@ public class CheckUpTypeService {
 		return checkUpTypeRepository.save(ct);
 	}
 
+	public CheckUpType saveTwo(CheckUpType ct) {
+		List<CheckUpType> cek = checkUpTypeRepository.findAll();
+		return checkUpTypeRepository.save(ct);
+	}
+
+	// can't save name if there is one type with the same name
+	public CheckUpType update(CheckUpType c, String after) {
+		List<CheckUpType> allTypes = findAll();
+		for (CheckUpType cek : allTypes) {
+			if (cek.getName().equals(after)) {
+				return null;
+			}
+		}
+		c.setName(after);
+		return checkUpTypeRepository.save(c);
+	}
+
 	public CheckUpType addType(CheckUpTypeDTO type, ClinicAdministrator clinicAdministrator) {
 		CheckUpType tip = new CheckUpType();
 		tip.setName(type.getName());
 		List<CheckUpType> allTypes = findAll();
-		Clinic klinika = new Clinic();	
+		Clinic klinika = new Clinic();
 		klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-		tip.getClinics().add(klinika);
 		int x = 0;
 		for (CheckUpType t : klinika.getCheckUpTypes()) {
 			if (t.getName().equals(tip.getName())) {
 				x = 1;
 			}
 		}
-		if (x == 0) {
-			klinika.getCheckUpTypes().add(tip);
-			klinika = clinicService.updateClinic(clinicAdministrator, new ClinicDTO(klinika));
-		} else {
-			return null; // already exist
-		}
 
-		// save types in all types of clinical center
-		int y = 0;
-		for (CheckUpType t : allTypes) {
-			if (tip.getName().equals(t.getName())) {
-				y = 1;
+		int o = 0;
+		for (CheckUpType c : allTypes) {
+			if (c.getName().equals(type.getName())) {
+				o = 1;
 			}
 		}
-		if (y == 0) {
-			tip.getClinics().add(klinika);
+		if (o == 0) {
+			tip.setName(type.getName());
 			tip = save(tip);
-			//klinika.getCheckUpTypes().add(tip);
-			return tip;
+		}
+
+		if (x == 0) {
+			CheckUpType temp = findOneByName(type.getName());
+			temp.getClinics().add(klinika);
+			temp = save(temp);
+			klinika.getCheckUpTypes().add(temp);
+			klinika = clinicService.updateClinic(clinicAdministrator, new ClinicDTO(klinika));
+			return temp;
 		} else
 			return null;
 	}
