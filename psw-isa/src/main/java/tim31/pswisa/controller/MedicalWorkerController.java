@@ -1,5 +1,6 @@
 package tim31.pswisa.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,15 +10,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.MedicalWorkerDTO;
+import tim31.pswisa.dto.RecipeDTO;
 import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Recipe;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.MedicalWorkerService;
+import tim31.pswisa.service.RecipeService;
 import tim31.pswisa.service.UserService;
 
 @RestController
@@ -31,6 +36,9 @@ public class MedicalWorkerController {
 
 	@Autowired
 	private TokenUtils tokenUtils;
+
+	@Autowired
+	private RecipeService recipeService;
 	// method returns medical worker by email
 
 	// This method returns medical worker for update
@@ -69,7 +77,16 @@ public class MedicalWorkerController {
 			return new ResponseEntity<>(new MedicalWorkerDTO(medicalWorker), HttpStatus.CREATED);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+	}
 
+	@GetMapping(value = "/getRecipes", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<RecipeDTO>> getRecipes() {
+		List<Recipe> recipes = recipeService.findAllByVerified(false);
+		List<RecipeDTO> ret = new ArrayList<RecipeDTO>();
+		for (Recipe recipe : recipes) {
+			ret.add(new RecipeDTO(recipe));
+		}
+		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 	
 	/* method for searching doctors by given parameters
@@ -86,4 +103,17 @@ public class MedicalWorkerController {
 		}
 	}
 
+	@PostMapping(value = "/verifyRecipe/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RecipeDTO> verifyRecipe(@PathVariable Long id, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		MedicalWorker nurse = medicalWorkerService.findByUser(user.getId());
+		Recipe recipe = recipeService.findOneById(id);
+		recipe = recipeService.verify(recipe, nurse);
+		if (recipe != null) {
+			return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+	}
 }

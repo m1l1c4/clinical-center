@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -32,9 +33,6 @@ public class Patient {
 	@Column(name = "jbo", nullable = false)
 	private String jbo;
 
-	@Column(name = "email", nullable = false)
-	private String email;
-
 	@Column(name = "city", nullable = false)
 	private String city;
 
@@ -44,26 +42,29 @@ public class Patient {
 	@Column(name = "address", nullable = false)
 	private String address; // ulica i broj
 
+	@JsonManagedReference(value = "checkup_patient_movement")
+	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Checkup> appointments;
+
 	@JsonManagedReference(value = "patient_record_movement")
 	@OneToOne(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalRecord medicalRecord;
-
-	// @JsonManagedReference(value="cup_movement")
-	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Checkup> appointments;
 
 	/*
 	 * @OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade =
 	 * CascadeType.ALL) private ArrayList<Operation> operations;
 	 */
 
-	// @JsonBackReference(value="clinic_movement")
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonBackReference(value = "clinic_movement")
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Clinic clinic;
 
-	// @JsonBackReference(value="mw_movement")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private MedicalWorker mw;
+	/*
+	 * // @JsonBackReference(value="mw_movement")
+	 * 
+	 * @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) private
+	 * MedicalWorker mw;
+	 */
 
 	public Patient() {
 		super();
@@ -156,21 +157,11 @@ public class Patient {
 		this.id = id;
 	}
 
-	public MedicalWorker getMw() {
-		return mw;
-	}
-
-	public void setMw(MedicalWorker mw) {
-		this.mw = mw;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
+	/*
+	 * public MedicalWorker getMw() { return mw; }
+	 * 
+	 * public void setMw(MedicalWorker mw) { this.mw = mw; }
+	 */
 
 	public MedicalRecord getMedicalRecord() {
 		return medicalRecord;

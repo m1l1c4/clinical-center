@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -23,12 +24,16 @@ public class Report {
 	private Long id;
 
 	@JsonManagedReference(value = "report_recipe_mov")
-	@OneToMany(mappedBy = "report", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "report", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Recipe> recipes;
 
 	@JsonBackReference(value = "record_mov")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private MedicalRecord medicalRecord;
+
+	@JsonManagedReference(value = "checkup_report_mov")
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Checkup checkUp;
 
 	@Column(name = "informations", unique = false, nullable = true)
 	private String informations;
@@ -78,6 +83,14 @@ public class Report {
 
 	public void setRecipes(Set<Recipe> recipes) {
 		this.recipes = recipes;
+	}
+
+	public Checkup getCheckUp() {
+		return checkUp;
+	}
+
+	public void setCheckUp(Checkup checkUp) {
+		this.checkUp = checkUp;
 	}
 
 }

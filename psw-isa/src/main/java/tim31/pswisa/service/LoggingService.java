@@ -9,10 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.model.Authority;
-import tim31.pswisa.model.ClinicalCenterAdministrator;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
-import tim31.pswisa.repository.CCAdminRepository;
 import tim31.pswisa.repository.PatientRepository;
 import tim31.pswisa.repository.UserRepository;
 
@@ -21,9 +19,6 @@ public class LoggingService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepo;
-
-	@Autowired
-	private CCAdminRepository adminRepo;
 
 	@Autowired
 	private PatientRepository patientRepo;
@@ -51,16 +46,6 @@ public class LoggingService implements UserDetailsService {
 
 		return p;
 
-	}
-
-	public ClinicalCenterAdministrator save(ClinicalCenterAdministrator admin) {
-		List<User> users = userRepo.findAll();
-		for (User u : users) {
-			if (u.getEmail().equals(admin.getUser().getEmail())) {
-				return null;
-			}
-		}
-		return adminRepo.save(admin);
 	}
 
 	public User loginUser(User u) {

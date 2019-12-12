@@ -1,35 +1,20 @@
 package tim31.pswisa.dto;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import tim31.pswisa.model.Absence;
-import tim31.pswisa.model.Checkup;
-import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
-import tim31.pswisa.model.Patient;
-import tim31.pswisa.model.User;
 
 public class MedicalWorkerDTO {
 
 	private Long id;
-	private User user;
-	private ClinicDTO clinic;
+	private UserDTO user;
 	private String phone;
-	private Set<Patient> patients;
-	private Set<Absence> hollydays;
 	private int rating;
 	private int startHr;
 	private int endHr;
 	private String type;
-	private Set<Checkup> checkUps = new HashSet<Checkup>();
-	private HashMap<String, List<String>> availableCheckups = new HashMap<String, List<String>>();
 
-	public MedicalWorkerDTO(MedicalWorker m) {
-		this(m.getId(), m.getUser(), new ClinicDTO(m.getClinic()), m.getPhone(), m.getPatients(), m.getHollydays(), m.getRating(),
-				m.getStartHr(), m.getEndHr(), m.getType(), m.getCheckUps());
+	public MedicalWorkerDTO(MedicalWorker mw) {
+		this(mw.getId(), new UserDTO(mw.getUser()), mw.getPhone(), mw.getRating(), mw.getStartHr(), mw.getEndHr(),
+				mw.getType());
 	}
 
 	public MedicalWorkerDTO() {
@@ -37,20 +22,15 @@ public class MedicalWorkerDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MedicalWorkerDTO(Long id, User user, ClinicDTO clinic, String phone, Set<Patient> patients,
-			Set<Absence> hollydays, int rating, int startHr, int endHr, String type, Set<Checkup> checkUps) {
+	public MedicalWorkerDTO(Long id, UserDTO user, String phone, int rating, int startHr, int endHr, String type) {
 		super();
 		this.id = id;
 		this.user = user;
-		this.clinic = clinic;
 		this.phone = phone;
-		this.patients = patients;
-		this.hollydays = hollydays;
 		this.rating = rating;
 		this.startHr = startHr;
 		this.endHr = endHr;
 		this.type = type;
-		this.checkUps = checkUps;
 	}
 
 	public Long getId() {
@@ -61,20 +41,12 @@ public class MedicalWorkerDTO {
 		this.id = id;
 	}
 
-	public User getUser() {
+	public UserDTO getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(UserDTO user) {
 		this.user = user;
-	}
-
-	public ClinicDTO getClinic() {
-		return clinic;
-	}
-
-	public void setClinic(ClinicDTO clinic) {
-		this.clinic = clinic;
 	}
 
 	public String getPhone() {
@@ -83,22 +55,6 @@ public class MedicalWorkerDTO {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public Set<Patient> getPatients() {
-		return patients;
-	}
-
-	public void setPatients(Set<Patient> patients) {
-		this.patients = patients;
-	}
-
-	public Set<Absence> getHollydays() {
-		return hollydays;
-	}
-
-	public void setHollydays(Set<Absence> hollydays) {
-		this.hollydays = hollydays;
 	}
 
 	public int getRating() {
@@ -131,22 +87,6 @@ public class MedicalWorkerDTO {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public Set<Checkup> getCheckUps() {
-		return checkUps;
-	}
-
-	public void setCheckUps(Set<Checkup> checkUps) {
-		this.checkUps = checkUps;
-	}
-
-	public HashMap<String, List<String>> getAvailableCheckups() {
-		return availableCheckups;
-	}
-
-	public void setAvailableCheckups(HashMap<String, List<String>> availableCheckups) {
-		this.availableCheckups = availableCheckups;
 	}
 
 }

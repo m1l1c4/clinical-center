@@ -41,7 +41,6 @@ public class MedicalWorkerService {
 		medWorker.getUser().setName(mw.getUser().getName());
 		medWorker.getUser().setSurname(mw.getUser().getSurname());
 		medWorker.setPhone(mw.getPhone());
-		medWorker.getUser().setPassword(passwordEncoder.encode(mw.getUser().getPassword()));
 		medWorker = update(medWorker);
 		return medWorker;
 	}
@@ -59,8 +58,17 @@ public class MedicalWorkerService {
 	}
 
 	public MedicalWorker save(MedicalWorkerDTO mw) {
+		User user = userRepository.findOneByEmail(mw.getUser().getEmail());
+		if (user != null) {
+			return null;
+		}
 		MedicalWorker medicalWorker = new MedicalWorker();
-		medicalWorker.setUser(mw.getUser());
+		user = new User();
+		user.setName(mw.getUser().getName());
+		user.setSurname(mw.getUser().getSurname());
+		user.setEmail(mw.getUser().getEmail());
+		user.setType(mw.getUser().getType());
+		medicalWorker.setUser(user);
 		medicalWorker.setPhone(mw.getPhone());
 		medicalWorker.setEndHr(mw.getEndHr());
 		medicalWorker.setStartHr(mw.getStartHr());
@@ -70,11 +78,6 @@ public class MedicalWorkerService {
 		medicalWorker.getUser().setActivated(true);
 		List<Authority> auth = authorityService.findByname(medicalWorker.getType());
 		medicalWorker.getUser().setAuthorities(auth);
-
-		User user = userRepository.findOneByEmail(medicalWorker.getUser().getEmail());
-		if (user != null) {
-			return null;
-		}
 
 		return medicalWorkerRepository.save(medicalWorker);
 	}

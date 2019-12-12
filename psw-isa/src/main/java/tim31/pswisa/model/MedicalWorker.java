@@ -10,7 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -36,12 +35,18 @@ public class MedicalWorker {
 	@Column(name = "phone", unique = false, nullable = true)
 	private String phone;
 
+	/*
 	// @JsonManagedReference(value="mw_movement")
 	@OneToMany(mappedBy = "mw", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Patient> patients;
+	*/
 
 	@OneToMany(mappedBy = "mw", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Absence> hollydays;
+	
+	@JsonManagedReference(value = "nurse_recipe_mov")
+	@OneToMany(mappedBy = "nurse", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Recipe> recipes;
 
 	// just for doctors
 
@@ -113,13 +118,11 @@ public class MedicalWorker {
 		this.clinic = clinic;
 	}
 
-	public Set<Patient> getPatients() {
-		return patients;
-	}
-
-	public void setPatients(Set<Patient> patients) {
-		this.patients = patients;
-	}
+	/*
+	 * public Set<Patient> getPatients() { return patients; }
+	 * 
+	 * public void setPatients(Set<Patient> patients) { this.patients = patients; }
+	 */
 
 	public Set<Absence> getHollydays() {
 		return hollydays;

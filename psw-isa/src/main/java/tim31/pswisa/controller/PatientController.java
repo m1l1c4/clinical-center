@@ -1,5 +1,6 @@
 package tim31.pswisa.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.PatientDTO;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
@@ -32,10 +34,13 @@ public class PatientController {
 	TokenUtils tokenUtils;
 
 	@GetMapping(value = "/patientsRequests", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Patient>> getNewUserRequests() {
+	public ResponseEntity<List<PatientDTO>> getNewUserRequests() {
 		List<Patient> patients = patientService.findAllByActive(userService.findAllByActivated(false));
-
-		return new ResponseEntity<>(patients, HttpStatus.OK);
+		List<PatientDTO> ret = new ArrayList<PatientDTO>();
+		for (Patient patient : patients) {
+			ret.add(new PatientDTO(patient));
+		}
+		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/getPatientProfile", produces = MediaType.APPLICATION_JSON_VALUE)

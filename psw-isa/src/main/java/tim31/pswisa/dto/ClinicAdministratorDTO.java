@@ -1,34 +1,27 @@
 package tim31.pswisa.dto;
 
-import java.util.Set;
-
-import tim31.pswisa.model.Absence;
-import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
-import tim31.pswisa.model.User;
 
 public class ClinicAdministratorDTO {
 
 	private Long id;
-	private User user;
-	private Clinic clinic;
-	private Set<Absence> absences;
+	private UserDTO user;
+	private ClinicDTO clinic;
+
+	public ClinicAdministratorDTO(ClinicAdministrator ca) {
+		this(ca.getId(), new UserDTO(ca.getUser()), new ClinicDTO(ca.getClinic()));
+	}
 
 	public ClinicAdministratorDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public ClinicAdministratorDTO(Long id, User user, Clinic clinic, Set<Absence> absences) {
+	public ClinicAdministratorDTO(Long id, UserDTO user, ClinicDTO clinic) {
 		super();
 		this.id = id;
 		this.user = user;
 		this.clinic = clinic;
-		this.absences = absences;
-	}
-
-	public ClinicAdministratorDTO(ClinicAdministrator c) {
-		this(c.getId(), c.getUser(), c.getClinic(), c.getAbsences());
 	}
 
 	public Long getId() {
@@ -39,28 +32,20 @@ public class ClinicAdministratorDTO {
 		this.id = id;
 	}
 
-	public User getUser() {
+	public UserDTO getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(UserDTO user) {
 		this.user = user;
 	}
 
-	public Clinic getClinic() {
+	public ClinicDTO getClinic() {
 		return clinic;
 	}
 
-	public void setClinic(Clinic clinic) {
+	public void setClinic(ClinicDTO clinic) {
 		this.clinic = clinic;
-	}
-
-	public Set<Absence> getAbsences() {
-		return absences;
-	}
-
-	public void setAbsences(Set<Absence> absences) {
-		this.absences = absences;
 	}
 
 }

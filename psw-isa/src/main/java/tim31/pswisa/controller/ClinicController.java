@@ -23,7 +23,6 @@ import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RoomDTO;
 import tim31.pswisa.model.CheckUpType;
-import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
@@ -93,10 +92,6 @@ public class ClinicController {
 		} else {
 			for (Clinic clinic : clinics) {
 				ClinicDTO cldto = new ClinicDTO(clinic);
-
-				for (Checkup ch : clinic.getAvailableAppointments()) {
-					cldto.getCheckUpTypes().add(ch.getCheckUpType());
-				}
 
 				retDto.add(cldto);
 			}
@@ -349,6 +344,17 @@ public class ClinicController {
 		} else {
 			return new ResponseEntity<>(room, HttpStatus.NOT_FOUND);
 		}
+	}
+
+	@PostMapping(value = "/addRooms/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<RoomDTO>> addRooms(@RequestBody List<RoomDTO> rooms, @PathVariable Long id) {
+		Clinic clinic = clinicService.findOneById(id);
+		for (RoomDTO room : rooms) {
+			Room r = clinicService.addRoom(clinic, room);
+			if (r == null)
+				return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+		}
+		return new ResponseEntity<>(rooms, HttpStatus.OK);
 	}
 
 }

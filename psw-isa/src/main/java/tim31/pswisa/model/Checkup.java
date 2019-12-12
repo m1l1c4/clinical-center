@@ -42,15 +42,15 @@ public class Checkup {
 	private double price;
 
 	@JsonBackReference(value = "soba_mov")
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Room room;
 
-	// @JsonBackReference(value="cup_movement")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonBackReference(value = "checkup_patient_movement")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Patient patient;
 
 	@JsonBackReference(value = "checkup_mov")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
 	@JsonBackReference(value = "doktor_mov")
@@ -58,8 +58,12 @@ public class Checkup {
 	private MedicalWorker medicalWorker;
 
 	@JsonBackReference(value = "checkup")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private CheckUpType checkUpType;
+
+	@JsonBackReference(value = "checkup_report_mov")
+	@OneToOne(mappedBy = "checkUp", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Report report;
 
 	public Checkup() {
 
@@ -188,6 +192,14 @@ public class Checkup {
 
 	public void setPatient(Patient patient) {
 		this.patient = patient;
+	}
+
+	public Report getReport() {
+		return report;
+	}
+
+	public void setReport(Report report) {
+		this.report = report;
 	}
 
 }
