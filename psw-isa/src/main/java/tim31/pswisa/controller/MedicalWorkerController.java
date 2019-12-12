@@ -88,6 +88,20 @@ public class MedicalWorkerController {
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
+	
+	/* method for searching doctors by given parameters
+	 * input - String array, sent parameters from client request
+	 * output - List<MedicalWorkerDTO> , list of doctors that meet searching params
+	 */
+	@PostMapping(value = "/searchDoctors", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> searchDoctors(@RequestBody String[] params) {
+		List<MedicalWorkerDTO> result = medicalWorkerService.searchDoctors(params);
+		if (result == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+	}
 
 	@PostMapping(value = "/verifyRecipe/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RecipeDTO> verifyRecipe(@PathVariable Long id, HttpServletRequest request) {

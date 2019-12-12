@@ -1,5 +1,6 @@
 package tim31.pswisa.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +29,9 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private AuthorityService authorityService;
+	
+	@Autowired
+	private ClinicService clinicService;
 
 	public Set<MedicalWorker> findAllByClinicId(Long id) {
 		return medicalWorkerRepository.findAllByClinicId(id);
@@ -80,5 +84,35 @@ public class MedicalWorkerService {
 
 	public MedicalWorker findOneById(Long id) {
 		return medicalWorkerRepository.findOneById(id);
+	}
+	
+	public List<MedicalWorkerDTO> searchDoctors(String[] params) {
+		List<MedicalWorkerDTO> forSearch = clinicService.doctorsInClinic(params[0], params[1], params[2]);
+		String name = params[3].equals("") ? "" : params[3] ;
+		String surname = params[4].equals("") ? "" : params[4] ;
+		int rating = 0;		
+		List<MedicalWorkerDTO> ret = new ArrayList<MedicalWorkerDTO>() ;
+		
+		if (!params[5].equals("")) {
+			rating = Integer.parseInt(params[5]) ;
+		}
+		
+		for (MedicalWorkerDTO mw : forSearch) {
+			if (checkParams(mw, name, surname, rating)) {
+				ret.add(mw);
+			}
+		}
+		
+		return ret;		
+		
+	}
+	
+	public boolean checkParams(MedicalWorkerDTO mw, String name, String surname, int rating) {
+				
+		if(!name.equals("") && !mw.getUser().getName().equals(name)) return false;
+		if(!surname.equals("") && !mw.getUser().getSurname().equals(surname)) return false;
+		if(rating != 0 && mw.getRating()!= rating) return false;
+		
+		return true;
 	}
 }

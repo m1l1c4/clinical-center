@@ -66,7 +66,7 @@ public class CheckupController {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(new ReportDTO(report), HttpStatus.CREATED);
-	}
+	}*/
 
 	// have to modify just for doctors
 	// This method adding new appointment created by clinic administrator. Patients

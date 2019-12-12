@@ -29,6 +29,7 @@ import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
+import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.ClinicService;
 import tim31.pswisa.service.MedicalWorkerService;
@@ -80,7 +81,7 @@ public class ClinicController {
 		} else
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
-
+	
 	@GetMapping(value = "/getClinics", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ClinicDTO>> getAllClinics() {
 		List<Clinic> clinics = clinicService.findAll();
@@ -100,6 +101,60 @@ public class ClinicController {
 
 	}
 
+	//'http://localhost:8099/clinic/changeNameOfType/'+ before + '/' + now,
+	
+	@PostMapping(value="/changeNameOfType", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<CheckUpTypeDTO>changeTypeNameController(@RequestBody String[] params, HttpServletRequest request){
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		
+		if(user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());	
+			if(clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if(clinic != null) {
+					CheckUpType temp = new CheckUpType();
+					temp = clinicService.editType(clinic, params[0], params[1]);
+					if(temp == null) {
+						return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+					}
+					else {
+						return new ResponseEntity<>(new CheckUpTypeDTO(temp),HttpStatus.OK);
+					}
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+	}
+		
+	
+	@PostMapping(value = "/searchOneType/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<CheckUpTypeDTO>> getOneTypeController(@PathVariable String name, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+
+		if (user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if (clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if (clinic != null) {
+					Set<CheckUpType> temps = clinic.getCheckUpTypes();
+					for (CheckUpType c : temps) {
+						if (c.getName().equals(name)) {
+							ArrayList<CheckUpTypeDTO>temp = new ArrayList<CheckUpTypeDTO>();
+							temp.add(new CheckUpTypeDTO(c));
+							return new ResponseEntity<>(temp, HttpStatus.OK);
+						}
+					}
+					return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+	}
+
 	@PostMapping(value = "/searchClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Clinic>> searchClinics(@RequestBody String[] params) {
 		List<Clinic> ret = clinicService.searchClinics(params);
@@ -112,6 +167,20 @@ public class ClinicController {
 		ret = clinicService.filterClinics(p, (ArrayList<Clinic>) clinics);
 
 		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
+	
+	/* find all doctors in one clinic by clinic id
+	 * input - string, clinic id
+	 * return value - List<MedicalWorker> , list of all doctors in clinic 
+	 */
+	@PostMapping(value = "/clinicDoctors", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> getDoctorsByClinicId(@RequestBody String[] params) {
+		List<MedicalWorkerDTO> ret = clinicService.doctorsInClinic(params[0], params[1], params[2]);
+		if (ret == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<>(ret, HttpStatus.OK);
+		}
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -135,7 +204,7 @@ public class ClinicController {
 				Clinic clinic = clinicAdministrator.getClinic();
 				if (clinic != null) {
 					List<Room> rooms = roomService.findAllByClinicId(clinic.getId());
-					ArrayList<RoomDTO> dtos = new ArrayList<RoomDTO>();
+					List<RoomDTO> dtos = new ArrayList<RoomDTO>();
 					for (Room r : rooms) {
 						dtos.add(new RoomDTO(r));
 					}

@@ -1,13 +1,16 @@
 package tim31.pswisa.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.dto.ClinicDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RoomDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
@@ -26,6 +29,9 @@ public class ClinicService {
 
 	@Autowired
 	private RoomService roomService;
+
+	@Autowired
+	private CheckUpTypeService checkUpTypeService;
 
 	@Autowired
 	private CheckUpTypeRepository checkupTypeRepository;
@@ -75,6 +81,29 @@ public class ClinicService {
 			return null;
 	}
 
+	// can't edit the name of type if there is just one appointment with that type
+	// in just one clinic of clinical center
+	public CheckUpType editType(Clinic clinic, String before, String after) {
+		CheckUpType retVal = new CheckUpType();
+		List<Clinic> clinics = findAll();
+		retVal = checkUpTypeService.findOneByName(before);
+		for (Clinic klinika : clinics) {
+			if (klinika.getAvailableAppointments() != null) {
+				for (Checkup c : klinika.getAvailableAppointments()) {
+					if (c.getType().equals(before)) {
+						return null; // returns null if can't change name of type
+					}
+				}
+			}
+		}
+		if (checkUpTypeService.update(retVal, after) == null) {
+			return null;
+		} else {
+			retVal = checkUpTypeService.update(retVal, after);
+			return retVal;
+		}
+	}
+
 	public String deleteRoom(String name, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
@@ -111,7 +140,7 @@ public class ClinicService {
 	public List<Clinic> searchClinics(String[] params) {
 		List<Clinic> retClinics = new ArrayList<Clinic>();
 		List<Clinic> result = new ArrayList<Clinic>();
-		int counter = 0; // assuming there is 7 checkups in one day
+		int counter = 0; // assuming there are 7 checkups in one day
 		CheckUpType srchType = checkupTypeRepository.findOneByName(params[0]);
 
 		if (params[0].equals("") || params[1].equals("") || srchType == null)
@@ -159,6 +188,50 @@ public class ClinicService {
 
 		return filtered;
 	}
+	
+	public List<MedicalWorkerDTO> doctorsInClinic(String name, String type, String date) {
+		Clinic cl = clinicRepository.findOneByName(name);
+		List<MedicalWorkerDTO> doctors = new ArrayList<MedicalWorkerDTO>();
+		List<String> temp = new ArrayList<String>();		// list of times of appointments for specific date
+		int counter = 0 ;
+		if (cl != null) {
+			 for (MedicalWorker medicalWorker : cl.getMedicalStuff()) {
+				if (medicalWorker.getType().equals(type)) {					
+							for (Checkup c : medicalWorker.getCheckUps()) {
+								if (c.getDate().toString().equals(date)) {
+									counter++;
+								}
+							}
+							if (counter < 7) {
+								MedicalWorkerDTO mw = new MedicalWorkerDTO(medicalWorker);
+								doctors.add(mw);
+								break;
+							}
+						}
+					}
+			 boolean taken = false;
+			 ArrayList<String> pom = new ArrayList<String>();
+			 for (MedicalWorkerDTO mw : doctors) {
+				 for (int i = mw.getStartHr(); i < mw.getEndHr() ; i++) {
+					 for (Checkup ch : mw.getCheckUps()) {
+						 if (Integer.parseInt(ch.getTime()) ==  i) {
+							 taken = true;
+							 break;
+						 }
+					 }
+					 if (!taken) {
+						 pom.add(Integer.toString(i));						 
+					 }
+				 }
+				 
+				 mw.getAvailableCheckups().put(date,  pom);
+					
+			}
+			return doctors; 
+		}
+		return null;
+			
+	}
 
 	public Clinic update(Clinic clinic) {
 		for (Room r : clinic.getRooms())
@@ -175,3 +248,4 @@ public class ClinicService {
 		return roomService.save(room);
 	}
 }
+
