@@ -23,10 +23,6 @@ public class Recipe {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@JsonBackReference(value = "record_mov")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private MedicalRecord medicalRecord;
-
 	@ManyToMany
 	@JoinTable(name = "workers", joinColumns = @JoinColumn(name = "recipe_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "medical_worker_id", referencedColumnName = "id"))
 	private Set<MedicalWorker> medicalWorkers;
@@ -38,14 +34,18 @@ public class Recipe {
 	 * MedicalWorker doctor;
 	 */
 	@JsonBackReference(value = "recipe_code_mov")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Codebook code;
 
 	@JsonBackReference(value = "report_recipe_mov")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Report report;
 
-	@Column(name = "verified", unique = true, nullable = false)
+	@JsonBackReference(value = "nurse_recipe_mov")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private MedicalWorker nurse;
+
+	@Column(name = "verified", unique = false, nullable = false)
 	private Boolean verified;
 
 	public Recipe() {
@@ -68,14 +68,6 @@ public class Recipe {
 		this.id = id;
 	}
 
-	public MedicalRecord getMedicalRecord() {
-		return medicalRecord;
-	}
-
-	public void setMedicalRecord(MedicalRecord medicalRecord) {
-		this.medicalRecord = medicalRecord;
-	}
-
 	public Set<MedicalWorker> getMedicalWorkers() {
 		return medicalWorkers;
 	}
@@ -90,6 +82,22 @@ public class Recipe {
 
 	public void setVerified(Boolean verified) {
 		this.verified = verified;
+	}
+
+	public Report getReport() {
+		return report;
+	}
+
+	public void setReport(Report report) {
+		this.report = report;
+	}
+
+	public MedicalWorker getNurse() {
+		return nurse;
+	}
+
+	public void setNurse(MedicalWorker nurse) {
+		this.nurse = nurse;
 	}
 
 }

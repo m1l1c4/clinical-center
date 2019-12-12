@@ -1,10 +1,5 @@
 package tim31.pswisa.dto;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import tim31.pswisa.model.Checkup;
-import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.Room;
 
 public class RoomDTO {
@@ -14,8 +9,7 @@ public class RoomDTO {
 	private String type;
 	private boolean isFree;
 	private int number;
-	private Set<Checkup> bookedCheckups = new HashSet<Checkup>();
-	private Clinic clinic;
+	private ClinicDTO clinic;
 
 	public RoomDTO() {
 		super();
@@ -23,18 +17,16 @@ public class RoomDTO {
 	}
 
 	public RoomDTO(Room r) {
-		this(r.getId(), r.getName(), r.getType(), r.isFree(), r.getNumber(), r.getBookedCheckups(), r.getClinic());
+		this(r.getId(), r.getName(), r.getType(), r.isFree(), r.getNumber(), new ClinicDTO(r.getClinic()));
 	}
 
-	public RoomDTO(Long id, String name, String type, boolean isFree, int number, Set<Checkup> bookedCheckups,
-			Clinic clinic) {
+	public RoomDTO(Long id, String name, String type, boolean isFree, int number, ClinicDTO clinic) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.type = type;
 		this.isFree = isFree;
 		this.number = number;
-		this.bookedCheckups = bookedCheckups;
 		this.clinic = clinic;
 	}
 
@@ -78,19 +70,11 @@ public class RoomDTO {
 		this.number = number;
 	}
 
-	public Set<Checkup> getBookedCheckups() {
-		return bookedCheckups;
-	}
-
-	public void setBookedCheckups(Set<Checkup> bookedCheckups) {
-		this.bookedCheckups = bookedCheckups;
-	}
-
-	public Clinic getClinic() {
+	public ClinicDTO getClinic() {
 		return clinic;
 	}
 
-	public void setClinic(Clinic clinic) {
+	public void setClinic(ClinicDTO clinic) {
 		this.clinic = clinic;
 	}
 

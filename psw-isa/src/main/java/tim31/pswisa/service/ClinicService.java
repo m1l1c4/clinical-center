@@ -52,21 +52,6 @@ public class ClinicService {
 		clinic.setCity(c.getCity());
 		clinic.setAddress(c.getAddress());
 		clinic.setDescription(c.getDescription());
-		clinic.setRooms(c.getRooms());
-
-		if (clinic.getRooms().size() == 0) {
-			return null;
-		}
-
-		Clinic cl = findOneByName(clinic.getName());
-		if (cl != null && cl.getId() != clinic.getId()) {
-			return null;
-		}
-
-		for (Room r : clinic.getRooms()) {
-			r.setClinic(clinic);
-			r.setFree(true);
-		}
 		return clinicRepository.save(clinic);
 	}
 
@@ -83,7 +68,6 @@ public class ClinicService {
 		nameOfClinic.setAddress(clinic.getAddress());
 		nameOfClinic.setCity(clinic.getCity());
 		nameOfClinic.setDescription(clinic.getDescription());
-		nameOfClinic.setRooms(clinic.getRooms());
 		nameOfClinic = update(nameOfClinic);
 		if (nameOfClinic != null)
 			return nameOfClinic;
@@ -182,4 +166,12 @@ public class ClinicService {
 		return clinicRepository.save(clinic);
 	}
 
+	public Room addRoom(Clinic clinic, RoomDTO r) {
+		Room room = new Room();
+		room.setClinic(clinic);
+		room.setFree(true);
+		room.setName(r.getName());
+		room.setNumber(r.getNumber());
+		return roomService.save(room);
+	}
 }

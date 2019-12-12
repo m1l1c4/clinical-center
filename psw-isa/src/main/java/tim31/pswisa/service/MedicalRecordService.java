@@ -18,4 +18,9 @@ public class MedicalRecordService {
 		medicalRecord.setPatient(p);
 		return medicalRecordRepository.save(medicalRecord);
 	}
+
+	public MedicalRecord findOneById(Long id) {
+		return medicalRecordRepository.findOneById(id);
+	}
+
 }

@@ -6,4 +6,5 @@ import tim31.pswisa.model.MedicalRecord;
 
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Long> {
 
+	MedicalRecord findOneById(Long id);
 }

@@ -20,13 +20,13 @@ public class CheckUpService {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
-	
+
 	@Autowired
 	CheckUpTypeService checkUpTypeService;
-	
+
 	@Autowired
 	private RoomService roomService;
-	
+
 	@Autowired
 	private CheckUpRepository checkupRepository;
 
@@ -41,7 +41,11 @@ public class CheckUpService {
 	public Checkup save(Checkup c) {
 		return checkupRepository.save(c);
 	}
-	
+
+	public Checkup findOneById(Long id) {
+		return checkupRepository.findOneById(id);
+	}
+
 	public Checkup addAppointment(CheckupDTO c, MedicalWorker mw, ClinicAdministrator clinicAdministrator) {
 		Checkup checkup = new Checkup();
 		checkup.setMedicalWorker(mw);
@@ -53,7 +57,6 @@ public class CheckUpService {
 		checkup.setType(c.getType());
 		checkup.setDuration(1);
 		checkup.setDiscount(0);
-		checkup.setRoom(c.getRoom());
 		Room room = new Room();
 		Set<Room> rooms = new HashSet<Room>();
 		Clinic clinic = new Clinic();
@@ -66,7 +69,7 @@ public class CheckUpService {
 				checkups = room.getBookedCheckups();
 				for (Checkup pom : checkups) { // same room and same time of appointment
 					if (c.getDate().equals(pom.getDate()) && c.getTime().equals(pom.getTime())) {
-						return null; 
+						return null;
 					}
 				}
 			}
@@ -87,7 +90,8 @@ public class CheckUpService {
 			mw = medicalWorkerService.update(mw);
 
 			return checkup;
-		}
-		else return null;
+		} else
+			return null;
 	}
+
 }

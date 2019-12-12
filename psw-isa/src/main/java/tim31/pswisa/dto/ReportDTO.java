@@ -1,35 +1,28 @@
 package tim31.pswisa.dto;
 
-import java.util.Set;
-
-import tim31.pswisa.model.MedicalRecord;
-import tim31.pswisa.model.Recipe;
 import tim31.pswisa.model.Report;
 
 public class ReportDTO {
 
 	private Long id;
-	private Set<Recipe> recipes;
-	private MedicalRecord medicalRecord;
 	private String informations;
 	private String diagnose;
-	
+	private CheckupDTO checkUp;
+
+	public ReportDTO(Report r) {
+		this(r.getId(), r.getInformations(), r.getDiagnose(), new CheckupDTO(r.getCheckUp()));
+	}
+
 	public ReportDTO() {
 		super();
 	}
 
-	public ReportDTO(Report report) {
-		this(report.getId(), report.getRecipes(), report.getMedicalRecord(), report.getInformations(),
-				report.getDiagnose());
-	}
-
-	public ReportDTO(Long id, Set<Recipe> recipes, MedicalRecord medicalRecord, String informations, String diagnose) {
+	public ReportDTO(Long id, String informations, String diagnose, CheckupDTO checkup) {
 		super();
 		this.id = id;
-		this.recipes = recipes;
-		this.medicalRecord = medicalRecord;
 		this.informations = informations;
 		this.diagnose = diagnose;
+		this.checkUp = checkup;
 	}
 
 	public Long getId() {
@@ -38,22 +31,6 @@ public class ReportDTO {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Set<Recipe> getRecipes() {
-		return recipes;
-	}
-
-	public void setRecipes(Set<Recipe> recipes) {
-		this.recipes = recipes;
-	}
-
-	public MedicalRecord getMedicalRecord() {
-		return medicalRecord;
-	}
-
-	public void setMedicalRecord(MedicalRecord medicalRecord) {
-		this.medicalRecord = medicalRecord;
 	}
 
 	public String getInformations() {
@@ -70,6 +47,14 @@ public class ReportDTO {
 
 	public void setDiagnose(String diagnose) {
 		this.diagnose = diagnose;
+	}
+
+	public CheckupDTO getCheckUp() {
+		return checkUp;
+	}
+
+	public void setCheckUp(CheckupDTO checkUp) {
+		this.checkUp = checkUp;
 	}
 
 }

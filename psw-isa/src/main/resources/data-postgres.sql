@@ -22,3 +22,8 @@ INSERT INTO room(is_free, room_name, room_number, type, clinic_id)	VALUES (true,
 INSERT INTO room(is_free, room_name, room_number, type, clinic_id)	VALUES (true, 'Soba2', 5, 'nekitip2', 1);
 
 
+
+INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'pacijent@gmail.com', 'Marko', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Markovic', 'PACIJENT', true, true);
+INSERT INTO patient(address, city, jbo, phone_number, state, clinic_id, user_id) VALUES ('Karadjordjeva', 'Beograd', 468, 963, 'Srbija', 1, 5);
+INSERT INTO medical_record(blood_type, diopter, height, weight, patient_id) VALUES ('0-', 0, 175, 70, 1);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);

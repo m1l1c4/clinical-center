@@ -1,7 +1,5 @@
 package tim31.pswisa.model;
 
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,11 +7,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class MedicalRecord {
@@ -25,10 +21,6 @@ public class MedicalRecord {
 	@JsonBackReference(value = "patient_record_movement")
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Patient patient;
-
-	@JsonManagedReference(value = "record_mov")
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Report> reports;
 
 	@Column(name = "bloodType", unique = false, nullable = true)
 	private String bloodType;
@@ -97,12 +89,12 @@ public class MedicalRecord {
 		this.weight = weight;
 	}
 
-	public Set<Report> getReports() {
-		return reports;
+	public Long getId() {
+		return id;
 	}
 
-	public void setReports(Set<Report> reports) {
-		this.reports = reports;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/*

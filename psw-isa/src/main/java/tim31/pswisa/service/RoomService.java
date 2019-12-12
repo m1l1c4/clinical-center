@@ -33,4 +33,8 @@ public class RoomService {
 	public Room update(Room ct) {
 		return roomRepository.save(ct);
 	}
+
+	public Room findOneByClinicAndNumber(Long clinicId, int number) {
+		return roomRepository.findOneByClinicIdAndNumber(clinicId, number);
+	}
 }

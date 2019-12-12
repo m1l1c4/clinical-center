@@ -6,4 +6,5 @@ import tim31.pswisa.model.Report;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
+	Report findOneById(Long id);
 }

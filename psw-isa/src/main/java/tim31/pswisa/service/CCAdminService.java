@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.UserDTO;
 import tim31.pswisa.model.Authority;
 import tim31.pswisa.model.ClinicalCenterAdministrator;
 import tim31.pswisa.model.User;
@@ -23,24 +24,29 @@ public class CCAdminService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private AuthorityService authorityService;
 
-	public ClinicalCenterAdministrator save(User u) {
+	public ClinicalCenterAdministrator save(UserDTO u) {
+		User user = userRepository.findOneByEmail(u.getEmail());
+		if (user != null) {
+			return null;
+		}
 		ClinicalCenterAdministrator admin = new ClinicalCenterAdministrator();
-		admin.setUser(u);
+		user = new User();
+		user = new User();
+		user.setName(u.getName());
+		user.setSurname(u.getSurname());
+		user.setEmail(u.getEmail());
+		user.setType(u.getType());
+		admin.setUser(user);
 		admin.getUser().setPassword(passwordEncoder.encode("admin"));
 		admin.getUser().setFirstLogin(false);
 		admin.getUser().setEnabled(true);
 		admin.getUser().setActivated(true);
 		List<Authority> auth = authorityService.findByname("CCADMIN");
 		admin.getUser().setAuthorities(auth);
-
-		User user = userRepository.findOneByEmail(u.getEmail());
-		if (user != null) {
-			return null;
-		}
 
 		return ccadminRepository.save(admin);
 	}

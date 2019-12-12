@@ -1,11 +1,6 @@
 package tim31.pswisa.dto;
 
-import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
-import tim31.pswisa.model.Clinic;
-import tim31.pswisa.model.MedicalWorker;
-import tim31.pswisa.model.Patient;
-import tim31.pswisa.model.Room;
 
 public class CheckupDTO {
 
@@ -17,25 +12,26 @@ public class CheckupDTO {
 	private String type;
 	private int duration;
 	private double price;
-	private Room room;
-	private Patient patient;
-	private Clinic clinic;
-	private MedicalWorker medicalWorker;
-	private CheckUpType checkUpType;
+	private RoomDTO room;
+	private PatientDTO patient;
+	private ClinicDTO clinic;
+	private MedicalWorkerDTO medicalWorker;
+	private CheckUpTypeDTO checkUpType;
+
+	public CheckupDTO(Checkup c) {
+		this(c.getId(), c.getDiscount(), c.isScheduled(), c.getDate(), c.getTime(), c.getType(), c.getDuration(),
+				c.getDiscount(), new RoomDTO(c.getRoom()), new PatientDTO(c.getPatient()), new ClinicDTO(c.getClinic()),
+				new MedicalWorkerDTO(c.getMedicalWorker()), new CheckUpTypeDTO(c.getCheckUpType()));
+	}
 
 	public CheckupDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public CheckupDTO(Checkup c) {
-		this(c.getId(), c.getDiscount(), c.isScheduled(), c.getDate(), c.getTime(), c.getType(), c.getDuration(),
-				c.getPrice(), c.getRoom(), c.getPatient(), c.getClinic(), c.getMedicalWorker(), c.getCheckUpType());
-	}
-
 	public CheckupDTO(Long id, double discount, boolean scheduled, String date, String time, String type, int duration,
-			double price, Room room, Patient patient, Clinic clinic, MedicalWorker medicalWorker,
-			CheckUpType checkUpType) {
+			double price, RoomDTO room, PatientDTO patient, ClinicDTO clinic, MedicalWorkerDTO medicalWorker,
+			CheckUpTypeDTO checkUpType) {
 		super();
 		this.id = id;
 		this.discount = discount;
@@ -116,43 +112,43 @@ public class CheckupDTO {
 		this.price = price;
 	}
 
-	public Room getRoom() {
+	public RoomDTO getRoom() {
 		return room;
 	}
 
-	public void setRoom(Room room) {
+	public void setRoom(RoomDTO room) {
 		this.room = room;
 	}
 
-	public Patient getPatient() {
+	public PatientDTO getPatient() {
 		return patient;
 	}
 
-	public void setPatient(Patient patient) {
+	public void setPatient(PatientDTO patient) {
 		this.patient = patient;
 	}
 
-	public Clinic getClinic() {
+	public ClinicDTO getClinic() {
 		return clinic;
 	}
 
-	public void setClinic(Clinic clinic) {
+	public void setClinic(ClinicDTO clinic) {
 		this.clinic = clinic;
 	}
 
-	public MedicalWorker getMedicalWorker() {
+	public MedicalWorkerDTO getMedicalWorker() {
 		return medicalWorker;
 	}
 
-	public void setMedicalWorker(MedicalWorker medicalWorker) {
+	public void setMedicalWorker(MedicalWorkerDTO medicalWorker) {
 		this.medicalWorker = medicalWorker;
 	}
 
-	public CheckUpType getCheckUpType() {
+	public CheckUpTypeDTO getCheckUpType() {
 		return checkUpType;
 	}
 
-	public void setCheckUpType(CheckUpType checkUpType) {
+	public void setCheckUpType(CheckUpTypeDTO checkUpType) {
 		this.checkUpType = checkUpType;
 	}
 
