@@ -122,17 +122,17 @@ public class ClinicService {
 		Room room1 = new Room();
 		room1.setName(room.getName());
 		room1.setNumber(room.getNumber());
+		room1.setTypeRoom(room.getTypeRoom());
 		Clinic klinika = new Clinic();
 		klinika = findOneById(clinicAdministrator.getClinic().getId());
 		List<Room> allRooms = roomService.findAllByClinicId(klinika.getId());
 		for (Room r : allRooms) {
-			if (r.getName().equals(room.getName()) || r.getNumber() == room.getNumber()) {
+			if (r.getNumber() == room.getNumber()) {
 				return null;
 			}
 		}
 		room1.setClinic(klinika);
 		room1.setFree(true);
-		room1.setType("PREGLED");
 		klinika.getRooms().add(room1);
 		room1 = roomService.save(room1);
 		return room1;
