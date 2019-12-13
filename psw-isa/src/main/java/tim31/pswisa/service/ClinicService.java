@@ -1,14 +1,12 @@
 package tim31.pswisa.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RoomDTO;
@@ -36,6 +34,9 @@ public class ClinicService {
 	@Autowired
 	private CheckUpTypeRepository checkupTypeRepository;
 
+	@Autowired
+	private MedicalWorkerService medicalWorkerService;
+	
 	public Room findRoomById(Long id) {
 		return clinicRepository.findRoomById(id);
 	}
@@ -212,8 +213,9 @@ public class ClinicService {
 			 boolean taken = false;
 			 ArrayList<String> pom = new ArrayList<String>();
 			 for (MedicalWorkerDTO mw : doctors) {
-				 for (int i = mw.getStartHr(); i < mw.getEndHr() ; i++) {
-					 for (Checkup ch : mw.getCheckUps()) {
+				 MedicalWorker medicalWorker = medicalWorkerService.findOneById(mw.getId());
+				 for (int i = medicalWorker.getStartHr(); i < medicalWorker.getEndHr() ; i++) {
+					 for (Checkup ch : medicalWorker.getCheckUps()) {
 						 if (Integer.parseInt(ch.getTime()) ==  i) {
 							 taken = true;
 							 break;

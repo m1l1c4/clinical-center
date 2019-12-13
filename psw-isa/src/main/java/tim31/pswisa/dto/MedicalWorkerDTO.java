@@ -1,5 +1,8 @@
 package tim31.pswisa.dto;
 
+import java.util.HashMap;
+import java.util.List;
+
 import tim31.pswisa.model.MedicalWorker;
 
 public class MedicalWorkerDTO {
@@ -11,10 +14,12 @@ public class MedicalWorkerDTO {
 	private int startHr;
 	private int endHr;
 	private String type;
+	private ClinicDTO clinic;
+	private HashMap<String, List<String>> availableCheckups = new HashMap<String, List<String>>();
 
 	public MedicalWorkerDTO(MedicalWorker mw) {
 		this(mw.getId(), new UserDTO(mw.getUser()), mw.getPhone(), mw.getRating(), mw.getStartHr(), mw.getEndHr(),
-				mw.getType());
+				mw.getType(), new ClinicDTO(mw.getClinic()));
 	}
 
 	public MedicalWorkerDTO() {
@@ -22,7 +27,8 @@ public class MedicalWorkerDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MedicalWorkerDTO(Long id, UserDTO user, String phone, int rating, int startHr, int endHr, String type) {
+	public MedicalWorkerDTO(Long id, UserDTO user, String phone, int rating, int startHr, int endHr, String type,
+			ClinicDTO clinic) {
 		super();
 		this.id = id;
 		this.user = user;
@@ -31,6 +37,7 @@ public class MedicalWorkerDTO {
 		this.startHr = startHr;
 		this.endHr = endHr;
 		this.type = type;
+		this.clinic = clinic;
 	}
 
 	public Long getId() {
@@ -87,6 +94,22 @@ public class MedicalWorkerDTO {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public HashMap<String, List<String>> getAvailableCheckups() {
+		return availableCheckups;
+	}
+
+	public void setAvailableCheckups(HashMap<String, List<String>> availableCheckups) {
+		this.availableCheckups = availableCheckups;
+	}
+
+	public ClinicDTO getClinic() {
+		return clinic;
+	}
+
+	public void setClinic(ClinicDTO clinic) {
+		this.clinic = clinic;
 	}
 
 }
