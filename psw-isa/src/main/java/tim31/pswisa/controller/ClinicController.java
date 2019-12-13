@@ -98,14 +98,10 @@ public class ClinicController {
 
 			return new ResponseEntity<>(retDto, HttpStatus.OK);
 		}
-
 	}
 
-	// 'http://localhost:8099/clinic/changeNameOfType/'+ before + '/' + now,
-
 	@PostMapping(value = "/changeNameOfType", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CheckUpTypeDTO> changeTypeNameController(@RequestBody String[] params,
-			HttpServletRequest request) {
+	public ResponseEntity<CheckUpTypeDTO> changeTypeNameController(@RequestBody String[] params, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
