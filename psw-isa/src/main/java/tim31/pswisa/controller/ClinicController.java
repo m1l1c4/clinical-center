@@ -81,7 +81,7 @@ public class ClinicController {
 		} else
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
-	
+
 	@GetMapping(value = "/getClinics", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ClinicDTO>> getAllClinics() {
 		List<Clinic> clinics = clinicService.findAll();
@@ -101,36 +101,36 @@ public class ClinicController {
 
 	}
 
-	//'http://localhost:8099/clinic/changeNameOfType/'+ before + '/' + now,
-	
-	@PostMapping(value="/changeNameOfType", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CheckUpTypeDTO>changeTypeNameController(@RequestBody String[] params, HttpServletRequest request){
+	// 'http://localhost:8099/clinic/changeNameOfType/'+ before + '/' + now,
+
+	@PostMapping(value = "/changeNameOfType", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<CheckUpTypeDTO> changeTypeNameController(@RequestBody String[] params,
+			HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		
-		if(user != null) {
-			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());	
-			if(clinicAdministrator != null) {
+
+		if (user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if (clinicAdministrator != null) {
 				Clinic clinic = clinicAdministrator.getClinic();
-				if(clinic != null) {
+				if (clinic != null) {
 					CheckUpType temp = new CheckUpType();
-					temp = clinicService.editType(clinic, params[0], params[1]);
-					if(temp == null) {
+					temp = clinicService.editType(clinic, params[0], params[1], params[2]);
+					if (temp == null) {
 						return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
-					}
-					else {
-						return new ResponseEntity<>(new CheckUpTypeDTO(temp),HttpStatus.OK);
+					} else {
+						return new ResponseEntity<>(new CheckUpTypeDTO(temp), HttpStatus.OK);
 					}
 				}
 			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
-		
-	
+
 	@PostMapping(value = "/searchOneType/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<CheckUpTypeDTO>> getOneTypeController(@PathVariable String name, HttpServletRequest request) {
+	public ResponseEntity<ArrayList<CheckUpTypeDTO>> getOneTypeController(@PathVariable String name,
+			HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
@@ -143,7 +143,7 @@ public class ClinicController {
 					Set<CheckUpType> temps = clinic.getCheckUpTypes();
 					for (CheckUpType c : temps) {
 						if (c.getName().equals(name)) {
-							ArrayList<CheckUpTypeDTO>temp = new ArrayList<CheckUpTypeDTO>();
+							ArrayList<CheckUpTypeDTO> temp = new ArrayList<CheckUpTypeDTO>();
 							temp.add(new CheckUpTypeDTO(c));
 							return new ResponseEntity<>(temp, HttpStatus.OK);
 						}
@@ -168,10 +168,10 @@ public class ClinicController {
 
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
-	
-	/* find all doctors in one clinic by clinic id
-	 * input - string, clinic id
-	 * return value - List<MedicalWorker> , list of all doctors in clinic 
+
+	/*
+	 * find all doctors in one clinic by clinic id input - string, clinic id return
+	 * value - List<MedicalWorker> , list of all doctors in clinic
 	 */
 	@PostMapping(value = "/clinicDoctors", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalWorkerDTO>> getDoctorsByClinicId(@RequestBody String[] params) {

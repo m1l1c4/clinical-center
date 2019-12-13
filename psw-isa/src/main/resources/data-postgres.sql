@@ -6,8 +6,8 @@ INSERT INTO medical_worker(end_hr, phone, rating, start_hr, type_of_doctor, clin
 
 INSERT INTO clinic( address, city, clinic_name, rating, description) VALUES ('Nikole Tesle', 'Novi Sad', 'Institut', 5, 'Opis klinike');
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'doktor@gmail.com', 'Milica', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Skipina', 'DOKTOR', true, false);
-INSERT INTO check_up_type(type_name) VALUES ('KARDIOLOSKI');
-INSERT INTO check_up_type(type_name) VALUES ('DERMATOLOSKI');
+INSERT INTO check_up_type(type_name, type_price) VALUES ('KARDIOLOSKI', 50);
+INSERT INTO check_up_type(type_name, type_price) VALUES ('DERMATOLOSKI', 30);
 
 INSERT INTO clinic_and_type(check_up_type_id, clinic_id) VALUES (1, 1);
 INSERT INTO clinic_and_type(check_up_type_id, clinic_id) VALUES (2, 2);

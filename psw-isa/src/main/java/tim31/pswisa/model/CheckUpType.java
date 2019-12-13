@@ -26,6 +26,9 @@ public class CheckUpType {
 	@Column(name = "typeName", unique = true, nullable = false)
 	private String name;
 
+	@Column(name = "typePrice", unique = false, nullable = false)
+	private int typePrice;
+
 	// @JsonManagedReference(value="type_mov")
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "CLINIC_AND_TYPE", joinColumns = {
@@ -41,12 +44,13 @@ public class CheckUpType {
 		// TODO Auto-generated constructor stub
 	}
 
-	public CheckUpType(Long id, String name, Set<Checkup> checkups, Set<Clinic> clinics) {
+	public CheckUpType(Long id, String name, Set<Checkup> checkups, Set<Clinic> clinics, int t) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.checkups = checkups;
 		this.clinics = clinics;
+		this.typePrice = t;
 	}
 
 	public Long getId() {
@@ -59,6 +63,14 @@ public class CheckUpType {
 
 	public String getName() {
 		return name;
+	}
+
+	public int getTypePrice() {
+		return typePrice;
+	}
+
+	public void setTypePrice(int typePrice) {
+		this.typePrice = typePrice;
 	}
 
 	public void setName(String name) {

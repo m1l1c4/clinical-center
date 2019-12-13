@@ -36,7 +36,7 @@ public class ClinicService {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
-	
+
 	public Room findRoomById(Long id) {
 		return clinicRepository.findRoomById(id);
 	}
@@ -84,7 +84,7 @@ public class ClinicService {
 
 	// can't edit the name of type if there is just one appointment with that type
 	// in just one clinic of clinical center
-	public CheckUpType editType(Clinic clinic, String before, String after) {
+	public CheckUpType editType(Clinic clinic, String before, String after, String price) {
 		CheckUpType retVal = new CheckUpType();
 		List<Clinic> clinics = findAll();
 		retVal = checkUpTypeService.findOneByName(before);
@@ -97,10 +97,10 @@ public class ClinicService {
 				}
 			}
 		}
-		if (checkUpTypeService.update(retVal, after) == null) {
+		if (checkUpTypeService.update(retVal, after, price) == null) {
 			return null;
 		} else {
-			retVal = checkUpTypeService.update(retVal, after);
+			retVal = checkUpTypeService.update(retVal, after, price);
 			return retVal;
 		}
 	}
@@ -189,50 +189,50 @@ public class ClinicService {
 
 		return filtered;
 	}
-	
+
 	public List<MedicalWorkerDTO> doctorsInClinic(String name, String type, String date) {
 		Clinic cl = clinicRepository.findOneByName(name);
 		List<MedicalWorkerDTO> doctors = new ArrayList<MedicalWorkerDTO>();
-		List<String> temp = new ArrayList<String>();		// list of times of appointments for specific date
-		int counter = 0 ;
+		List<String> temp = new ArrayList<String>(); // list of times of appointments for specific date
+		int counter = 0;
 		if (cl != null) {
-			 for (MedicalWorker medicalWorker : cl.getMedicalStuff()) {
-				if (medicalWorker.getType().equals(type)) {					
-							for (Checkup c : medicalWorker.getCheckUps()) {
-								if (c.getDate().toString().equals(date)) {
-									counter++;
-								}
-							}
-							if (counter < 7) {
-								MedicalWorkerDTO mw = new MedicalWorkerDTO(medicalWorker);
-								doctors.add(mw);
-								break;
-							}
+			for (MedicalWorker medicalWorker : cl.getMedicalStuff()) {
+				if (medicalWorker.getType().equals(type)) {
+					for (Checkup c : medicalWorker.getCheckUps()) {
+						if (c.getDate().toString().equals(date)) {
+							counter++;
 						}
 					}
-			 boolean taken = false;
-			 ArrayList<String> pom = new ArrayList<String>();
-			 for (MedicalWorkerDTO mw : doctors) {
-				 MedicalWorker medicalWorker = medicalWorkerService.findOneById(mw.getId());
-				 for (int i = medicalWorker.getStartHr(); i < medicalWorker.getEndHr() ; i++) {
-					 for (Checkup ch : medicalWorker.getCheckUps()) {
-						 if (Integer.parseInt(ch.getTime()) ==  i) {
-							 taken = true;
-							 break;
-						 }
-					 }
-					 if (!taken) {
-						 pom.add(Integer.toString(i));						 
-					 }
-				 }
-				 
-				 mw.getAvailableCheckups().put(date,  pom);
-					
+					if (counter < 7) {
+						MedicalWorkerDTO mw = new MedicalWorkerDTO(medicalWorker);
+						doctors.add(mw);
+						break;
+					}
+				}
 			}
-			return doctors; 
+			boolean taken = false;
+			ArrayList<String> pom = new ArrayList<String>();
+			for (MedicalWorkerDTO mw : doctors) {
+				MedicalWorker medicalWorker = medicalWorkerService.findOneById(mw.getId());
+				for (int i = medicalWorker.getStartHr(); i < medicalWorker.getEndHr(); i++) {
+					for (Checkup ch : medicalWorker.getCheckUps()) {
+						if (Integer.parseInt(ch.getTime()) == i) {
+							taken = true;
+							break;
+						}
+					}
+					if (!taken) {
+						pom.add(Integer.toString(i));
+					}
+				}
+
+				mw.getAvailableCheckups().put(date, pom);
+
+			}
+			return doctors;
 		}
 		return null;
-			
+
 	}
 
 	public Clinic update(Clinic clinic) {
@@ -250,4 +250,3 @@ public class ClinicService {
 		return roomService.save(room);
 	}
 }
-

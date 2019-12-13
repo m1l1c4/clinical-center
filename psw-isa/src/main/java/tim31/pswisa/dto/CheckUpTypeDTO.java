@@ -6,15 +6,17 @@ public class CheckUpTypeDTO {
 
 	private Long id;
 	private String name;
+	private int typePrice;
 
 	public CheckUpTypeDTO(CheckUpType c) {
-		this(c.getId(), c.getName());
+		this(c.getId(), c.getName(), c.getTypePrice());
 	}
 
-	public CheckUpTypeDTO(Long id, String name) {
+	public CheckUpTypeDTO(Long id, String name, int price) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.typePrice = price;
 	}
 
 	public CheckUpTypeDTO() {
@@ -28,6 +30,14 @@ public class CheckUpTypeDTO {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public int getTypePrice() {
+		return typePrice;
+	}
+
+	public void setTypePrice(int typePrice) {
+		this.typePrice = typePrice;
 	}
 
 	public String getName() {

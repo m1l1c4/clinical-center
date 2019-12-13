@@ -64,7 +64,7 @@ public class CheckUpTypeService {
 	}
 
 	// can't save name if there is one type with the same name
-	public CheckUpType update(CheckUpType c, String after) {
+	public CheckUpType update(CheckUpType c, String after, String price) {
 		List<CheckUpType> allTypes = findAll();
 		for (CheckUpType cek : allTypes) {
 			if (cek.getName().equals(after)) {
@@ -72,12 +72,15 @@ public class CheckUpTypeService {
 			}
 		}
 		c.setName(after);
+		int pri = Integer.parseInt(price);
+		c.setTypePrice(pri);
 		return checkUpTypeRepository.save(c);
 	}
 
 	public CheckUpType addType(CheckUpTypeDTO type, ClinicAdministrator clinicAdministrator) {
 		CheckUpType tip = new CheckUpType();
 		tip.setName(type.getName());
+		tip.setTypePrice(type.getTypePrice());
 		List<CheckUpType> allTypes = findAll();
 		Clinic klinika = new Clinic();
 		klinika = clinicService.findOneById(clinicAdministrator.getClinic().getId());
