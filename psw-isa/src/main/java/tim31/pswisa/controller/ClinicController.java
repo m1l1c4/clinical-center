@@ -101,7 +101,8 @@ public class ClinicController {
 	}
 
 	@PostMapping(value = "/changeNameOfType", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CheckUpTypeDTO> changeTypeNameController(@RequestBody String[] params, HttpServletRequest request) {
+	public ResponseEntity<CheckUpTypeDTO> changeTypeNameController(@RequestBody String[] params,
+			HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
@@ -150,7 +151,52 @@ public class ClinicController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
+	
+	
+	@PostMapping(value = "/searchRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<RoomDTO>> searchRoomsController(@RequestBody String[] params, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		if(user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if(clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if(clinic != null) {
+					System.out.println(params[0]);
+					System.out.println(params[1]);
+					List<RoomDTO> ret = clinicService.searchRooms(clinic,params);
+					return new ResponseEntity<>(ret,HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+				}
+			}
+		}
+		return new ResponseEntity<>( HttpStatus.BAD_GATEWAY);
+	}
 
+	@PostMapping(value = "/filterRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RoomDTO> filterRoomsController(@RequestBody int number, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		if(user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if(clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if(clinic != null) {
+					RoomDTO ret = clinicService.filterRooms(clinic,number);
+					return new ResponseEntity<>(ret,HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+				}
+			}
+		}
+		return new ResponseEntity<>( HttpStatus.BAD_GATEWAY);
+	}
+	
 	@PostMapping(value = "/searchClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Clinic>> searchClinics(@RequestBody String[] params) {
 		List<Clinic> ret = clinicService.searchClinics(params);
@@ -298,21 +344,23 @@ public class ClinicController {
 	}
 
 	// This method deletes room by name in clinic, used by administrator of clinic
-	@PostMapping(value = "/deleteRoom/{name}")
-	public ResponseEntity<String> deleteRoomController(@PathVariable String name, HttpServletRequest request) {
+	@PostMapping(value = "/deleteRoom/{number}")
+	public ResponseEntity<String> deleteTypeController(@PathVariable int number, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			if (clinicAdministrator != null) {
-				String retVal = clinicService.deleteRoom(name, clinicAdministrator);
-				if (retVal.equals("Obrisano")) {
+				String returnVal = clinicService.deleteRoomN(number, clinicAdministrator);
+				if (returnVal.equals("Obrisano")) {
 					return new ResponseEntity<>("Obrisano", HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
 				}
 			}
 		}
-		return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
+		return new ResponseEntity<>("Greska", HttpStatus.BAD_REQUEST);
 	}
 
 	// This method adds new room in clinic, already save some data such as type and

@@ -1,10 +1,13 @@
 package tim31.pswisa.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.RoomDTO;
+import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.repository.RoomRepository;
 
@@ -37,4 +40,6 @@ public class RoomService {
 	public Room findOneByClinicAndNumber(Long clinicId, int number) {
 		return roomRepository.findOneByClinicIdAndNumber(clinicId, number);
 	}
+	
+
 }

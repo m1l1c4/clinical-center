@@ -34,13 +34,13 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private AuthorityService authorityService;
-	
+
 	@Autowired
 	private ClinicService clinicService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private ClinicRepository clinicRepository;
 
@@ -59,18 +59,18 @@ public class MedicalWorkerService {
 	public MedicalWorker findByUser(Long id) {
 		return medicalWorkerRepository.findOneByUserId(id);
 	}
-	
-	public List<MedicalWorkerDTO>getDoctors(Clinic clinic){
+
+	public List<MedicalWorkerDTO> getDoctors(Clinic clinic) {
 		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
-		for(MedicalWorker med : temp) {
-				returnVal.add(new MedicalWorkerDTO(med));
+		for (MedicalWorker med : temp) {
+			returnVal.add(new MedicalWorkerDTO(med));
 		}
 		return returnVal;
 	}
-	
-	
+
+
 	public String deleteDoctor(String email, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
 		User user = userService.findOneByEmail(email);
@@ -78,25 +78,25 @@ public class MedicalWorkerService {
 		System.out.println(user.getName());
 		System.out.println(user.getId());
 		MedicalWorker med = findByUser(user.getId());
-		//if(med.getCheckUps().size() != 0) {
-			clinic.getMedicalStuff().remove(med);
-			clinicRepository.save(clinic);
-			med.setClinic(null);
-			medicalWorkerRepository.save(med);
+		// if(med.getCheckUps().size() != 0) {
+		clinic.getMedicalStuff().remove(med);
+		clinicRepository.save(clinic);
+		med.setClinic(null);
+		medicalWorkerRepository.save(med);
 		return "Obrisano";
-		//}
-		//else {
-			//return "Greska";
-		//}
+		// }
+		// else {
+		// return "Greska";
+		// }
 
 	}
-	
-	public List<MedicalWorkerDTO>findDoctors(Clinic clinic, String name, String typeD){
+
+	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {
 		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
-		
-		for(MedicalWorker med : temp) {
-			if(med.getUser().getName().equals(name)) {
+
+		for (MedicalWorker med : temp) {
+			if (med.getUser().getName().equals(name)) {
 				returnVal.add(new MedicalWorkerDTO(med));
 			}
 		}
@@ -139,34 +139,37 @@ public class MedicalWorkerService {
 	public MedicalWorker findOneById(Long id) {
 		return medicalWorkerRepository.findOneById(id);
 	}
-	
+
 	public List<MedicalWorkerDTO> searchDoctors(String[] params) {
 		List<MedicalWorkerDTO> forSearch = clinicService.doctorsInClinic(params[0], params[1], params[2]);
-		String name = params[3].equals("") ? "" : params[3] ;
-		String surname = params[4].equals("") ? "" : params[4] ;
-		int rating = 0;		
-		List<MedicalWorkerDTO> ret = new ArrayList<MedicalWorkerDTO>() ;
-		
+		String name = params[3].equals("") ? "" : params[3];
+		String surname = params[4].equals("") ? "" : params[4];
+		int rating = 0;
+		List<MedicalWorkerDTO> ret = new ArrayList<MedicalWorkerDTO>();
+
 		if (!params[5].equals("")) {
-			rating = Integer.parseInt(params[5]) ;
+			rating = Integer.parseInt(params[5]);
 		}
-		
+
 		for (MedicalWorkerDTO mw : forSearch) {
 			if (checkParams(mw, name, surname, rating)) {
 				ret.add(mw);
 			}
 		}
-		
-		return ret;		
-		
+
+		return ret;
+
 	}
-	
+
 	public boolean checkParams(MedicalWorkerDTO mw, String name, String surname, int rating) {
-				
-		if(!name.equals("") && !mw.getUser().getName().equals(name)) return false;
-		if(!surname.equals("") && !mw.getUser().getSurname().equals(surname)) return false;
-		if(rating != 0 && mw.getRating()!= rating) return false;
-		
+
+		if (!name.equals("") && !mw.getUser().getName().equals(name))
+			return false;
+		if (!surname.equals("") && !mw.getUser().getSurname().equals(surname))
+			return false;
+		if (rating != 0 && mw.getRating() != rating)
+			return false;
+
 		return true;
 	}
 }
