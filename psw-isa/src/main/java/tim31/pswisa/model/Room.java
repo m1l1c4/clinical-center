@@ -23,7 +23,7 @@ public class Room {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "roomName", unique = true, nullable = false)
+	@Column(name = "roomName", unique = false, nullable = false)
 	private String name;
 
 	@Column(name = "type", unique = false, nullable = true)

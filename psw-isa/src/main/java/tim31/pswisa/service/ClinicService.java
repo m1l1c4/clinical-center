@@ -18,6 +18,7 @@ import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.repository.CheckUpTypeRepository;
 import tim31.pswisa.repository.ClinicRepository;
+import tim31.pswisa.repository.RoomRepository;
 
 @Service
 public class ClinicService {
@@ -33,6 +34,9 @@ public class ClinicService {
 
 	@Autowired
 	private CheckUpTypeRepository checkupTypeRepository;
+
+	@Autowired
+	private RoomRepository roomRepository;
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
@@ -112,6 +116,21 @@ public class ClinicService {
 			if (r.getName().equals(name)) {
 				clinic.getRooms().remove(r);
 				clinic = save(new ClinicDTO(clinic)); // delete room from clinic
+				return "Obrisano";
+			}
+		}
+		return "";
+	}
+
+	public String deleteRoom(int number, ClinicAdministrator clinicAdministrator) {
+		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
+		Set<Room> sobe = clinic.getRooms();
+		for (Room r : sobe) {
+			if (r.getNumber() == number && r.isFree() == true) {
+				clinic.getRooms().remove(r);
+				clinic = update(clinic);
+				r.setClinic(null);
+				roomRepository.save(r);
 				return "Obrisano";
 			}
 		}

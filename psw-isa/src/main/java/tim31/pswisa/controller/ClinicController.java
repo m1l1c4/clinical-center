@@ -101,7 +101,8 @@ public class ClinicController {
 	}
 
 	@PostMapping(value = "/changeNameOfType", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CheckUpTypeDTO> changeTypeNameController(@RequestBody String[] params, HttpServletRequest request) {
+	public ResponseEntity<CheckUpTypeDTO> changeTypeNameController(@RequestBody String[] params,
+			HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
@@ -298,21 +299,23 @@ public class ClinicController {
 	}
 
 	// This method deletes room by name in clinic, used by administrator of clinic
-	@PostMapping(value = "/deleteRoom/{name}")
-	public ResponseEntity<String> deleteRoomController(@PathVariable String name, HttpServletRequest request) {
+	@PostMapping(value = "/deleteRoom/{number}")
+	public ResponseEntity<String> deleteTypeController(@PathVariable int number, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			if (clinicAdministrator != null) {
-				String retVal = clinicService.deleteRoom(name, clinicAdministrator);
-				if (retVal.equals("Obrisano")) {
+				String returnVal = clinicService.deleteRoom(number, clinicAdministrator);
+				if (returnVal.equals("Obrisano")) {
 					return new ResponseEntity<>("Obrisano", HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
 				}
 			}
 		}
-		return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
+		return new ResponseEntity<>("Greska", HttpStatus.BAD_REQUEST);
 	}
 
 	// This method adds new room in clinic, already save some data such as type and
