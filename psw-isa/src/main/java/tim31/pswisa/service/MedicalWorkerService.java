@@ -70,6 +70,7 @@ public class MedicalWorkerService {
 		return returnVal;
 	}
 
+
 	public String deleteDoctor(String email, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
 		User user = userService.findOneByEmail(email);
