@@ -34,6 +34,9 @@ public class Room {
 
 	@Column(name = "roomNumber", unique = false, nullable = false)
 	private int number;
+	
+	@Column(name="firstFreeDate")
+	private String firstFreeDate;
 
 	@JsonManagedReference(value = "soba_mov")
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -48,7 +51,7 @@ public class Room {
 		bookedCheckups = new HashSet<Checkup>();
 	}
 
-	public Room(Long id, String name, String type, boolean isFree, int number, Clinic clinic) {
+	public Room(Long id, String name, String type, boolean isFree, int number, Clinic clinic, String first) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -56,6 +59,7 @@ public class Room {
 		this.isFree = isFree;
 		this.number = number;
 		this.clinic = clinic;
+		this.firstFreeDate = first;
 	}
 
 	public String getName() {
@@ -113,5 +117,15 @@ public class Room {
 	public void setClinic(Clinic clinic) {
 		this.clinic = clinic;
 	}
+
+	public String getFirstFreeDate() {
+		return firstFreeDate;
+	}
+
+	public void setFirstFreeDate(String firstFreeDate) {
+		this.firstFreeDate = firstFreeDate;
+	}
+	
+	
 
 }
