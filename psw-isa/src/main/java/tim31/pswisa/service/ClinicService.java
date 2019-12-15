@@ -36,6 +36,9 @@ public class ClinicService {
 	private CheckUpTypeRepository checkupTypeRepository;
 
 	@Autowired
+	private RoomRepository roomRepository;
+
+	@Autowired
 	private MedicalWorkerService medicalWorkerService;
 	
 	@Autowired
@@ -109,6 +112,47 @@ public class ClinicService {
 		}
 	}
 
+	public RoomDTO filterRooms(Clinic clinic, int number) {
+		Set<Room>temp = clinic.getRooms();
+		RoomDTO ret = new RoomDTO();
+		for(Room r : temp) {
+			if(r.getNumber() == number) {
+				ret = new RoomDTO(r);
+				return ret;
+			}
+		}
+		return null;
+	}
+	
+	public List<RoomDTO>searchRooms(Clinic clinic, String [] params){
+		String name = params[0];
+		String type = params[1];
+		List<RoomDTO>ret = new ArrayList<RoomDTO>();
+		System.out.println(params[0]);
+		System.out.println(params[1]);
+		Set<Room>temp = clinic.getRooms();
+		if(name.equals("undefined") || name.equals("")) {
+			for(Room r:temp) {
+				if(r.getTypeRoom().equals(type)) {
+					System.out.println("udje li");
+					ret.add(new RoomDTO(r));
+				}
+			}
+		}else {
+			for(Room r : temp) {
+				if(r.getName().equals(name) && r.getTypeRoom().equals(type)) {
+					ret.add(new RoomDTO(r));
+				}
+			}
+		}
+		if(ret.size() == 0) {
+			return null;
+		}
+		else {
+			return ret;
+		}
+	}
+	
 	public String deleteRoom(String name, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
