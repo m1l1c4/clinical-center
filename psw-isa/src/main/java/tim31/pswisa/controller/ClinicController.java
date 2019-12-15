@@ -168,6 +168,7 @@ public class ClinicController {
 				if(clinic != null) {
 					System.out.println(params[0]);
 					System.out.println(params[1]);
+					System.out.println(params[2]);
 					List<RoomDTO> ret = clinicService.searchRooms(clinic,params);
 					return new ResponseEntity<>(ret,HttpStatus.OK);
 				}
@@ -180,7 +181,7 @@ public class ClinicController {
 	}
 
 	@PostMapping(value = "/filterRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<RoomDTO> filterRoomsController(@RequestBody int number, HttpServletRequest request) {
+	public ResponseEntity<List<RoomDTO>> filterRoomsController(@RequestBody int[] number, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
@@ -189,7 +190,7 @@ public class ClinicController {
 			if(clinicAdministrator != null) {
 				Clinic clinic = clinicAdministrator.getClinic();
 				if(clinic != null) {
-					RoomDTO ret = clinicService.filterRooms(clinic,number);
+					List<RoomDTO> ret = clinicService.filterRooms(clinic,number[0]);
 					return new ResponseEntity<>(ret,HttpStatus.OK);
 				}
 				else {
@@ -391,6 +392,31 @@ public class ClinicController {
 			return new ResponseEntity<>(room, HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	
+	@PostMapping(value = "/changeRoom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RoomDTO> changeRoomController(@RequestBody RoomDTO room, HttpServletRequest request) {
+
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+
+		if (user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if (clinicAdministrator != null) {
+				Room room1 = clinicService.changeRoom(room, clinicAdministrator);
+				if (room1 == null) {
+					return new ResponseEntity<>(room, HttpStatus.ALREADY_REPORTED);
+				} else {
+					return new ResponseEntity<>(new RoomDTO(room1), HttpStatus.OK);
+				}
+			} else {
+				return new ResponseEntity<>(room, HttpStatus.NOT_FOUND);
+			}
+		} else {
+			return new ResponseEntity<>(room, HttpStatus.NOT_FOUND);
+		}
+	}
 
 	@PostMapping(value = "/addRooms/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RoomDTO>> addRooms(@RequestBody List<RoomDTO> rooms, @PathVariable Long id) {
@@ -413,47 +439,6 @@ public class ClinicController {
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/searchRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<RoomDTO>> searchRoomsController(@RequestBody String[] params,
-			HttpServletRequest request) {
-		String token = tokenUtils.getToken(request);
-		String email = tokenUtils.getUsernameFromToken(token);
-		User user = userService.findOneByEmail(email);
-		if (user != null) {
-			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-			if (clinicAdministrator != null) {
-				Clinic clinic = clinicAdministrator.getClinic();
-				if (clinic != null) {
-					System.out.println(params[0]);
-					System.out.println(params[1]);
-					List<RoomDTO> ret = clinicService.searchRooms(clinic, params);
-					return new ResponseEntity<>(ret, HttpStatus.OK);
-				} else {
-					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
-				}
-			}
-		}
-		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
-	}
 
-	@PostMapping(value = "/filterRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<RoomDTO> filterRoomsController(@RequestBody int number, HttpServletRequest request) {
-		String token = tokenUtils.getToken(request);
-		String email = tokenUtils.getUsernameFromToken(token);
-		User user = userService.findOneByEmail(email);
-		if (user != null) {
-			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-			if (clinicAdministrator != null) {
-				Clinic clinic = clinicAdministrator.getClinic();
-				if (clinic != null) {
-					RoomDTO ret = clinicService.filterRooms(clinic, number);
-					return new ResponseEntity<>(ret, HttpStatus.OK);
-				} else {
-					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
-				}
-			}
-		}
-		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
-	}
 
 }
