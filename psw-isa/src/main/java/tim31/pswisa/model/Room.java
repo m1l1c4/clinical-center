@@ -32,7 +32,7 @@ public class Room {
 	@Column(name = "isFree", unique = false, nullable = true)
 	private boolean isFree;
 
-	@Column(name = "roomNumber", unique = true, nullable = false)
+	@Column(name = "roomNumber", unique = false, nullable = false)
 	private int number;
 
 	@JsonManagedReference(value = "soba_mov")

@@ -58,6 +58,9 @@ public class ClinicController {
 	@Autowired
 	TokenUtils tokenUtils;
 
+	@Autowired
+	private CheckUpTypeService checkUpTypeService;
+
 	// This method updates clinic by administrator who is using application at the
 	// moment, gets administrator and his clinic
 	@PostMapping(value = "/updateClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -398,6 +401,59 @@ public class ClinicController {
 				return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 		}
 		return new ResponseEntity<>(rooms, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/getClinicsByType/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ClinicDTO>> getClinicByCheckupType(@PathVariable String name) {
+		Set<Clinic> clinics = checkUpTypeService.findClinics(name);
+		List<ClinicDTO> ret = new ArrayList<>();
+		for (Clinic clinic : clinics) {
+			ret.add(new ClinicDTO(clinic));
+		}
+		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/searchRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<RoomDTO>> searchRoomsController(@RequestBody String[] params,
+			HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		if (user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if (clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if (clinic != null) {
+					System.out.println(params[0]);
+					System.out.println(params[1]);
+					List<RoomDTO> ret = clinicService.searchRooms(clinic, params);
+					return new ResponseEntity<>(ret, HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+	}
+
+	@PostMapping(value = "/filterRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RoomDTO> filterRoomsController(@RequestBody int number, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		if (user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if (clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if (clinic != null) {
+					RoomDTO ret = clinicService.filterRooms(clinic, number);
+					return new ResponseEntity<>(ret, HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 
 }

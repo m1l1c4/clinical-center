@@ -11,11 +11,10 @@ public class PatientDTO {
 	private String city;
 	private String state;
 	private String address;
-	private ClinicDTO clinic;
 
 	public PatientDTO(Patient p) {
 		this(p.getId(), new UserDTO(p.getUser()), p.getPhoneNumber(), p.getJbo(), p.getCity(), p.getState(),
-				p.getAddress(), new ClinicDTO(p.getClinic()));
+				p.getAddress());
 	}
 
 	public PatientDTO() {
@@ -23,8 +22,8 @@ public class PatientDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PatientDTO(Long id, UserDTO user, String phoneNumber, String jbo, String city, String state, String address,
-			ClinicDTO clinic) {
+	public PatientDTO(Long id, UserDTO user, String phoneNumber, String jbo, String city, String state,
+			String address) {
 		super();
 		this.id = id;
 		this.user = user;
@@ -33,7 +32,6 @@ public class PatientDTO {
 		this.city = city;
 		this.state = state;
 		this.address = address;
-		this.clinic = clinic;
 	}
 
 	public Long getId() {
@@ -90,14 +88,6 @@ public class PatientDTO {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	public ClinicDTO getClinic() {
-		return clinic;
-	}
-
-	public void setClinic(ClinicDTO clinic) {
-		this.clinic = clinic;
 	}
 
 }

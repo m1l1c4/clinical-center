@@ -46,6 +46,9 @@ public class MedicalWorkerController {
 
 	@Autowired
 	private RecipeService recipeService;
+	
+	@Autowired 
+	private ClinicAdministratorService clinicAdministratorService;
 	// method returns medical worker by email
 
 	// This method returns medical worker for update
@@ -189,5 +192,72 @@ public class MedicalWorkerController {
 			return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+	}
+	
+	@PostMapping(value = "/deleteDoctor")
+	public ResponseEntity<String> deleteDoctorController(@RequestBody UserDTO userDTO, HttpServletRequest request) {
+		System.out.println(request);
+		String token = tokenUtils.getToken(request);
+		System.out.println(token);
+		String email = tokenUtils.getUsernameFromToken(token);
+		System.out.println(email);
+		User user = userService.findOneByEmail(email);
+		if (user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if (clinicAdministrator != null) {
+				String returnVal = medicalWorkerService.deleteDoctor(userDTO.getEmail(), clinicAdministrator);
+				if (returnVal.equals("Obrisano")) {
+					return new ResponseEntity<>("Obrisano", HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
+				}
+			}
+		}
+		return new ResponseEntity<>("Greska", HttpStatus.BAD_REQUEST);
+	}
+	
+	@PostMapping(value = "/findDoctors", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>>findDoctorsController(@RequestBody String[] params, HttpServletRequest request){
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		if(user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if(clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if(clinic != null) {
+					if( medicalWorkerService.findDoctors(clinic, params[0], params[1]) == null) {
+						return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+					}else {
+						return new ResponseEntity<>(medicalWorkerService.findDoctors(clinic, params[0], params[1]), HttpStatus.OK);
+					}
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+	}
+	
+	
+	
+	
+	@GetMapping(value = "/getAllDoctors", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> getAllDoctors(HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		System.out.println(user.getName());
+		System.out.println(email);
+		if (user != null) {
+			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+			if(clinicAdministrator != null) {
+				Clinic clinic = clinicAdministrator.getClinic();
+				if(clinic != null) {
+					if(medicalWorkerService.getDoctors(clinic) != null) {
+						return new ResponseEntity<> (medicalWorkerService.getDoctors(clinic), HttpStatus.OK );
+					}
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 }

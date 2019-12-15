@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.Authority;
-import tim31.pswisa.model.CheckUpType;
+
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
@@ -37,6 +37,12 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private ClinicService clinicService;
+	
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private ClinicRepository clinicRepository;
 
 	@Autowired
 	private UserService userService;
@@ -58,6 +64,48 @@ public class MedicalWorkerService {
 
 	public MedicalWorker findByUser(Long id) {
 		return medicalWorkerRepository.findOneByUserId(id);
+	}
+	
+	public List<MedicalWorkerDTO> getDoctors(Clinic clinic) {
+		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
+
+		for (MedicalWorker med : temp) {
+			returnVal.add(new MedicalWorkerDTO(med));
+		}
+		return returnVal;
+	}
+	
+	public String deleteDoctor(String email, ClinicAdministrator clinicAdministrator) {
+		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+		User user = userService.findOneByEmail(email);
+		System.out.println(email);
+		System.out.println(user.getName());
+		System.out.println(user.getId());
+		MedicalWorker med = findByUser(user.getId());
+		// if(med.getCheckUps().size() != 0) {
+		clinic.getMedicalStuff().remove(med);
+		clinicRepository.save(clinic);
+		med.setClinic(null);
+		medicalWorkerRepository.save(med);
+		return "Obrisano";
+		// }
+		// else {
+		// return "Greska";
+		// }
+
+	}
+	
+	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {
+		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
+
+		for (MedicalWorker med : temp) {
+			if (med.getUser().getName().equals(name)) {
+				returnVal.add(new MedicalWorkerDTO(med));
+			}
+		}
+		return returnVal;
 	}
 
 	public List<MedicalWorkerDTO> getDoctors(Clinic clinic) {
@@ -123,6 +171,8 @@ public class MedicalWorkerService {
 		user.setEmail(mw.getUser().getEmail());
 		user.setType(mw.getUser().getType());
 		medicalWorker.setUser(user);
+		Clinic clinic = clinicService.findOneById(mw.getClinic().getId());
+		medicalWorker.setClinic(clinic);
 		medicalWorker.setPhone(mw.getPhone());
 		medicalWorker.setEndHr(mw.getEndHr());
 		medicalWorker.setStartHr(mw.getStartHr());
@@ -130,7 +180,12 @@ public class MedicalWorkerService {
 		medicalWorker.getUser().setFirstLogin(false);
 		medicalWorker.getUser().setEnabled(true);
 		medicalWorker.getUser().setActivated(true);
-		List<Authority> auth = authorityService.findByname(medicalWorker.getType());
+		if (user.getType().equals("MEDICINAR")) {
+			medicalWorker.setType("");
+		} else {
+			medicalWorker.setType(mw.getType());
+		}
+		List<Authority> auth = authorityService.findByname(medicalWorker.getUser().getType());
 		medicalWorker.getUser().setAuthorities(auth);
 
 		return medicalWorkerRepository.save(medicalWorker);

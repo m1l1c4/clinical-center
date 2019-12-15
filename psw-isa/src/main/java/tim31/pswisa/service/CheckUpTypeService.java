@@ -59,7 +59,6 @@ public class CheckUpTypeService {
 	}
 
 	public CheckUpType saveTwo(CheckUpType ct) {
-		List<CheckUpType> cek = checkUpTypeRepository.findAll();
 		return checkUpTypeRepository.save(ct);
 	}
 
@@ -111,5 +110,10 @@ public class CheckUpTypeService {
 			return temp;
 		} else
 			return null;
+	}
+	
+	public Set<Clinic> findClinics(String name){
+		CheckUpType type = checkUpTypeRepository.findOneByName(name);
+		return type.getClinics();
 	}
 }

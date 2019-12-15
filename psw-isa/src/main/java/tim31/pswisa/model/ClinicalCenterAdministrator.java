@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class ClinicalCenterAdministrator {
 
@@ -15,6 +17,7 @@ public class ClinicalCenterAdministrator {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@JsonManagedReference(value = "ccadmin_movement")
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private User user;
 

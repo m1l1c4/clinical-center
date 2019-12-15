@@ -81,6 +81,7 @@ public class User implements UserDetails {
 	private ClinicAdministrator clinicAdministrator;
 
 	// @JsonBackReference()
+	@JsonBackReference(value = "ccadmin_movement")
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private ClinicalCenterAdministrator ccAdmin;
 
