@@ -1,4 +1,5 @@
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'admin@gmail.com', 'Dragana', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Mihajlovic', 'ADMINISTRATOR', true, false);
+
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'doktor@gmail.com', 'Pero', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Peric', 'DOKTOR', true, false);
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'sestra2@gmail.com', 'Ivana', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Ivanovic', 'MEDICINAR', true, false);
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'doktor2@gmail.com', 'Aleksandar', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Drakul', 'DOKTOR', true, false);
