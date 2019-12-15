@@ -47,10 +47,11 @@ public class Clinic {
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<MedicalWorker> medicalStuff;
 
+	/*
 	// @JsonManagedReference(value="clinic_movement")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Patient> patients;
-
+*/
 	@JsonManagedReference(value = "room_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Room> rooms = new HashSet<Room>();
@@ -120,7 +121,7 @@ public class Clinic {
 	public void setMedicalStuff(Set<MedicalWorker> medicalStuff) {
 		this.medicalStuff = medicalStuff;
 	}
-
+/*
 	public Set<Patient> getPatients() {
 		return patients;
 	}
@@ -128,7 +129,7 @@ public class Clinic {
 	public void setPatients(Set<Patient> patients) {
 		this.patients = patients;
 	}
-
+*/
 	public Set<Room> getRooms() {
 		return rooms;
 	}

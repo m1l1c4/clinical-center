@@ -18,6 +18,7 @@ import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.repository.CheckUpTypeRepository;
 import tim31.pswisa.repository.ClinicRepository;
+import tim31.pswisa.repository.RoomRepository;
 
 @Service
 public class ClinicService {
@@ -36,6 +37,9 @@ public class ClinicService {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
+	
+	@Autowired
+	private RoomRepository roomRepository;
 
 	public Room findRoomById(Long id) {
 		return clinicRepository.findRoomById(id);
@@ -111,7 +115,25 @@ public class ClinicService {
 		for (Room r : sobe) {
 			if (r.getName().equals(name)) {
 				clinic.getRooms().remove(r);
-				clinic = save(new ClinicDTO(clinic)); // delete room from clinic
+				clinic = updateClinic(clinicAdministrator, new ClinicDTO(clinic)); 
+				roomRepository.delete(r);
+				return "Obrisano";
+			}
+		}
+		return "";
+	}
+
+	public String deleteRoomN(int number, ClinicAdministrator clinicAdministrator) {
+		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
+		Set<Room> sobe = clinic.getRooms();
+		for (Room r : sobe) {
+			if ((r.getNumber() == number) && (r.isFree() == true)) {
+				System.out.println(clinic.getRooms().size());
+				clinic.getRooms().remove(r);
+				clinic = update(clinic);
+				System.out.println(clinic.getRooms().size());
+				r.setClinic(null);
+				roomRepository.save(r);
 				return "Obrisano";
 			}
 		}
@@ -127,7 +149,7 @@ public class ClinicService {
 		klinika = findOneById(clinicAdministrator.getClinic().getId());
 		List<Room> allRooms = roomService.findAllByClinicId(klinika.getId());
 		for (Room r : allRooms) {
-			if (r.getNumber() == room.getNumber()) {
+			if ((r.getNumber() == room.getNumber())) {
 				return null;
 			}
 		}
@@ -246,7 +268,49 @@ public class ClinicService {
 		room.setClinic(clinic);
 		room.setFree(true);
 		room.setName(r.getName());
+		room.setTypeRoom(r.getTypeRoom());
 		room.setNumber(r.getNumber());
 		return roomService.save(room);
+	}
+	
+	public RoomDTO filterRooms(Clinic clinic, int number) {
+		Set<Room>temp = clinic.getRooms();
+		RoomDTO ret = new RoomDTO();
+		for(Room r : temp) {
+			if(r.getNumber() == number) {
+				ret = new RoomDTO(r);
+				return ret;
+			}
+		}
+		return null;
+	}
+
+	public List<RoomDTO>searchRooms(Clinic clinic, String [] params){
+		String name = params[0];
+		String type = params[1];
+		List<RoomDTO>ret = new ArrayList<RoomDTO>();
+		System.out.println(params[0]);
+		System.out.println(params[1]);
+		Set<Room>temp = clinic.getRooms();
+		if(name.equals("undefined") || name.equals("")) {
+			for(Room r:temp) {
+				if(r.getTypeRoom().equals(type)) {
+					System.out.println("udje li");
+					ret.add(new RoomDTO(r));
+				}
+			}
+		}else {
+			for(Room r : temp) {
+				if(r.getName().equals(name) && r.getTypeRoom().equals(type)) {
+					ret.add(new RoomDTO(r));
+				}
+			}
+		}
+		if(ret.size() == 0) {
+			return null;
+		}
+		else {
+			return ret;
+		}
 	}
 }

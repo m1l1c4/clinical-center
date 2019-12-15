@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.Authority;
+import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
+import tim31.pswisa.repository.ClinicRepository;
 import tim31.pswisa.repository.MedicalWorkerRepository;
 import tim31.pswisa.repository.UserRepository;
 
@@ -29,9 +32,15 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private AuthorityService authorityService;
-	
+
 	@Autowired
 	private ClinicService clinicService;
+	
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private ClinicRepository clinicRepository;
 
 	public Set<MedicalWorker> findAllByClinicId(Long id) {
 		return medicalWorkerRepository.findAllByClinicId(id);
@@ -47,6 +56,48 @@ public class MedicalWorkerService {
 
 	public MedicalWorker findByUser(Long id) {
 		return medicalWorkerRepository.findOneByUserId(id);
+	}
+	
+	public List<MedicalWorkerDTO> getDoctors(Clinic clinic) {
+		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
+
+		for (MedicalWorker med : temp) {
+			returnVal.add(new MedicalWorkerDTO(med));
+		}
+		return returnVal;
+	}
+	
+	public String deleteDoctor(String email, ClinicAdministrator clinicAdministrator) {
+		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+		User user = userService.findOneByEmail(email);
+		System.out.println(email);
+		System.out.println(user.getName());
+		System.out.println(user.getId());
+		MedicalWorker med = findByUser(user.getId());
+		// if(med.getCheckUps().size() != 0) {
+		clinic.getMedicalStuff().remove(med);
+		clinicRepository.save(clinic);
+		med.setClinic(null);
+		medicalWorkerRepository.save(med);
+		return "Obrisano";
+		// }
+		// else {
+		// return "Greska";
+		// }
+
+	}
+	
+	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {
+		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
+
+		for (MedicalWorker med : temp) {
+			if (med.getUser().getName().equals(name)) {
+				returnVal.add(new MedicalWorkerDTO(med));
+			}
+		}
+		return returnVal;
 	}
 
 	public MedicalWorker findOne(Long id) {
@@ -69,6 +120,8 @@ public class MedicalWorkerService {
 		user.setEmail(mw.getUser().getEmail());
 		user.setType(mw.getUser().getType());
 		medicalWorker.setUser(user);
+		Clinic clinic = clinicService.findOneById(mw.getClinic().getId());
+		medicalWorker.setClinic(clinic);
 		medicalWorker.setPhone(mw.getPhone());
 		medicalWorker.setEndHr(mw.getEndHr());
 		medicalWorker.setStartHr(mw.getStartHr());
@@ -76,7 +129,12 @@ public class MedicalWorkerService {
 		medicalWorker.getUser().setFirstLogin(false);
 		medicalWorker.getUser().setEnabled(true);
 		medicalWorker.getUser().setActivated(true);
-		List<Authority> auth = authorityService.findByname(medicalWorker.getType());
+		if (user.getType().equals("MEDICINAR")) {
+			medicalWorker.setType("");
+		} else {
+			medicalWorker.setType(mw.getType());
+		}
+		List<Authority> auth = authorityService.findByname(medicalWorker.getUser().getType());
 		medicalWorker.getUser().setAuthorities(auth);
 
 		return medicalWorkerRepository.save(medicalWorker);
@@ -85,34 +143,37 @@ public class MedicalWorkerService {
 	public MedicalWorker findOneById(Long id) {
 		return medicalWorkerRepository.findOneById(id);
 	}
-	
+
 	public List<MedicalWorkerDTO> searchDoctors(String[] params) {
 		List<MedicalWorkerDTO> forSearch = clinicService.doctorsInClinic(params[0], params[1], params[2]);
-		String name = params[3].equals("") ? "" : params[3] ;
-		String surname = params[4].equals("") ? "" : params[4] ;
-		int rating = 0;		
-		List<MedicalWorkerDTO> ret = new ArrayList<MedicalWorkerDTO>() ;
-		
+		String name = params[3].equals("") ? "" : params[3];
+		String surname = params[4].equals("") ? "" : params[4];
+		int rating = 0;
+		List<MedicalWorkerDTO> ret = new ArrayList<MedicalWorkerDTO>();
+
 		if (!params[5].equals("")) {
-			rating = Integer.parseInt(params[5]) ;
+			rating = Integer.parseInt(params[5]);
 		}
-		
+
 		for (MedicalWorkerDTO mw : forSearch) {
 			if (checkParams(mw, name, surname, rating)) {
 				ret.add(mw);
 			}
 		}
-		
-		return ret;		
-		
+
+		return ret;
+
 	}
-	
+
 	public boolean checkParams(MedicalWorkerDTO mw, String name, String surname, int rating) {
-				
-		if(!name.equals("") && !mw.getUser().getName().equals(name)) return false;
-		if(!surname.equals("") && !mw.getUser().getSurname().equals(surname)) return false;
-		if(rating != 0 && mw.getRating()!= rating) return false;
-		
+
+		if (!name.equals("") && !mw.getUser().getName().equals(name))
+			return false;
+		if (!surname.equals("") && !mw.getUser().getSurname().equals(surname))
+			return false;
+		if (rating != 0 && mw.getRating() != rating)
+			return false;
+
 		return true;
 	}
 }

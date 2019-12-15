@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tim31.pswisa.dto.UserDTO;
+import tim31.pswisa.dto.ClinicAdministratorDTO;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.ClinicalCenterAdministrator;
 import tim31.pswisa.model.Patient;
@@ -126,15 +126,15 @@ public class LoggingController {
 	}
 
 	@PostMapping(value = "/addAdmin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User> addMedicalWorker(@RequestBody UserDTO user) {
-		if (user.getType().equals("ADMINISTRATOR")) {
+	public ResponseEntity<User> addMedicalWorker(@RequestBody ClinicAdministratorDTO clinicAdministrator) {
+		if (clinicAdministrator.getUser().getType().equals("ADMINISTRATOR")) {
 
-			ClinicAdministrator admin = clinicAdministratorService.save(user);
+			ClinicAdministrator admin = clinicAdministratorService.save(clinicAdministrator);
 			if (admin != null) {
 				return new ResponseEntity<>(admin.getUser(), HttpStatus.CREATED);
 			}
 		} else {
-			ClinicalCenterAdministrator worker = ccAdminService.save(user);
+			ClinicalCenterAdministrator worker = ccAdminService.save(clinicAdministrator.getUser());
 			if (worker != null) {
 				return new ResponseEntity<>(worker.getUser(), HttpStatus.CREATED);
 			}

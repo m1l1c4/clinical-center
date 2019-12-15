@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import tim31.pswisa.dto.ClinicAdministratorDTO;
 import tim31.pswisa.dto.UserDTO;
 import tim31.pswisa.model.Authority;
+import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.ClinicAdministratorRepository;
@@ -28,6 +29,9 @@ public class ClinicAdministratorService {
 
 	@Autowired
 	private AuthorityService authorityService;
+	
+	@Autowired
+	private ClinicService clinicService;
 
 	public ClinicAdministrator findByUser(Long id) {
 		return clinicAdministratorRepository.findOneByUserId(id);
@@ -48,14 +52,14 @@ public class ClinicAdministratorService {
 		return clinicAdministratorRepository.findOneById(id);
 	}
 
-	public ClinicAdministrator save(UserDTO u) {
-		User user = userRepository.findOneByEmail(u.getEmail());
+	public ClinicAdministrator save(ClinicAdministratorDTO ca) {
+		User user = userRepository.findOneByEmail(ca.getUser().getEmail());
 		if (user != null) {
 			return null;
 		}
 		ClinicAdministrator admin = new ClinicAdministrator();
 		user = new User();
-		user = new User();
+		UserDTO u = ca.getUser();
 		user.setName(u.getName());
 		user.setSurname(u.getSurname());
 		user.setEmail(u.getEmail());
@@ -65,6 +69,8 @@ public class ClinicAdministratorService {
 		admin.getUser().setFirstLogin(false);
 		admin.getUser().setEnabled(true);
 		admin.getUser().setActivated(true);
+		Clinic clinic = clinicService.findOneById(ca.getClinic().getId());
+		admin.setClinic(clinic);
 		List<Authority> auth = authorityService.findByname("ADMINISTRATOR");
 		admin.getUser().setAuthorities(auth);
 
