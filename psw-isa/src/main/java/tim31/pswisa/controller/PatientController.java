@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.PatientDTO;
+import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
@@ -41,6 +44,39 @@ public class PatientController {
 			ret.add(new PatientDTO(patient));
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/findPatients", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PatientDTO>> findPatientsController(@RequestBody String[] params,
+			HttpServletRequest request) {
+
+		List<PatientDTO> retVal = patientService.findPatients(params[0],params[1],params[2]);
+		if (retVal == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		} else {
+			return new ResponseEntity<>(retVal, HttpStatus.OK);
+		}
+	}
+	
+	@PostMapping(value = "/filterPatients", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PatientDTO>> filterPatientsController(@RequestBody String[] params) {
+
+		List<PatientDTO> retVal = patientService.filterPatients(params[0]);
+		if (retVal == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		} else {
+			return new ResponseEntity<>(retVal, HttpStatus.OK);
+		}
+	}
+
+	@GetMapping(value = "/getPatients", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PatientDTO>> getPatientController() {
+		List<PatientDTO> patients = patientService.getAllPatients();
+		if (patients.size() != 0) {
+			return new ResponseEntity<>(patients, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		}
 	}
 
 	@GetMapping(value = "/getPatientProfile", produces = MediaType.APPLICATION_JSON_VALUE)

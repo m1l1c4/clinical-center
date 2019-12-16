@@ -37,7 +37,7 @@ public class ClinicService {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
-	
+
 	@Autowired
 	private RoomRepository roomRepository;
 
@@ -56,8 +56,8 @@ public class ClinicService {
 	public Clinic findOneByName(String clinic) {
 		return clinicRepository.findOneByName(clinic);
 	}
-	
-	public boolean whoIsBigger(String d1,String d2) {
+
+	public boolean whoIsBigger(String d1, String d2) {
 		String[] datum1 = d1.split("-");
 		String[] datum2 = d2.split("-");
 		int god1 = Integer.parseInt(datum1[0]);
@@ -66,11 +66,16 @@ public class ClinicService {
 		int mjesec2 = Integer.parseInt(datum2[1]);
 		int dan1 = Integer.parseInt(datum1[2]);
 		int dan2 = Integer.parseInt(datum2[2]);
-		if(god1>god2)return true;
-		if(god1<god2)return false;
-		if(mjesec1>mjesec2)return true;
-		if(mjesec1<mjesec2)return false;
-		if(dan1>=dan2) return true;
+		if (god1 > god2)
+			return true;
+		if (god1 < god2)
+			return false;
+		if (mjesec1 > mjesec2)
+			return true;
+		if (mjesec1 < mjesec2)
+			return false;
+		if (dan1 >= dan2)
+			return true;
 		return false;
 	}
 
@@ -127,69 +132,68 @@ public class ClinicService {
 	}
 
 	public List<RoomDTO> filterRooms(Clinic clinic, int number) {
-		Set<Room>temp = clinic.getRooms();
+		Set<Room> temp = clinic.getRooms();
 		List<RoomDTO> ret = new ArrayList<RoomDTO>();
-		for(Room r : temp) {
-			if(r.getNumber() == number) {
+		for (Room r : temp) {
+			if (r.getNumber() == number) {
 				ret.add(new RoomDTO(r));
 				return ret;
 			}
 		}
 		return null;
 	}
-	
-	public List<RoomDTO>searchRooms(Clinic clinic, String [] params){
+
+	public List<RoomDTO> searchRooms(Clinic clinic, String[] params) {
 		String name = params[0];
 		String type = params[1];
 		String date = params[2];
-		List<RoomDTO>ret = new ArrayList<RoomDTO>();
-		Set<Room>temp = clinic.getRooms();
+		List<RoomDTO> ret = new ArrayList<RoomDTO>();
+		Set<Room> temp = clinic.getRooms();
 		int counter = 0;
-		if(name.equals("undefined") || name.equals("")) {
-			for(Room r:temp) {
-				if(r.getTypeRoom().equals(type)) {
-					Set<Checkup>checkups = r.getBookedCheckups();
-					for(Checkup c : checkups) {
-						if(c.getDate().equals(date)) {
+		if (name.equals("undefined") || name.equals("")) {
+			for (Room r : temp) {
+				if (r.getTypeRoom().equals(type)) {
+					Set<Checkup> checkups = r.getBookedCheckups();
+					for (Checkup c : checkups) {
+						if (c.getDate().equals(date)) {
 							counter++;
 						}
 					}
-					if(counter < 8) {
+					if (counter < 8) {
 						ret.add(new RoomDTO(r));
 					}
 				}
 			}
-		}else {
+		} else {
 			counter = 0;
-			for(Room r : temp) {
-				if(r.getName().equals(name) && r.getTypeRoom().equals(type)) {
-						Set<Checkup>checkups = r.getBookedCheckups();
-						for(Checkup c : checkups) {
-							if(c.getDate().equals(date)) {	
-								counter++;
-							}
+			for (Room r : temp) {
+				if (r.getName().equals(name) && r.getTypeRoom().equals(type)) {
+					Set<Checkup> checkups = r.getBookedCheckups();
+					for (Checkup c : checkups) {
+						if (c.getDate().equals(date)) {
+							counter++;
 						}
-						if(counter < 8) {
-							ret.add(new RoomDTO(r));
-						}
+					}
+					if (counter < 8) {
+						ret.add(new RoomDTO(r));
+					}
 				}
 			}
 		}
-		if(ret.size() == 0) {
+		if (ret.size() == 0) {
 			return null;
-		}
-		else {
+		} else {
 			return ret;
 		}
 	}
-	
+
 	public String deleteRoom(String name, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
 		for (Room r : sobe) {
 			if (r.getName().equals(name)) {
 				clinic.getRooms().remove(r);
-				clinic = updateClinic(clinicAdministrator, new ClinicDTO(clinic)); 
+				clinic = updateClinic(clinicAdministrator, new ClinicDTO(clinic));
 				roomRepository.delete(r);
 				return "Obrisano";
 			}
@@ -201,7 +205,7 @@ public class ClinicService {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
 		for (Room r : sobe) {
-			if ((r.getNumber() == number) && (r.isFree() == true) && (r.getBookedCheckups().size()==0)) {
+			if ((r.getNumber() == number) && (r.isFree() == true) && (r.getBookedCheckups().size() == 0)) {
 				System.out.println(clinic.getRooms().size());
 				clinic.getRooms().remove(r);
 				clinic = update(clinic);
@@ -234,11 +238,10 @@ public class ClinicService {
 		return room1;
 	}
 
-	
 	public Room changeRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Clinic klinika = findOneById(clinicAdministrator.getClinic().getId());
 		Room room1 = roomRepository.findOneByClinicIdAndNumber(klinika.getId(), room.getNumber());
-		if(!room1.isFree() || room1.getBookedCheckups().size() == 0) {
+		if (!room1.isFree() || room1.getBookedCheckups().size() == 0) {
 			return null;
 		}
 		room1.setName(room.getName());
@@ -246,7 +249,7 @@ public class ClinicService {
 		roomRepository.save(room1);
 		return room1;
 	}
-	
+
 	public List<Clinic> searchClinics(String[] params) {
 		List<Clinic> retClinics = new ArrayList<Clinic>();
 		List<Clinic> result = new ArrayList<Clinic>();
@@ -360,7 +363,5 @@ public class ClinicService {
 		room.setFirstFreeDate(r.getFirstFreeDate());
 		return roomService.save(room);
 	}
-	
-
 
 }
