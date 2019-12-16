@@ -25,20 +25,20 @@ public class Checkup {
 	@Column(name = "scheduled", nullable = false)
 	private boolean scheduled;
 
-	@Column(name = "DateOfCheckup", nullable = false)
+	@Column(name = "DateOfCheckup", nullable = true)
 	private String date;
 
-	@Column(name = "TimeOfCheckup", nullable = false)
+	@Column(name = "TimeOfCheckup", nullable = true)
 	private String time;
 
 	// operation or appointment
 	@Column(name = "type", nullable = false)
 	private String type;
 
-	@Column(name = "duration", nullable = false)
+	@Column(name = "duration", nullable = true)
 	private int duration;
 
-	@Column(name = "price", nullable = false)
+	@Column(name = "price", nullable = true)
 	private double price;
 
 	@JsonBackReference(value = "soba_mov")

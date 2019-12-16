@@ -91,12 +91,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/checkup/addAppointment", "/checkUpType/addType", "/clinic/searchClinic", "/searchDoctors",
 				"/clinic/clinicDoctors", "/clinic/filterClinic/**", "/clinic/addRooms/*", "/editPatient",
 				"/changePassword", "/checkup/addRecipes/*", "/verifyRecipe/*", "/clinic/filterRooms",
-				"/clinic/searchRooms", "/clinic/deleteRoom/*", "/deleteDoctor", "/findDoctors" , "/clinic/changeRoom");
+				"/clinic/searchRooms", "/clinic/deleteRoom/*", "/deleteDoctor", "/findDoctors" , "/clinic/changeRoom", "/findPatients", 
+				"/filterPatients", "/canAccessToMedicalRecord", "/bookForPatient" );
 		web.ignoring().antMatchers(HttpMethod.GET, "/getAllDoctors", "/patientsRequests", "/getMedicalWorker",
 				"/codebook", "/getAdministrator", "/getUser", "/clinic/getClinic", "/clinic/getDoctors",
 				"/getPatientProfile", "/clinic/getAllTypes", "/clinic/getRooms", "/patientsRequests",
 				"/checkUpType/addTypes", "/clinic/getClinics", "/getTypes", "/checkUpType/allTypes", "/checkup/*",
-				"/getRecipes", "/clinic/getClinicsByType/*");
+				"/getRecipes", "/clinic/getClinicsByType/*", "/getPatients");
 		// web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html",
 		// "/favicon.ico", "/**/*.html",
 		// "/**/*.css", "/**/*.js");

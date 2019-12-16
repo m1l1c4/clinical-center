@@ -53,10 +53,11 @@ public class Patient {
 	 */
 
 	/*
-	@JsonBackReference(value = "clinic_movement")
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Clinic clinic;
-	*/
+	 * @JsonBackReference(value = "clinic_movement")
+	 * 
+	 * @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER) private Clinic
+	 * clinic;
+	 */
 	/*
 	 * // @JsonBackReference(value="mw_movement")
 	 * 
@@ -138,15 +139,11 @@ public class Patient {
 	 * public void setOperations(ArrayList<Operation> operations) { this.operations
 	 * = operations; }
 	 */
-/*
-	public Clinic getClinic() {
-		return clinic;
-	}
-
-	public void setClinic(Clinic clinic) {
-		this.clinic = clinic;
-	}
-*/
+	/*
+	 * public Clinic getClinic() { return clinic; }
+	 * 
+	 * public void setClinic(Clinic clinic) { this.clinic = clinic; }
+	 */
 	public Long getId() {
 		return id;
 	}

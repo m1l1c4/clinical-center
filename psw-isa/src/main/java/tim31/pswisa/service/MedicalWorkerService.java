@@ -5,24 +5,32 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.Authority;
-
+import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
+import tim31.pswisa.model.MedicalRecord;
 import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.ClinicRepository;
 import tim31.pswisa.repository.MedicalWorkerRepository;
 import tim31.pswisa.repository.UserRepository;
-import tim31.pswisa.security.TokenUtils;
 
 @Service
 public class MedicalWorkerService {
 
+	@Autowired
+	private EmailService emailService;
+	
 	@Autowired
 	private MedicalWorkerRepository medicalWorkerRepository;
 
@@ -42,6 +50,9 @@ public class MedicalWorkerService {
 	private UserService userService;
 
 	@Autowired
+	private PatientService patientService;
+
+	@Autowired
 	private ClinicRepository clinicRepository;
 
 	public Set<MedicalWorker> findAllByClinicId(Long id) {
@@ -59,7 +70,7 @@ public class MedicalWorkerService {
 	public MedicalWorker findByUser(Long id) {
 		return medicalWorkerRepository.findOneByUserId(id);
 	}
-	
+
 	public List<MedicalWorkerDTO> getDoctors(Clinic clinic) {
 		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
@@ -69,7 +80,7 @@ public class MedicalWorkerService {
 		}
 		return returnVal;
 	}
-	
+
 	public String deleteDoctor(String email, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
 		User user = userService.findOneByEmail(email);
@@ -90,12 +101,56 @@ public class MedicalWorkerService {
 
 	}
 
+	public void bookForPatient(User user, CheckupDTO c) {
+		if (user != null) {
+			MedicalWorker medWorker = findByUser(user.getId());
+			Clinic clinic = medWorker.getClinic();
+			Set<ClinicAdministrator> clinicAdministrators = clinic.getClAdmins();
+			Checkup checkup = new Checkup();
+			User patient = userService.findOneByEmail(c.getPatient().getUser().getEmail());
+			Patient p = patientService.findOneByUserId(patient.getId());
+			checkup.setPatient(p);
+			checkup.setScheduled(false);
+			checkup.setType(c.getType());
+			checkup.setMedicalWorker(medWorker);
+			String text = "New request for appointment or operation.";
+
+			for(ClinicAdministrator ca : clinicAdministrators) {
+				try {
+					emailService.sendAccountConfirmationEmail(ca.getUser().getEmail(),text );
+				} catch (MailException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public String canAccess(User user, String pom) {
+		String retVal = "";
+		User user1 = userService.findOneByEmail(pom);
+		Patient p = patientService.findOneByUserId(user1.getId());
+		MedicalWorker medWorker = findByUser(user.getId());
+		for (Checkup c : p.getAppointments()) {
+			if (c.getMedicalWorker().getUser().getEmail().equals((medWorker.getUser().getEmail()))) {
+				retVal = "DA";
+			}
+		}
+		if (retVal.equals("DA")) {
+			return retVal;
+		} else {
+			return "NE";
+		}
+	}
 
 	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {
 		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
-		if(name.equals("") ) {
+		if (name.equals("")) {
 			for (MedicalWorker med : temp) {
 				if (med.getType().equals(typeD)) {
 					returnVal.add(new MedicalWorkerDTO(med));
@@ -103,7 +158,7 @@ public class MedicalWorkerService {
 				}
 			}
 		}
-		
+
 		for (MedicalWorker med : temp) {
 			if (med.getUser().getName().equals(name) && med.getType().equals(typeD)) {
 				returnVal.add(new MedicalWorkerDTO(med));
