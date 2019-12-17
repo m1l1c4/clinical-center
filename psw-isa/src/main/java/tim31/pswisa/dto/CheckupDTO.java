@@ -9,7 +9,7 @@ public class CheckupDTO {
 	private boolean scheduled;
 	private String date;
 	private String time;
-	private String type;
+	private String type;			// appointment or operation
 	private int duration;
 	private double price;
 	private RoomDTO room;

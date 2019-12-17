@@ -64,6 +64,10 @@ public class Checkup {
 	@JsonBackReference(value = "checkup_report_mov")
 	@OneToOne(mappedBy = "checkUp", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Report report;
+	
+	/*@JsonBackReference(value = "ca_mov")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private ClinicAdministrator clinicAdministrator;*/
 
 	public Checkup() {
 

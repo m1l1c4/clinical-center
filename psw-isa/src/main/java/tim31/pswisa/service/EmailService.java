@@ -27,9 +27,7 @@ public class EmailService {
 		System.out.println("Sending email...");
 		User u = userService.findOneByEmail(email);
 		String path = "http://localhost:3000/activateAccount/" + u.getId();
-		// String path = "<html><a href='" + varifyUrl + "'>" + varifyUrl + "</a></html>
-		// ";
-
+		
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));

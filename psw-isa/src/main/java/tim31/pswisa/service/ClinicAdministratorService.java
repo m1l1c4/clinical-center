@@ -76,4 +76,8 @@ public class ClinicAdministratorService {
 
 		return clinicAdministratorRepository.save(admin);
 	}
+	
+	public List<ClinicAdministrator> findAll() {
+		return clinicAdministratorRepository.findAll();
+	}
 }
