@@ -13,4 +13,6 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	List<Checkup> findAllByClinicId(Long id);
 
 	Checkup findOneById(Long id);
+	
+	List<Checkup> findAllByScheduled(boolean ok);
 }

@@ -32,7 +32,7 @@ public class Checkup {
 	private String time;
 
 	// operation or appointment
-	@Column(name = "type", nullable = false)
+	@Column(name = "type", nullable = true)
 	private String type;
 
 	@Column(name = "duration", nullable = true)
