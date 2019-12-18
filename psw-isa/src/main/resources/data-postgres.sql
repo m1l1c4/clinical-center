@@ -15,7 +15,7 @@ INSERT INTO clinic( address, city, clinic_name, rating, description) VALUES ('Ni
 INSERT INTO clinic_administrator(clinic_id, user_id) VALUES (1, 1);
 INSERT INTO medical_worker(end_hr, phone, rating, start_hr, type_of_doctor, clinic_id, user_id) VALUES (15, 062547896, 10, 7, 'KARDIOLOSKI', 1, 2);
 INSERT INTO medical_worker(end_hr, phone, rating, start_hr, type_of_doctor, clinic_id, user_id) VALUES (20, 064785213, 9, 12, 'UROLOSKI', 1, 3);
-INSERT INTO medical_worker(end_hr, phone, rating, start_hr, type_of_doctor, clinic_id, user_id) VALUES (23, 065479826, 9, 15, 'DERMATOLOSKI', 2, 4);
+INSERT INTO medical_worker(end_hr, phone, rating, start_hr, type_of_doctor, clinic_id, user_id) VALUES (23, 065479826, 9, 15, 'DERMATOLOSKI', 1, 4);
 INSERT INTO medical_worker(end_hr, phone, rating, start_hr, type_of_doctor, clinic_id, user_id) VALUES (17, 062457893, 8, 9, 'KARDIOLOSKI', 1, 7);
 
 INSERT INTO patient(address, city, jbo, phone_number, state, user_id) VALUES ('Karadjordjeva', 'Beograd', 123456789101, 065852456, 'Srbija', 5);

@@ -14,12 +14,14 @@ import org.springframework.stereotype.Service;
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.Authority;
+import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalRecord;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
+import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.ClinicRepository;
 import tim31.pswisa.repository.MedicalWorkerRepository;
@@ -48,12 +50,21 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private CheckUpTypeService checkUpTypeService;
 
 	@Autowired
 	private PatientService patientService;
+	
+	@Autowired
+	private RoomService roomService;
 
 	@Autowired
 	private ClinicRepository clinicRepository;
+	
+	@Autowired
+	private CheckUpService checkupService;
 
 	public Set<MedicalWorker> findAllByClinicId(Long id) {
 		return medicalWorkerRepository.findAllByClinicId(id);
@@ -101,11 +112,10 @@ public class MedicalWorkerService {
 
 	}
 
-	public void bookForPatient(User user, CheckupDTO c) {
+	public void bookForPatient(User user, CheckupDTO c) throws MailException, InterruptedException {
 		if (user != null) {
 			MedicalWorker medWorker = findByUser(user.getId());
 			Clinic clinic = medWorker.getClinic();
-			Set<ClinicAdministrator> clinicAdministrators = clinic.getClAdmins();
 			Checkup checkup = new Checkup();
 			User patient = userService.findOneByEmail(c.getPatient().getUser().getEmail());
 			Patient p = patientService.findOneByUserId(patient.getId());
@@ -113,19 +123,17 @@ public class MedicalWorkerService {
 			checkup.setScheduled(false);
 			checkup.setType(c.getType());
 			checkup.setMedicalWorker(medWorker);
-			String text = "New request for appointment or operation.";
-
-			for(ClinicAdministrator ca : clinicAdministrators) {
-				try {
-					emailService.sendAccountConfirmationEmail(ca.getUser().getEmail(),text );
-				} catch (MailException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			checkup.setTime(c.getTime());
+			checkup.setDuration(1);
+			checkup.setClinic(clinic);
+			CheckUpType temp = checkUpTypeService.findOneByName(medWorker.getType());
+			checkup.setCheckUpType(temp);
+			List<Room> rooms = roomService.findAllByClinicId(clinic.getId());
+			checkup.setPrice(temp.getTypePrice());
+			checkup.setDate(c.getDate());
+			checkup.setRoom(rooms.get(1));
+			checkupService.save(checkup);
+			emailService.sendNotificationToAmin(clinic,medWorker,p);
 		}
 	}
 

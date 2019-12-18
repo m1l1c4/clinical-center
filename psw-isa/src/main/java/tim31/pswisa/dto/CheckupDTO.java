@@ -23,7 +23,7 @@ public class CheckupDTO {
 				c.getDiscount(), new RoomDTO(c.getRoom()), new PatientDTO(c.getPatient()), new ClinicDTO(c.getClinic()),
 				new MedicalWorkerDTO(c.getMedicalWorker()), new CheckUpTypeDTO(c.getCheckUpType()));
 	}
-
+	
 	public CheckupDTO() {
 		super();
 		// TODO Auto-generated constructor stub
