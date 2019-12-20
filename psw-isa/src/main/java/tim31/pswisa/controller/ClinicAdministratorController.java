@@ -1,5 +1,7 @@
 package tim31.pswisa.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.ClinicAdministratorDTO;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
+import tim31.pswisa.service.CheckUpService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.UserService;
 
@@ -29,6 +33,9 @@ public class ClinicAdministratorController {
 
 	@Autowired
 	private TokenUtils tokenUtils;
+	
+	@Autowired
+	private CheckUpService checkupService;
 
 	// This method returns administrator who is using application at the moment
 	@GetMapping(value = "/getAdministrator", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,6 +51,15 @@ public class ClinicAdministratorController {
 			}
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+	
+	@GetMapping(value = "/requestsForRoom", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<CheckupDTO>> requestForRoomController(HttpServletRequest request){
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		List<CheckupDTO> returnValue = checkupService.findAllByScheduled(false);
+		return new ResponseEntity<>(returnValue, HttpStatus.OK);
 	}
 
 	// This method updates administrator who is using application at the moment

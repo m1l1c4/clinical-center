@@ -154,30 +154,29 @@ public class ClinicController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
-	
-	
+
 	@PostMapping(value = "/searchRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<RoomDTO>> searchRoomsController(@RequestBody String[] params, HttpServletRequest request) {
+	public ResponseEntity<List<RoomDTO>> searchRoomsController(@RequestBody String[] params,
+			HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		if(user != null) {
+		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-			if(clinicAdministrator != null) {
+			if (clinicAdministrator != null) {
 				Clinic clinic = clinicAdministrator.getClinic();
-				if(clinic != null) {
+				if (clinic != null) {
 					System.out.println(params[0]);
 					System.out.println(params[1]);
 					System.out.println(params[2]);
-					List<RoomDTO> ret = clinicService.searchRooms(clinic,params);
-					return new ResponseEntity<>(ret,HttpStatus.OK);
-				}
-				else {
+					List<RoomDTO> ret = clinicService.searchRooms(clinic, params);
+					return new ResponseEntity<>(ret, HttpStatus.OK);
+				} else {
 					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 				}
 			}
 		}
-		return new ResponseEntity<>( HttpStatus.BAD_GATEWAY);
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 
 	@PostMapping(value = "/filterRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -185,22 +184,21 @@ public class ClinicController {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		if(user != null) {
+		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-			if(clinicAdministrator != null) {
+			if (clinicAdministrator != null) {
 				Clinic clinic = clinicAdministrator.getClinic();
-				if(clinic != null) {
-					List<RoomDTO> ret = clinicService.filterRooms(clinic,number[0]);
-					return new ResponseEntity<>(ret,HttpStatus.OK);
-				}
-				else {
+				if (clinic != null) {
+					List<RoomDTO> ret = clinicService.filterRooms(clinic, number[0]);
+					return new ResponseEntity<>(ret, HttpStatus.OK);
+				} else {
 					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 				}
 			}
 		}
-		return new ResponseEntity<>( HttpStatus.BAD_GATEWAY);
+		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
-	
+
 	@PostMapping(value = "/searchClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Clinic>> searchClinics(@RequestBody String[] params) {
 		List<Clinic> ret = clinicService.searchClinics(params);
@@ -296,7 +294,7 @@ public class ClinicController {
 			if (clinicAdministrator != null) {
 				Clinic clinic = clinicAdministrator.getClinic();
 				if (clinic != null) {
-					Set<MedicalWorker> workers = medicalWorkerService.findAllByClinicId(clinic.getId());
+					List<MedicalWorker> workers = medicalWorkerService.findAllByClinicId(clinic.getId());
 					ArrayList<MedicalWorkerDTO> dtos = new ArrayList<MedicalWorkerDTO>();
 					for (MedicalWorker d : workers) {
 						dtos.add(new MedicalWorkerDTO(d));
@@ -392,8 +390,7 @@ public class ClinicController {
 			return new ResponseEntity<>(room, HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	
+
 	@PostMapping(value = "/changeRoom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RoomDTO> changeRoomController(@RequestBody RoomDTO room, HttpServletRequest request) {
 
@@ -439,6 +436,20 @@ public class ClinicController {
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 
+	@GetMapping(value = "/getRooms/{roomType}/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<RoomDTO>> getRoomsByClinicIdAndType(@PathVariable String roomType, @PathVariable Long id,
+			@PathVariable String date, HttpServletRequest request) {
+		List<Room> rooms = roomService.findAllByClinicIdAndTypeRoom(id, roomType, date);
+		List<RoomDTO> ret = new ArrayList<>();
+		for (Room room : rooms) {
+			ret.add(new RoomDTO(room));
+		}
+		return new ResponseEntity<List<RoomDTO>>(ret, HttpStatus.OK);
+	}
 
-
+	@GetMapping(value = "/roomAvailability/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Integer>> getRoomVailability(@PathVariable Long id, @PathVariable String date) {
+		ArrayList<Integer> roomAvailability  = roomService.findRoomAvailability(id, date);
+		return new ResponseEntity<List<Integer>>(roomAvailability, HttpStatus.OK);
+	}
 }

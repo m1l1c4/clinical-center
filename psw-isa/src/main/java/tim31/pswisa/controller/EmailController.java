@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.service.EmailService;
 import tim31.pswisa.service.MedicalRecordService;
@@ -52,5 +53,12 @@ public class EmailController {
 		px = patientService.save(px);
 		medicalRecordService.add(px);
 		return new ResponseEntity<>(px, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/changeDate/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> activateAccount(@PathVariable Long id, @RequestBody CheckupDTO checkup) {
+		Patient patient = patientService.findOneById(id);
+		emailService.sendChangeDate(patient, checkup);
+		return new ResponseEntity<>("Email sent", HttpStatus.OK);
 	}
 }

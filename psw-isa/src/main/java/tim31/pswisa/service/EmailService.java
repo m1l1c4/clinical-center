@@ -8,6 +8,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.model.Checkup;
+import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
 
 @Service
@@ -21,6 +26,9 @@ public class EmailService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private MedicalWorkerService medicalWorkerService;
 
 	@Async
 	public void sendAccountConfirmationEmail(String email, String text) throws MailException, InterruptedException {
@@ -43,6 +51,48 @@ public class EmailService {
 							+ text + "\n\nAdministration team");
 		javaMailSender.send(msg);
 
+		System.out.println("Email sent.");
+	}
+
+	@Async
+	public void sendNotificationToAmin(Clinic clinic, MedicalWorker medWorker, Patient patient)
+			throws MailException, InterruptedException {
+		// Set<ClinicAdministrator> clinicAdministrators = clinic.getClAdmins();
+		SimpleMailMessage msg = new SimpleMailMessage();
+		// for(ClinicAdministrator ca : clinicAdministrators) {
+		System.out.println("Sending email...");
+		msg.setTo("pswisa.tim31.2019@gmail.com");
+		msg.setFrom(env.getProperty("spring.mail.username"));
+		msg.setSubject("New request for operation or appointment");
+		msg.setText("There is new request for operation or appointment by doctor " + medWorker.getUser().getName() + " "
+				+ medWorker.getUser().getSurname() + " for patient " + patient.getUser().getName() + " "
+				+ patient.getUser().getSurname());
+		javaMailSender.send(msg);
+		System.out.println("Email sent.");
+		// }
+
+	}
+
+	@Async
+	public void sendChangeDate(Patient patient, CheckupDTO c) {
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo("pswisa.tim31.2019@gmail.com");
+		msg.setFrom(env.getProperty("spring.mail.username"));
+		msg.setSubject("Account confirmation");
+		msg.setText("Your operation was resheduled for " + c.getDate().toString() + " " + c.getTime() + " in the room ."
+				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
+		System.out.println("Email sent.");
+	}
+	
+	@Async
+	public void notifyDoctor(Long id, Checkup c) {
+		MedicalWorker medicalWorker = medicalWorkerService.findOneById(id);
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo("pswisa.tim31.2019@gmail.com");
+		msg.setFrom(env.getProperty("spring.mail.username"));
+		msg.setSubject("Account confirmation");
+		msg.setText("You must attend operatin on " + c.getDate().toString() + " " + c.getTime() + " in the room ."
+				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
 		System.out.println("Email sent.");
 	}
 

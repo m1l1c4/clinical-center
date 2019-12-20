@@ -1,5 +1,6 @@
 package tim31.pswisa.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -14,12 +15,14 @@ import org.springframework.stereotype.Service;
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.Authority;
+import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalRecord;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
+import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.ClinicRepository;
 import tim31.pswisa.repository.MedicalWorkerRepository;
@@ -48,14 +51,23 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private CheckUpTypeService checkUpTypeService;
 
 	@Autowired
 	private PatientService patientService;
+	
+	@Autowired
+	private RoomService roomService;
 
 	@Autowired
 	private ClinicRepository clinicRepository;
+	
+	@Autowired
+	private CheckUpService checkupService;
 
-	public Set<MedicalWorker> findAllByClinicId(Long id) {
+	public List<MedicalWorker> findAllByClinicId(Long id) {
 		return medicalWorkerRepository.findAllByClinicId(id);
 	}
 
@@ -72,7 +84,7 @@ public class MedicalWorkerService {
 	}
 
 	public List<MedicalWorkerDTO> getDoctors(Clinic clinic) {
-		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		List<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
 		for (MedicalWorker med : temp) {
@@ -101,31 +113,28 @@ public class MedicalWorkerService {
 
 	}
 
-	public void bookForPatient(User user, CheckupDTO c) {
+	public void bookForPatient(User user, CheckupDTO c) throws MailException, InterruptedException {
 		if (user != null) {
 			MedicalWorker medWorker = findByUser(user.getId());
 			Clinic clinic = medWorker.getClinic();
-			Set<ClinicAdministrator> clinicAdministrators = clinic.getClAdmins();
 			Checkup checkup = new Checkup();
 			User patient = userService.findOneByEmail(c.getPatient().getUser().getEmail());
 			Patient p = patientService.findOneByUserId(patient.getId());
 			checkup.setPatient(p);
 			checkup.setScheduled(false);
 			checkup.setType(c.getType());
-			checkup.setMedicalWorker(medWorker);
-			String text = "New request for appointment or operation.";
-
-			for(ClinicAdministrator ca : clinicAdministrators) {
-				try {
-					emailService.sendAccountConfirmationEmail(ca.getUser().getEmail(),text );
-				} catch (MailException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			checkup.getDoctors().add(medWorker);
+			checkup.setTime(c.getTime());
+			checkup.setDuration(1);
+			checkup.setClinic(clinic);
+			CheckUpType temp = checkUpTypeService.findOneByName(medWorker.getType());
+			checkup.setCheckUpType(temp);
+			List<Room> rooms = roomService.findAllByClinicId(clinic.getId());
+			checkup.setPrice(temp.getTypePrice());
+			checkup.setDate(c.getDate());
+			checkup.setRoom(rooms.get(1));
+			checkupService.save(checkup);
+			emailService.sendNotificationToAmin(clinic,medWorker,p);
 		}
 	}
 
@@ -134,11 +143,12 @@ public class MedicalWorkerService {
 		User user1 = userService.findOneByEmail(pom);
 		Patient p = patientService.findOneByUserId(user1.getId());
 		MedicalWorker medWorker = findByUser(user.getId());
+		/*
 		for (Checkup c : p.getAppointments()) {
 			if (c.getMedicalWorker().getUser().getEmail().equals((medWorker.getUser().getEmail()))) {
 				retVal = "DA";
 			}
-		}
+		*/
 		if (retVal.equals("DA")) {
 			return retVal;
 		} else {
@@ -147,7 +157,7 @@ public class MedicalWorkerService {
 	}
 
 	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {
-		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		List<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
 		if (name.equals("")) {
@@ -242,5 +252,24 @@ public class MedicalWorkerService {
 			return false;
 
 		return true;
+	}
+	
+	public List<MedicalWorker> findAllAvailable(Long id, String date, String t){
+		List<MedicalWorker> doctors = medicalWorkerRepository.findAllByClinicId(id);
+		int time = Integer.parseInt(t);
+		List<MedicalWorker> ret = new ArrayList<>();
+		List<Checkup> checkups = checkupService.findOneByTimeAndDate(t, LocalDate.parse(date));
+		for(Checkup checkup : checkups) {
+			for (MedicalWorker doctor : checkup.getDoctors()) {
+				doctors.remove(doctor);
+			}
+		}
+		for(MedicalWorker doctor : doctors) {
+			if(time < doctor.getEndHr() && time >= doctor.getStartHr() && doctor.getUser().getType().equals("DOKTOR")) {
+				ret.add(doctor);
+			}
+		}
+		// dodati jos za godisnje odmore
+		return doctors;
 	}
 }
