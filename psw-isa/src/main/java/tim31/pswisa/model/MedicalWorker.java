@@ -41,7 +41,7 @@ public class MedicalWorker {
 	@OneToMany(mappedBy = "mw", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Patient> patients;
 	*/
-
+	@JsonManagedReference(value = "vacation")
 	@OneToMany(mappedBy = "mw", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Absence> hollydays;
 	
@@ -160,5 +160,8 @@ public class MedicalWorker {
 	public void setEndHr(int endHr) {
 		this.endHr = endHr;
 	}
+
+	
+	
 
 }
