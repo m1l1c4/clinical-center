@@ -1,6 +1,6 @@
 package tim31.pswisa.repository;
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -28,8 +28,10 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 	 * This method servers for getting all medical workers from one clinic
 	 * 
 	 * @param id - clinic id
-	 * @return - (Set<MedicalWorker>) This method returns all medical workers in
+	 * @return - (List<MedicalWorker>) This method returns all medical workers in
 	 *         clinic
 	 */
-	Set<MedicalWorker> findAllByClinicId(Long id);;
+  
+	List<MedicalWorker> findAllByClinicId(Long id);
+
 }

@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -62,8 +63,8 @@ public class MedicalWorker {
 	@Column(name = "typeOfDoctor", unique = false, nullable = true)
 	private String type;
 
-	@JsonManagedReference(value = "doktor_mov")
-	@OneToMany(mappedBy = "medicalWorker", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonManagedReference(value = "doctor_checkup_mov")
+	@ManyToMany(mappedBy = "doctors")
 	private Set<Checkup> checkUps = new HashSet<Checkup>();
 
 	// just for nurse

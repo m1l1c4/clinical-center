@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tim31.pswisa.dto.MedicalWorkerDTO;
+import tim31.pswisa.dto.MedicalRecordDTO;
 import tim31.pswisa.dto.PatientDTO;
-import tim31.pswisa.model.Clinic;
-import tim31.pswisa.model.ClinicAdministrator;
+import tim31.pswisa.model.MedicalRecord;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
+import tim31.pswisa.service.MedicalRecordService;
 import tim31.pswisa.service.PatientService;
 import tim31.pswisa.service.UserService;
 
@@ -32,6 +32,9 @@ public class PatientController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private MedicalRecordService medicalRecordService;
 
 	@Autowired
 	TokenUtils tokenUtils;
@@ -50,14 +53,14 @@ public class PatientController {
 	public ResponseEntity<List<PatientDTO>> findPatientsController(@RequestBody String[] params,
 			HttpServletRequest request) {
 
-		List<PatientDTO> retVal = patientService.findPatients(params[0],params[1],params[2]);
+		List<PatientDTO> retVal = patientService.findPatients(params[0], params[1], params[2]);
 		if (retVal == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 		} else {
 			return new ResponseEntity<>(retVal, HttpStatus.OK);
 		}
 	}
-	
+
 	@PostMapping(value = "/filterPatients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientDTO>> filterPatientsController(@RequestBody String[] params) {
 
@@ -106,6 +109,15 @@ public class PatientController {
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
+	}
+
+	@PostMapping(value = "/editMedicalRecord", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalRecordDTO> editMedicalRecord(@RequestBody MedicalRecordDTO mr) {
+		MedicalRecord medicalRecord = medicalRecordService.update(mr);
+		if (medicalRecord != null) {
+			return new ResponseEntity<MedicalRecordDTO>(new MedicalRecordDTO(medicalRecord),HttpStatus.ACCEPTED);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 }

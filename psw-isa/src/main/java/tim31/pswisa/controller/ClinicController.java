@@ -168,6 +168,7 @@ public class ClinicController {
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 
+
 	/**
 	 * This method servers for searching rooms in clinic
 	 * 
@@ -177,6 +178,7 @@ public class ClinicController {
 	 * @return - (List<RoomDTO>) This methods return all room with entered criteria
 	 * 
 	 */
+
 	@PostMapping(value = "/searchRooms", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RoomDTO>> searchRoomsController(@RequestBody String[] params,
 			HttpServletRequest request) {
@@ -440,6 +442,7 @@ public class ClinicController {
 	 * @param request -
 	 * @return - (RoomDTO) This method returns updated room
 	 */
+
 	@PostMapping(value = "/changeRoom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RoomDTO> changeRoomController(@RequestBody RoomDTO room, HttpServletRequest request) {
 
@@ -566,6 +569,24 @@ public class ClinicController {
 			ret.add(new ClinicDTO(clinic));
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
+
+
+	@GetMapping(value = "/getRooms/{roomType}/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<RoomDTO>> getRoomsByClinicIdAndType(@PathVariable String roomType, @PathVariable Long id,
+			@PathVariable String date, HttpServletRequest request) {
+		List<Room> rooms = roomService.findAllByClinicIdAndTypeRoom(id, roomType, date);
+		List<RoomDTO> ret = new ArrayList<>();
+		for (Room room : rooms) {
+			ret.add(new RoomDTO(room));
+		}
+		return new ResponseEntity<List<RoomDTO>>(ret, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/roomAvailability/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Integer>> getRoomVailability(@PathVariable Long id, @PathVariable String date) {
+		ArrayList<Integer> roomAvailability  = roomService.findRoomAvailability(id, date);
+		return new ResponseEntity<List<Integer>>(roomAvailability, HttpStatus.OK);
 	}
 
 }

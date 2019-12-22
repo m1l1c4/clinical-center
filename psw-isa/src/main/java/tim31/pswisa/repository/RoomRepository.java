@@ -39,11 +39,16 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	 */
 	Room findOneByClinicIdAndNumber(Long clinicId, int number);
 
+
 	/**
 	 * This method servers for getting one room by number
 	 * 
 	 * @param number - number of room that has to be returned
 	 * @return - (Room) This method returns searched room
 	 */
+
+	List<Room> findAllByClinicIdAndTypeRoom(Long clinicId, String type);
+	
+
 	Room findOneByNumber(int number);
 }

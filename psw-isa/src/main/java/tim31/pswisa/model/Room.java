@@ -1,5 +1,6 @@
 package tim31.pswisa.model;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +27,7 @@ public class Room {
 	@Column(name = "roomName", unique = false, nullable = false)
 	private String name;
 
-	@Column(name = "type", unique = false, nullable = true)
+	@Column(name = "typeRoom", unique = false, nullable = true)
 	private String typeRoom;
 
 	@Column(name = "isFree", unique = false, nullable = true)
@@ -34,9 +35,9 @@ public class Room {
 
 	@Column(name = "roomNumber", unique = false, nullable = false)
 	private int number;
-	
-	@Column(name="firstFreeDate")
-	private String firstFreeDate;
+
+	@Column(name = "firstFreeDate")
+	private LocalDate firstFreeDate;
 
 	@JsonManagedReference(value = "soba_mov")
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -51,7 +52,7 @@ public class Room {
 		bookedCheckups = new HashSet<Checkup>();
 	}
 
-	public Room(Long id, String name, String type, boolean isFree, int number, Clinic clinic, String first) {
+	public Room(Long id, String name, String type, boolean isFree, int number, Clinic clinic, LocalDate first) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -118,14 +119,12 @@ public class Room {
 		this.clinic = clinic;
 	}
 
-	public String getFirstFreeDate() {
+	public LocalDate getFirstFreeDate() {
 		return firstFreeDate;
 	}
 
-	public void setFirstFreeDate(String firstFreeDate) {
+	public void setFirstFreeDate(LocalDate firstFreeDate) {
 		this.firstFreeDate = firstFreeDate;
 	}
-	
-	
 
 }

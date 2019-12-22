@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.model.Absence;
+import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
@@ -28,6 +30,9 @@ public class EmailService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private MedicalWorkerService medicalWorkerService;
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
@@ -138,6 +143,29 @@ public class EmailService {
 			System.out.println("Email sent.");
 		}
 
+	}
+
+	@Async
+	public void sendChangeDate(Patient patient, CheckupDTO c) {
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo("pswisa.tim31.2019@gmail.com");
+		msg.setFrom(env.getProperty("spring.mail.username"));
+		msg.setSubject("Account confirmation");
+		msg.setText("Your operation was resheduled for " + c.getDate().toString() + " " + c.getTime() + " in the room ."
+				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
+		System.out.println("Email sent.");
+	}
+	
+	@Async
+	public void notifyDoctor(Long id, Checkup c) {
+		MedicalWorker medicalWorker = medicalWorkerService.findOneById(id);
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo("pswisa.tim31.2019@gmail.com");
+		msg.setFrom(env.getProperty("spring.mail.username"));
+		msg.setSubject("Account confirmation");
+		msg.setText("You must attend operatin on " + c.getDate().toString() + " " + c.getTime() + " in the room ."
+				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
+		System.out.println("Email sent.");
 	}
 
 }

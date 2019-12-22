@@ -20,7 +20,6 @@ import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RecipeDTO;
 import tim31.pswisa.dto.UserDTO;
-import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
@@ -261,6 +260,17 @@ public class MedicalWorkerController {
 			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+	}
+
+	@GetMapping(value = "/getAllAvailable/{id}/{date}/{time}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> getAllAvailableDoctors(@PathVariable Long id,
+			@PathVariable String date, @PathVariable String time) {
+		List<MedicalWorker> doctors = medicalWorkerService.findAllAvailable(id, date, time);
+		List<MedicalWorkerDTO> ret = new ArrayList<>();
+		for (MedicalWorker mw : doctors) {
+			ret.add(new MedicalWorkerDTO(mw));
+		}
+		return new ResponseEntity<List<MedicalWorkerDTO>>(ret, HttpStatus.OK);
 	}
 
 }
