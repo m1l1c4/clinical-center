@@ -126,7 +126,7 @@ public class ClinicService {
 			List<Checkup> checkups = checkupService.findAll();
 			for (Checkup c : checkups) {
 				if (c.getClinic().getId() == clinic.getId() && c.isScheduled()) {
-					LocalDate temp = LocalDate.parse(c.getDate());
+					LocalDate temp = c.getDate();
 					System.out.println(temp.toString());
 					System.out.println(c.getDate());
 					if (temp.compareTo(date1Local) >= 0 && temp.compareTo(date2Local) <= 0) {
@@ -194,7 +194,7 @@ public class ClinicService {
 		List<Checkup> checkups = checkupService.findAll();
 		for (Checkup c : checkups) {
 			if (c.getClinic().getId() == clinic.getId() && c.isScheduled()) {
-				String temp = c.getDate();
+				String temp = c.getDate().toString();
 				String[] temp1 = temp.split("-");
 				String temp2 = temp1[1];
 				if (temp2.equals("01")) {
@@ -350,7 +350,7 @@ public class ClinicService {
 		if (clinicAdministrator != null) {
 			Clinic clinic = clinicAdministrator.getClinic();
 			if (clinic != null) {
-				Set<MedicalWorker> workers = medicalWorkerService.findAllByClinicId(clinic.getId());
+				List<MedicalWorker> workers = medicalWorkerService.findAllByClinicId(clinic.getId());
 				for (MedicalWorker d : workers) {
 					dtos.add(new MedicalWorkerDTO(d));
 				}

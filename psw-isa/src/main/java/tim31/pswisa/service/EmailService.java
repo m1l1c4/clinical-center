@@ -35,9 +35,6 @@ public class EmailService {
 	private MedicalWorkerService medicalWorkerService;
 
 	@Autowired
-	private MedicalWorkerService medicalWorkerService;
-
-	@Autowired
 	private AbsenceService absenceService;
 
 	@Autowired
