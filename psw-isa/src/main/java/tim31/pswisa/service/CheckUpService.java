@@ -1,5 +1,7 @@
 package tim31.pswisa.service;
 
+import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +32,9 @@ public class CheckUpService {
 
 	@Autowired
 	private CheckUpRepository checkupRepository;
+	
+	@Autowired
+	private EmailService emailService;
 
 	public List<Checkup> findAll() {
 		return checkupRepository.findAll();
@@ -57,9 +62,20 @@ public class CheckUpService {
 		return retVal;
 	}
 
+	public List<CheckupDTO> findAllByScheduled(boolean ok) {
+		List<Checkup> temp = checkupRepository.findAll();
+		List<CheckupDTO> retVal = new ArrayList<CheckupDTO>();
+		for (Checkup c : temp) {
+			if (!c.isScheduled()) {
+				retVal.add(new CheckupDTO(c));
+			}
+		}
+		return retVal;
+	}
+
 	public Checkup addAppointment(CheckupDTO c, MedicalWorker mw, ClinicAdministrator clinicAdministrator) {
 		Checkup checkup = new Checkup();
-		checkup.setMedicalWorker(mw);
+		checkup.getDoctors().add(mw);
 		CheckUpType typeC = checkUpTypeService.findOneByName(c.getCheckUpType().getName());
 		checkup.setCheckUpType(typeC);
 		checkup.setPrice(c.getPrice());
@@ -105,4 +121,32 @@ public class CheckUpService {
 			return null;
 	}
 
+	public List<Checkup> findAllByRoomIdAndScheduledAndDate(Long id, boolean scheduled, LocalDate date) {
+		return checkupRepository.findAllByRoomIdAndScheduledAndDate(id, scheduled, date);
+	}
+
+	public List<Checkup> findOneByTimeAndDate(String time, LocalDate date) {
+		return checkupRepository.findAllByTimeAndDate(time, date);
+	}
+	
+	public Checkup update(CheckupDTO c) {
+		Checkup checkup = checkupRepository.findOneById(c.getId());
+		checkup.setDate(c.getDate());
+		checkup.setTime(c.getTime());
+		Room room = roomService.findOneById(c.getRoom().getId());
+		checkup.setRoom(room);
+		checkup.setScheduled(true);
+		return checkupRepository.save(checkup);
+	}
+	
+	public Checkup addDoctors(Long id, Long[] workers) {
+		Checkup checkup = checkupRepository.findOneById(id);
+		checkup.setDoctors(new HashSet<MedicalWorker>());
+		for (Long doctorId : workers) {
+			MedicalWorker mw = medicalWorkerService.findOneById(doctorId);
+			checkup.getDoctors().add(mw);
+			emailService.notifyDoctor(doctorId, checkup);
+		}
+		return checkupRepository.save(checkup);
+	}
 }

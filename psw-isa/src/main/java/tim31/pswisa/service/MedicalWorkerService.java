@@ -1,5 +1,6 @@
 package tim31.pswisa.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class MedicalWorkerService {
 	@Autowired
 	private CheckUpService checkupService;
 
-	public Set<MedicalWorker> findAllByClinicId(Long id) {
+	public List<MedicalWorker> findAllByClinicId(Long id) {
 		return medicalWorkerRepository.findAllByClinicId(id);
 	}
 
@@ -83,7 +84,7 @@ public class MedicalWorkerService {
 	}
 
 	public List<MedicalWorkerDTO> getDoctors(Clinic clinic) {
-		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		List<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
 		for (MedicalWorker med : temp) {
@@ -122,7 +123,7 @@ public class MedicalWorkerService {
 			checkup.setPatient(p);
 			checkup.setScheduled(false);
 			checkup.setType(c.getType());
-			checkup.setMedicalWorker(medWorker);
+			checkup.getDoctors().add(medWorker);
 			checkup.setTime(c.getTime());
 			checkup.setDuration(1);
 			checkup.setClinic(clinic);
@@ -142,11 +143,12 @@ public class MedicalWorkerService {
 		User user1 = userService.findOneByEmail(pom);
 		Patient p = patientService.findOneByUserId(user1.getId());
 		MedicalWorker medWorker = findByUser(user.getId());
+		/*
 		for (Checkup c : p.getAppointments()) {
 			if (c.getMedicalWorker().getUser().getEmail().equals((medWorker.getUser().getEmail()))) {
 				retVal = "DA";
 			}
-		}
+		*/
 		if (retVal.equals("DA")) {
 			return retVal;
 		} else {
@@ -155,7 +157,7 @@ public class MedicalWorkerService {
 	}
 
 	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {
-		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		List<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
 		if (name.equals("")) {
@@ -250,5 +252,24 @@ public class MedicalWorkerService {
 			return false;
 
 		return true;
+	}
+	
+	public List<MedicalWorker> findAllAvailable(Long id, String date, String t){
+		List<MedicalWorker> doctors = medicalWorkerRepository.findAllByClinicId(id);
+		int time = Integer.parseInt(t);
+		List<MedicalWorker> ret = new ArrayList<>();
+		List<Checkup> checkups = checkupService.findOneByTimeAndDate(t, LocalDate.parse(date));
+		for(Checkup checkup : checkups) {
+			for (MedicalWorker doctor : checkup.getDoctors()) {
+				doctors.remove(doctor);
+			}
+		}
+		for(MedicalWorker doctor : doctors) {
+			if(time < doctor.getEndHr() && time >= doctor.getStartHr() && doctor.getUser().getType().equals("DOKTOR")) {
+				ret.add(doctor);
+			}
+		}
+		// dodati jos za godisnje odmore
+		return ret;
 	}
 }

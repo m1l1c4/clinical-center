@@ -1,13 +1,16 @@
 package tim31.pswisa.dto;
 
+import java.time.LocalDate;
+
 import tim31.pswisa.model.Checkup;
+import tim31.pswisa.model.MedicalWorker;
 
 public class CheckupDTO {
 
 	private Long id;
 	private double discount;
 	private boolean scheduled;
-	private String date;
+	private LocalDate date;
 	private String time;
 	private String type;
 	private int duration;
@@ -21,7 +24,7 @@ public class CheckupDTO {
 	public CheckupDTO(Checkup c) {
 		this(c.getId(), c.getDiscount(), c.isScheduled(), c.getDate(), c.getTime(), c.getType(), c.getDuration(),
 				c.getDiscount(), new RoomDTO(c.getRoom()), new PatientDTO(c.getPatient()), new ClinicDTO(c.getClinic()),
-				new MedicalWorkerDTO(c.getMedicalWorker()), new CheckUpTypeDTO(c.getCheckUpType()));
+				new MedicalWorkerDTO((MedicalWorker) c.getDoctors().toArray()[0]), new CheckUpTypeDTO(c.getCheckUpType()));
 	}
 	
 	public CheckupDTO() {
@@ -29,7 +32,7 @@ public class CheckupDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public CheckupDTO(Long id, double discount, boolean scheduled, String date, String time, String type, int duration,
+	public CheckupDTO(Long id, double discount, boolean scheduled, LocalDate date, String time, String type, int duration,
 			double price, RoomDTO room, PatientDTO patient, ClinicDTO clinic, MedicalWorkerDTO medicalWorker,
 			CheckUpTypeDTO checkUpType) {
 		super();
@@ -72,11 +75,11 @@ public class CheckupDTO {
 		this.scheduled = scheduled;
 	}
 
-	public String getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 

@@ -1,5 +1,6 @@
 package tim31.pswisa.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -146,7 +147,7 @@ public class ClinicService {
 	public List<RoomDTO> searchRooms(Clinic clinic, String[] params) {
 		String name = params[0];
 		String type = params[1];
-		String date = params[2];
+		LocalDate date = LocalDate.parse(params[2]);
 		List<RoomDTO> ret = new ArrayList<RoomDTO>();
 		Set<Room> temp = clinic.getRooms();
 		int counter = 0;
@@ -305,7 +306,6 @@ public class ClinicService {
 	public List<MedicalWorkerDTO> doctorsInClinic(String name, String type, String date) {
 		Clinic cl = clinicRepository.findOneByName(name);
 		List<MedicalWorkerDTO> doctors = new ArrayList<MedicalWorkerDTO>();
-		List<String> temp = new ArrayList<String>(); // list of times of appointments for specific date
 		int counter = 0;
 		if (cl != null) {
 			for (MedicalWorker medicalWorker : cl.getMedicalStuff()) {
@@ -323,7 +323,7 @@ public class ClinicService {
 				}
 			}
 			boolean taken = false;
-			ArrayList<String> pom = new ArrayList<String>();
+			ArrayList<String> pom = new ArrayList<String>(); // list of times of appointments for specific date
 			for (MedicalWorkerDTO mw : doctors) {
 				MedicalWorker medicalWorker = medicalWorkerService.findOneById(mw.getId());
 				for (int i = medicalWorker.getStartHr(); i < medicalWorker.getEndHr(); i++) {

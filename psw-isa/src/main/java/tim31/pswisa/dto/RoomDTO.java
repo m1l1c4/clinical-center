@@ -1,5 +1,7 @@
 package tim31.pswisa.dto;
 
+import java.time.LocalDate;
+
 import tim31.pswisa.model.Room;
 
 public class RoomDTO {
@@ -10,7 +12,7 @@ public class RoomDTO {
 	private boolean isFree;
 	private int number;
 	private ClinicDTO clinic;
-	private String firstFreeDate;
+	private LocalDate firstFreeDate;
 
 	public RoomDTO() {
 		super();
@@ -18,10 +20,12 @@ public class RoomDTO {
 	}
 
 	public RoomDTO(Room r) {
-		this(r.getId(), r.getName(), r.getTypeRoom(), r.isFree(), r.getNumber(), new ClinicDTO(r.getClinic()), r.getFirstFreeDate());
+		this(r.getId(), r.getName(), r.getTypeRoom(), r.isFree(), r.getNumber(), new ClinicDTO(r.getClinic()),
+				r.getFirstFreeDate());
 	}
 
-	public RoomDTO(Long id, String name, String type, boolean isFree, int number, ClinicDTO clinic, String firstFreeDate) {
+	public RoomDTO(Long id, String name, String type, boolean isFree, int number, ClinicDTO clinic,
+			LocalDate firstFreeDate) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -80,14 +84,12 @@ public class RoomDTO {
 		this.clinic = clinic;
 	}
 
-	public String getFirstFreeDate() {
+	public LocalDate getFirstFreeDate() {
 		return firstFreeDate;
 	}
 
-	public void setFirstFreeDate(String firstFreeDate) {
+	public void setFirstFreeDate(LocalDate firstFreeDate) {
 		this.firstFreeDate = firstFreeDate;
 	}
-	
-	
 
 }
