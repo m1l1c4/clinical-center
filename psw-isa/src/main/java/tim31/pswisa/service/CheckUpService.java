@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.CheckupDTO;
-import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
@@ -129,13 +128,13 @@ public class CheckUpService {
 		return checkupRepository.save(checkup);
 	}
 	
-	public Checkup addDoctors(Long id, List<MedicalWorkerDTO> workers) {
+	public Checkup addDoctors(Long id, Long[] workers) {
 		Checkup checkup = checkupRepository.findOneById(id);
 		checkup.setDoctors(new HashSet<MedicalWorker>());
-		for (MedicalWorkerDTO doctor : workers) {
-			MedicalWorker mw = medicalWorkerService.findOneById(doctor.getId());
+		for (Long doctorId : workers) {
+			MedicalWorker mw = medicalWorkerService.findOneById(doctorId);
 			checkup.getDoctors().add(mw);
-			emailService.notifyDoctor(doctor.getId(), checkup);
+			emailService.notifyDoctor(doctorId, checkup);
 		}
 		return checkupRepository.save(checkup);
 	}

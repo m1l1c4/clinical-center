@@ -222,7 +222,7 @@ public class MedicalWorkerController {
 		for (MedicalWorker mw : doctors) {
 			ret.add(new MedicalWorkerDTO(mw));
 		}
-		return new ResponseEntity<List<MedicalWorkerDTO>>(ret, HttpStatus.BAD_GATEWAY);
+		return new ResponseEntity<List<MedicalWorkerDTO>>(ret, HttpStatus.OK);
 	}
 
 }

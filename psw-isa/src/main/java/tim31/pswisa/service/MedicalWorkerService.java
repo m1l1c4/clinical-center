@@ -270,6 +270,6 @@ public class MedicalWorkerService {
 			}
 		}
 		// dodati jos za godisnje odmore
-		return doctors;
+		return ret;
 	}
 }

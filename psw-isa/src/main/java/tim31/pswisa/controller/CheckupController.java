@@ -129,7 +129,7 @@ public class CheckupController {
 	}
 	
 	@PostMapping(value = "/addDoctors/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> addDoctors(@RequestBody List<MedicalWorkerDTO> doctors, @PathVariable Long id) {
+	public ResponseEntity<String> addDoctors(@RequestBody Long[] doctors, @PathVariable Long id) {
 		Checkup checkup = checkupService.addDoctors(id, doctors);
 		if (checkup != null) {
 			return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
