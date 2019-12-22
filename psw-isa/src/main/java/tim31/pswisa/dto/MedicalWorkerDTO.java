@@ -112,4 +112,6 @@ public class MedicalWorkerDTO {
 		this.clinic = clinic;
 	}
 
+	
+
 }

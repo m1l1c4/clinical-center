@@ -1,9 +1,12 @@
 package tim31.pswisa.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.CheckUpTypeDTO;
@@ -11,6 +14,7 @@ import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
+import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpTypeRepository;
 
 @Service
@@ -22,31 +26,78 @@ public class CheckUpTypeService {
 	@Autowired
 	private CheckUpTypeRepository checkUpTypeRepository;
 
+	@Autowired
+	private ClinicAdministratorService clinicAdministratorService;
+
+	/**
+	 * This method servers for getting all types of check-ups from database
+	 * 
+	 * @return - (List<Checkup>) This method returns all check-up types from
+	 *         database
+	 */
 	public List<CheckUpType> findAll() {
 		return checkUpTypeRepository.findAll();
 	}
 
+	/**
+	 * This method servers for getting all types of check-ups from database
+	 * 
+	 * @param name - name of check-up type that has to be returned
+	 * @return - (CheckUpType) This method returns one type of check-up
+	 */
 	public CheckUpType findOneByName(String name) {
 		return checkUpTypeRepository.findOneByName(name);
 	}
 
-	public String deleteType(String name, ClinicAdministrator clinicAdministrator) {
-		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-		Set<CheckUpType> tipovi = clinic.getCheckUpTypes();
-		for (CheckUpType t : tipovi) {
-			if (t.getName().equals(name)) {
-				clinic.getCheckUpTypes().remove(t);
-				clinic = clinicService.update(clinic); // delete type from clinic
-				CheckUpType temp = findOneByName(name);
-				temp.getClinics().remove(clinic);
-				temp = saveTwo(temp);
-				return "Obrisano";
+	public ArrayList<CheckUpTypeDTO> getAllTypes(User user) {
+		ArrayList<CheckUpTypeDTO> retValue = new ArrayList<CheckUpTypeDTO>();
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		if (clinicAdministrator != null) {
+			Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+			Set<CheckUpType> lista = clinic.getCheckUpTypes();
+			for (CheckUpType c : lista) {
+				retValue.add(new CheckUpTypeDTO(c));
 			}
+			return retValue;
 		}
-		return "";
-
+		return null;
 	}
 
+	/**
+	 * This method servers for deleting type of check-up by name in clinic
+	 * 
+	 * @param name                - name of type that have to be deleted
+	 * @param clinicAdministrator - logged clinicAdministrator to know clinic
+	 * @return - (String) This method returns 'Obrisano' if type is deleted or '' if
+	 *         that type doesn't exist in clinic
+	 */
+	public String deleteType(User user, String name) {
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		if (clinicAdministrator != null) {
+			Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
+			Set<CheckUpType> tipovi = clinic.getCheckUpTypes();
+			for (CheckUpType t : tipovi) {
+				if (t.getName().equals(name)) {
+					clinic.getCheckUpTypes().remove(t);
+					clinic = clinicService.update(clinic); // delete type from clinic
+					CheckUpType temp = findOneByName(name);
+					temp.getClinics().remove(clinic);
+					temp = saveTwo(temp);
+					return "Obrisano";
+				}
+			}
+			return "";
+		}
+
+		return "";
+	}
+
+	/**
+	 * This method servers for saving new type of check-up in clinic
+	 * 
+	 * @param ct - check-up type that have to be saved
+	 * @return - (CheckUpType) check-up if it is saved or null if already exist
+	 */
 	public CheckUpType save(CheckUpType ct) {
 		List<CheckUpType> cek = checkUpTypeRepository.findAll();
 
@@ -58,11 +109,23 @@ public class CheckUpTypeService {
 		return checkUpTypeRepository.save(ct);
 	}
 
+	/**
+	 * This method servers for updating type of check-up in clinic
+	 * 
+	 * @param ct - check-up type that have to be updated if database
+	 * @return - (CheckUpType) updated check-up type
+	 */
 	public CheckUpType saveTwo(CheckUpType ct) {
 		return checkUpTypeRepository.save(ct);
 	}
 
-	// can't save name if there is one type with the same name
+	/**
+	 * @param c     - check-up type that have to be updated
+	 * @param after - new name of check-up type
+	 * @param price - new price of check-up
+	 * @return - check-up if it is successfully updated or null if type with same
+	 *         name already exists
+	 */
 	public CheckUpType update(CheckUpType c, String after, String price) {
 		List<CheckUpType> allTypes = findAll();
 		for (CheckUpType cek : allTypes) {
@@ -76,6 +139,14 @@ public class CheckUpTypeService {
 		return checkUpTypeRepository.save(c);
 	}
 
+	/**
+	 * This method servers for adding new type of check-up in clinic
+	 * 
+	 * @param type                - check-up type that have to be added
+	 * @param clinicAdministrator - logged clinic administrator
+	 * @return - (CheckUpType) check-up if it is successfully added or null if type
+	 *         with same name already exists
+	 */
 	public CheckUpType addType(CheckUpTypeDTO type, ClinicAdministrator clinicAdministrator) {
 		CheckUpType tip = new CheckUpType();
 		tip.setName(type.getName());
@@ -111,8 +182,8 @@ public class CheckUpTypeService {
 		} else
 			return null;
 	}
-	
-	public Set<Clinic> findClinics(String name){
+
+	public Set<Clinic> findClinics(String name) {
 		CheckUpType type = checkUpTypeRepository.findOneByName(name);
 		return type.getClinics();
 	}

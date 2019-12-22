@@ -30,11 +30,22 @@ public class Clinic {
 	@Column(name = "city", unique = false, nullable = false)
 	private String city;
 
+	@Column(name = "country")
+	private String country;
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
 	@Column(name = "address", unique = true, nullable = false)
 	private String address;
 
 	@Column(name = "rating", unique = false, nullable = true)
-	private int rating;
+	private double rating;
 
 	@Column(name = "description", unique = false, nullable = false)
 	private String description;
@@ -48,13 +59,18 @@ public class Clinic {
 	private Set<MedicalWorker> medicalStuff;
 
 	/*
-	// @JsonManagedReference(value="clinic_movement")
-	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Patient> patients;
-*/
+	 * // @JsonManagedReference(value="clinic_movement")
+	 * 
+	 * @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade =
+	 * CascadeType.ALL) private Set<Patient> patients;
+	 */
 	@JsonManagedReference(value = "room_mov")
 	@OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Room> rooms = new HashSet<Room>();
+
+	@JsonManagedReference(value = "clinicAbsence_mov")
+	@OneToMany(mappedBy = "clinicOfAbsence", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Absence> absences;
 
 	@JsonBackReference(value = "type_mov")
 	@ManyToMany(mappedBy = "clinics")
@@ -99,11 +115,11 @@ public class Clinic {
 		this.address = address;
 	}
 
-	public int getRating() {
+	public double getRating() {
 		return rating;
 	}
 
-	public void setRating(int rating) {
+	public void setRating(double rating) {
 		this.rating = rating;
 	}
 
@@ -121,15 +137,12 @@ public class Clinic {
 	public void setMedicalStuff(Set<MedicalWorker> medicalStuff) {
 		this.medicalStuff = medicalStuff;
 	}
-/*
-	public Set<Patient> getPatients() {
-		return patients;
-	}
 
-	public void setPatients(Set<Patient> patients) {
-		this.patients = patients;
-	}
-*/
+	/*
+	 * public Set<Patient> getPatients() { return patients; }
+	 * 
+	 * public void setPatients(Set<Patient> patients) { this.patients = patients; }
+	 */
 	public Set<Room> getRooms() {
 		return rooms;
 	}
@@ -176,6 +189,14 @@ public class Clinic {
 
 	public void setCheckUpTypes(Set<CheckUpType> checkUpTypes) {
 		this.checkUpTypes = checkUpTypes;
+	}
+
+	public Set<Absence> getAbsences() {
+		return absences;
+	}
+
+	public void setAbsences(Set<Absence> absences) {
+		this.absences = absences;
 	}
 
 	/*

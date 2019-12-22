@@ -32,7 +32,7 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Autowired
 	private MedicalWorkerRepository medicalWorkerRepository;
 
@@ -50,19 +50,19 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private CheckUpTypeService checkUpTypeService;
 
 	@Autowired
 	private PatientService patientService;
-	
+
 	@Autowired
 	private RoomService roomService;
 
 	@Autowired
 	private ClinicRepository clinicRepository;
-	
+
 	@Autowired
 	private CheckUpService checkupService;
 
@@ -70,6 +70,13 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllByClinicId(id);
 	}
 
+	/**
+	 * This method servers for updating medical worker
+	 * 
+	 * @param medWorker - medical worker who has to be changed
+	 * @param mw        - new information about medical worker
+	 * @return - (MedicalWorker) This method returns updated medicalWorker
+	 */
 	public MedicalWorker updateMedicalWorker(MedicalWorker medWorker, MedicalWorkerDTO mw) {
 		medWorker.getUser().setName(mw.getUser().getName());
 		medWorker.getUser().setSurname(mw.getUser().getSurname());
@@ -82,6 +89,13 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findOneByUserId(id);
 	}
 
+	/**
+	 * This method servers for getting medical workers in clinic
+	 * 
+	 * @param clinic - clinic where medical workers work
+	 * @return - (List<MedicalWorker>) This method returns list of medical workers
+	 *         in clinic
+	 */
 	public List<MedicalWorkerDTO> getDoctors(Clinic clinic) {
 		Set<MedicalWorker> temp = findAllByClinicId(clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
@@ -92,12 +106,16 @@ public class MedicalWorkerService {
 		return returnVal;
 	}
 
+	/**
+	 * This method servers for deleting medical worker
+	 * 
+	 * @param email               - medical worker who has to be changed
+	 * @param clinicAdministrator - logged clinic administrator
+	 * @return - (String) This method returns string ok or ""
+	 */
 	public String deleteDoctor(String email, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
 		User user = userService.findOneByEmail(email);
-		System.out.println(email);
-		System.out.println(user.getName());
-		System.out.println(user.getId());
 		MedicalWorker med = findByUser(user.getId());
 		// if(med.getCheckUps().size() != 0) {
 		clinic.getMedicalStuff().remove(med);
@@ -112,6 +130,13 @@ public class MedicalWorkerService {
 
 	}
 
+	/**
+	 * This method servers for booking appointment by doctor
+	 * 
+	 * @param user - logged doctor
+	 * @param c    - check-up of patient
+	 * @return - (void) This method has no return value
+	 */
 	public void bookForPatient(User user, CheckupDTO c) throws MailException, InterruptedException {
 		if (user != null) {
 			MedicalWorker medWorker = findByUser(user.getId());
@@ -133,10 +158,18 @@ public class MedicalWorkerService {
 			checkup.setDate(c.getDate());
 			checkup.setRoom(rooms.get(1));
 			checkupService.save(checkup);
-			emailService.sendNotificationToAmin(clinic,medWorker,p);
+			emailService.sendNotificationToAmin(clinic, medWorker, p);
 		}
 	}
 
+	/**
+	 * This method servers for checking if doctor can access to medical record of
+	 * patient
+	 * 
+	 * @param user - logged doctor
+	 * @param pom  - email of patient
+	 * @return - (String) This method returns string 'DA' or 'NE'
+	 */
 	public String canAccess(User user, String pom) {
 		String retVal = "";
 		User user1 = userService.findOneByEmail(pom);

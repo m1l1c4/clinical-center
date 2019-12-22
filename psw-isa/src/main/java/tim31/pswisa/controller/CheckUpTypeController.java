@@ -33,9 +33,6 @@ import tim31.pswisa.service.UserService;
 public class CheckUpTypeController {
 
 	@Autowired
-	private ClinicService clinicService;
-
-	@Autowired
 	private ClinicAdministratorService clinicAdministratorService;
 
 	@Autowired
@@ -47,52 +44,59 @@ public class CheckUpTypeController {
 	@Autowired
 	TokenUtils tokenUtils;
 
-	// This method delete type from clinic but type won't be deleted from all types
-	// in clinical center
+	/**
+	 * This method servers for deleting check-up type in clinic by clinic
+	 * administrator
+	 * 
+	 * @param name    - the name of check-up type that have to be deleted
+	 * @param request -
+	 * @return - (String) This method returns string "Obrisano" if type is deleted
+	 *         or "Greska" can't delete that type
+	 */
 	@PostMapping(value = "/deleteType/{name}")
 	public ResponseEntity<String> deleteTypeController(@PathVariable String name, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		if (user != null) {
-			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-			if (clinicAdministrator != null) {
-				String returnVal = checkUpTypeService.deleteType(name, clinicAdministrator);
-				if (returnVal.equals("Obrisano")) {
-					return new ResponseEntity<>("Obrisano", HttpStatus.OK);
-				} else {
-					return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
-				}
+			String returnVal = checkUpTypeService.deleteType(user, name);
+			if (returnVal.equals("Obrisano")) {
+				return new ResponseEntity<>("Obrisano", HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("Greska", HttpStatus.ALREADY_REPORTED);
 			}
 		}
 		return new ResponseEntity<>("Greska", HttpStatus.BAD_REQUEST);
 	}
 
-	// This method returs all types in clinic center of administrator who is logged
-	// in system
+	/**
+	 * This method servers getting all types of check-ups in clinic
+	 * 
+	 * @param request -
+	 * @return - (ArrayList<CheckUpTypeDTO>) This method returns list of all
+	 *         check-ups type in clinic if user is not null
+	 */
 	@GetMapping(value = "/getTypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<CheckUpTypeDTO>> getTypes(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		if (user != null) {
-			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
-			if (clinicAdministrator != null) {
-				Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
-				Set<CheckUpType> lista = clinic.getCheckUpTypes();
-				ArrayList<CheckUpTypeDTO> dtos = new ArrayList<CheckUpTypeDTO>();
-				for (CheckUpType c : lista) {
-					dtos.add(new CheckUpTypeDTO(c));
-				}
-				return new ResponseEntity<>(dtos, HttpStatus.OK);
-			} else
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			ArrayList<CheckUpTypeDTO> retValue = new ArrayList<CheckUpTypeDTO>();
+			retValue = checkUpTypeService.getAllTypes(user);
+			return new ResponseEntity<>(retValue, HttpStatus.OK);
 		} else
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 
-	// This method adding new type in all type of clinic, checking if there is a
-	// type with same name
+	/**
+	 * This method servers for adding new appointment for booking with one click
+	 * 
+	 * @param type    - check-up type that have to be added
+	 * @param request -
+	 * @return - (CheckUpTypeDTO) This method returns added check-up type in clinic
+	 * 
+	 */
 	@PostMapping(value = "/addType", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckUpTypeDTO> addTypeController(@RequestBody CheckUpTypeDTO type,
 			HttpServletRequest request) {

@@ -7,11 +7,12 @@ public class ClinicDTO {
 	private String name;
 	private String city;
 	private String address;
-	private int rating;
+	private double rating;
 	private String description;
+	private String country;
 
 	public ClinicDTO(Clinic c) {
-		this(c.getId(), c.getName(), c.getCity(), c.getAddress(), c.getRating(), c.getDescription());
+		this(c.getId(), c.getName(), c.getCity(), c.getAddress(), c.getRating(), c.getDescription(), c.getCountry());
 	}
 
 	public ClinicDTO() {
@@ -19,7 +20,7 @@ public class ClinicDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ClinicDTO(Long id, String name, String city, String address, int rating, String description) {
+	public ClinicDTO(Long id, String name, String city, String address, double rating, String description, String c) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -27,6 +28,15 @@ public class ClinicDTO {
 		this.address = address;
 		this.rating = rating;
 		this.description = description;
+		this.country = c;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	public Long getId() {
@@ -61,11 +71,11 @@ public class ClinicDTO {
 		this.address = address;
 	}
 
-	public int getRating() {
+	public double getRating() {
 		return rating;
 	}
 
-	public void setRating(int rating) {
+	public void setRating(double rating) {
 		this.rating = rating;
 	}
 
