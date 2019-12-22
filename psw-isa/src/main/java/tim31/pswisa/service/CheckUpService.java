@@ -1,6 +1,7 @@
 package tim31.pswisa.service;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +50,16 @@ public class CheckUpService {
 
 	public Checkup findOneById(Long id) {
 		return checkupRepository.findOneById(id);
+	}
+	public List<CheckupDTO>findAllByScheduled(boolean ok){
+		List<Checkup>temp = checkupRepository.findAll();
+		List<CheckupDTO>retVal = new ArrayList<CheckupDTO>();
+		for(Checkup c : temp) {
+			if(!c.isScheduled()) {
+				retVal.add(new CheckupDTO(c));
+			}
+		}
+		return retVal;
 	}
 
 	public List<CheckupDTO> findAllByScheduled(boolean ok) {

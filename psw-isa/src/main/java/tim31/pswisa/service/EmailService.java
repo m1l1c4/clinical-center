@@ -1,5 +1,7 @@
 package tim31.pswisa.service;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.User;
@@ -52,6 +55,24 @@ public class EmailService {
 		javaMailSender.send(msg);
 
 		System.out.println("Email sent.");
+	}
+	
+	
+	@Async
+	public void sendNotificationToAmin(Clinic clinic, MedicalWorker medWorker, Patient patient) throws MailException, InterruptedException {
+		// Set<ClinicAdministrator> clinicAdministrators = clinic.getClAdmins();
+		SimpleMailMessage msg = new SimpleMailMessage();
+		// for(ClinicAdministrator ca : clinicAdministrators) {
+			System.out.println("Sending email...");
+			msg.setTo("pswisa.tim31.2019@gmail.com");
+			msg.setFrom(env.getProperty("spring.mail.username"));
+			msg.setSubject("New request for operation or appointment");
+			msg.setText("There is new request for operation or appointment by doctor " + medWorker.getUser().getName() + " " + medWorker.getUser().getSurname()
+					+ " for patient " + patient.getUser().getName() + " " + patient.getUser().getSurname());
+			javaMailSender.send(msg);
+			System.out.println("Email sent.");
+		// }
+		
 	}
 
 	@Async

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.ClinicAdministratorDTO;
+import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
