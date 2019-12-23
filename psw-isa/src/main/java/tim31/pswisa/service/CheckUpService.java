@@ -254,4 +254,22 @@ public class CheckUpService {
 		}
 		return checkupRepository.save(checkup);
 	}
+	
+	
+	public List<CheckupDTO> getAllQuicks(Long id) {		
+		List<MedicalWorker> doctors = medicalWorkerService.findAllDoctors("DOKTOR", id);
+		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
+		for (MedicalWorker mw : doctors) {
+			for (Checkup ch : mw.getCheckUps()) {
+				if (ch.getPatient() == null) {
+					CheckupDTO chDto = new CheckupDTO(ch) ;					
+					ret.add(new CheckupDTO(ch));
+				}
+			}
+		}
+		
+		return ret;		
+	}
+	
+	
 }

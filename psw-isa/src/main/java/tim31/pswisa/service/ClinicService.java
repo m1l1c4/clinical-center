@@ -635,6 +635,8 @@ public class ClinicService {
 					}
 					if (!taken) {
 						pom.add(Integer.toString(i));
+					}else {
+						taken = false;
 					}
 				}
 
@@ -656,7 +658,7 @@ public class ClinicService {
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
 		LocalDate realDate = LocalDate.parse(date);
 		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
-		List<Checkup> checkups = checkupService.findAllByClinicId(parametar);
+		
 		if (mww != null) {
 			MedicalWorkerDTO mw = new MedicalWorkerDTO(mww);
 			boolean taken = false;
@@ -664,12 +666,14 @@ public class ClinicService {
 			for (int i = mww.getStartHr(); i < mww.getEndHr(); i++) {
 				for (Checkup ch : mww.getCheckUps()) {
 					if (Integer.parseInt(ch.getTime()) == i) {
-						taken = true;
+						taken = true;	
 						break;
 					}
 				}
 				if (!taken) {
-					pom.add(Integer.toString(i));
+					pom.add(Integer.toString(i));					
+				}else {
+					taken = false;
 				}
 			}	
 

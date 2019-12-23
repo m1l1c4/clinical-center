@@ -152,5 +152,14 @@ public class CheckupController {
 		}
 		return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 	}
+	
+	@PostMapping(value = "/getAllQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<CheckupDTO>> getAllQuickApp(@PathVariable Long id) {
+		List<CheckupDTO> checkups = checkupService.getAllQuicks(id);
+		if (checkups != null) {
+			return new ResponseEntity<>(checkups, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
 
 }

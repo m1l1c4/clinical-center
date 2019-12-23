@@ -3,6 +3,7 @@ package tim31.pswisa.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import tim31.pswisa.model.MedicalWorker;
 
@@ -33,5 +34,8 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 	 */
   
 	List<MedicalWorker> findAllByClinicId(Long id);
+	
+	@Query("select s from MedicalWorker s where s.user.type = ?1 and s.clinic.id = ?2")
+	List<MedicalWorker> findAllDoctors(String type, Long id);
 
 }

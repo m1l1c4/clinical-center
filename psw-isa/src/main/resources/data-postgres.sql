@@ -68,13 +68,16 @@ INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-19', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1, 1, 1, false);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-17', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, room_id, pending) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, room_id, pending) VALUES ('2019-12-17', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, false);
 
 
 INSERT INTO absence(end_vacation, start_vacation, type_of_absence, clinic_of_absence_id, mw_id, accepted) VALUES ('2019-03-12', '2019-03-01', 'odmor', 1, 1, 'SENT');
 INSERT INTO absence(end_vacation, start_vacation, type_of_absence, clinic_of_absence_id, mw_id, accepted) VALUES ('2019-03-10', '2019-03-01', 'odsustvo', 1, 2, 'SENT');
 
-
+INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) VALUES (19, 4);
+INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) VALUES (20, 4);
+INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) VALUES (1, 2);
+INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) VALUES (2, 1);
 
 

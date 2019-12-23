@@ -305,4 +305,8 @@ public class MedicalWorkerService {
 		// dodati jos za godisnje odmore
 		return ret;
 	}
+	
+	public List<MedicalWorker> findAllDoctors(String type, Long id) {
+		return medicalWorkerRepository.findAllDoctors(type, id);
+	}
 }
