@@ -122,7 +122,7 @@ public class Checkup {
 		this.discount = discount;
 	}
 
-	public boolean getScheduled() {
+	public boolean isScheduled() {
 		return scheduled;
 	}
 

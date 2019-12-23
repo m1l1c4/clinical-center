@@ -39,37 +39,37 @@ INSERT INTO codebook(name, code, code_type) values ('Sarkoidoza', 'OE46', 'DIJAG
 INSERT INTO codebook(name, code, code_type) values ('Diskus hernija', 'DC29', 'DIJAGNOZA');
 INSERT INTO codebook(name, code, code_type) values ('Hipertenzija', 'HP94', 'DIJAGNOZA');
 
-INSERT INTO room(first_free_date, is_free, room_name, room_number, type, clinic_id)	VALUES ('2019-12-15', true, 'Interno', 102, 'PREGLED', 1);
-INSERT INTO room(first_free_date, is_free, room_name, room_number, type, clinic_id)	VALUES ('2019-12-15', true, 'Interno', 103, 'PREGLED', 1);
-INSERT INTO room(first_free_date, is_free, room_name, room_number, type, clinic_id)	VALUES ('2019-12-15', true, 'Sala', 327, 'OPERACIJA', 1);
-INSERT INTO room(first_free_date, is_free, room_name, room_number, type, clinic_id)	VALUES ('2019-12-15', true, 'Dijagnostika', 215, 'PREGLED', 1);
+INSERT INTO room(first_free_date, is_free, room_name, room_number, type_room, clinic_id)	VALUES ('2019-12-15', true, 'Interno', 102, 'PREGLED', 1);
+INSERT INTO room(first_free_date, is_free, room_name, room_number, type_room, clinic_id)	VALUES ('2019-12-15', true, 'Interno', 103, 'PREGLED', 1);
+INSERT INTO room(first_free_date, is_free, room_name, room_number, type_room, clinic_id)	VALUES ('2019-12-15', true, 'Sala', 327, 'OPERACIJA', 1);
+INSERT INTO room(first_free_date, is_free, room_name, room_number, type_room, clinic_id)	VALUES ('2019-12-15', true, 'Dijagnostika', 215, 'PREGLED', 1);
 
 INSERT INTO medical_record(blood_type, diopter, height, weight, patient_id) VALUES ('0-', 0, 175, 70, 1);
 
 
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id, pending) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
 
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 0, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 0, 1, 50, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 0, 1, 25, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-09-20', 0, 1, 76, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-09-20', 0, 1, 40, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-06-20', 0, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-06-20', 0, 1, 70, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-06-20', 0, 1, 45, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-02-20', 0, 1, 22, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-02-20', 0, 1, 56, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-01-20', 0, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-20', 0, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-20', 0, 1, 50, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-20', 0, 1, 25, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-09-20', 0, 1, 76, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-09-20', 0, 1, 40, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-06-20', 0, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-06-20', 0, 1, 70, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-06-20', 0, 1, 45, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-02-20', 0, 1, 22, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-02-20', 0, 1, 56, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-01-20', 0, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
 
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-19', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-17', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-19', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1, 1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-18', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, patient_id, room_id, pending) VALUES ('2019-12-17', 20, 1, 100, true, '12', 'appointment', 1, 1,  1, 1, false);
 
 
 INSERT INTO absence(end_vacation, start_vacation, type_of_absence, clinic_of_absence_id, mw_id, accepted) VALUES ('2019-03-12', '2019-03-01', 'odmor', 1, 1, 'SENT');

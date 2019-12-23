@@ -48,10 +48,7 @@ public class ClinicService {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
-
-	@Autowired
-	private CheckUpService checkupService;
-
+	
 	@Autowired
 	private RoomRepository roomRepository;
 
@@ -657,22 +654,24 @@ public class ClinicService {
 	}
 	
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
+		LocalDate realDate = LocalDate.parse(date);
 		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
 		List<Checkup> checkups = checkupService.findAllByClinicId(parametar);
 		if (mww != null) {
 			MedicalWorkerDTO mw = new MedicalWorkerDTO(mww);
 			boolean taken = false;
 			ArrayList<String> pom = new ArrayList<String>();			
-			for (Checkup ch : mww.getCheckUps()) {
-				if (ch.getDate().equals(date)) {
-					if ( ch.getScheduled() || ch.getPending()) {
-						taken = true;					
-					}
-					if (!taken) {
-						pom.add(ch.getTime());
+			for (int i = mww.getStartHr(); i < mww.getEndHr(); i++) {
+				for (Checkup ch : mww.getCheckUps()) {
+					if (Integer.parseInt(ch.getTime()) == i) {
+						taken = true;
+						break;
 					}
 				}
-			}			
+				if (!taken) {
+					pom.add(Integer.toString(i));
+				}
+			}	
 
 			mw.getAvailableCheckups().put(date, pom);
 			return mw;

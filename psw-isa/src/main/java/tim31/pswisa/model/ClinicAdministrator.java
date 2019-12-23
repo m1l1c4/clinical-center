@@ -32,8 +32,8 @@ public class ClinicAdministrator {
 	private Clinic clinic;
 
 
-	@OneToMany(mappedBy = "clinicAdministrator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Absence> absences;
+	/*@OneToMany(mappedBy = "clinicAdministrator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Absence> absences;*/
 	
 	/*@JsonManagedReference(value = "ca_mov")
 	@OneToMany(mappedBy = "clinicAdministrator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -73,13 +73,13 @@ public class ClinicAdministrator {
 		this.clinic = clinic;
 	}
 
-	public Set<Absence> getAbsences() {
+	/*public Set<Absence> getAbsences() {
 		return absences;
 	}
 
 	public void setAbsences(Set<Absence> absences) {
 		this.absences = absences;
-	}
+	}*/
 
 
 }

@@ -214,15 +214,13 @@ public class CheckUpService {
 			return false;
 		} else  {
 			newCh.setPatient(p);
-			newCh.setMedicalWorker(mw);
+			newCh.getDoctors().add(mw);
 			newCh.setClinic(c);
 			newCh.setCheckUpType(chType);
-			newCh.setPending(true);
-			//for (ClinicAdministrator clinicAdministrator : clAdmins) {
-				//clinicAdministrator.getCheckupRequests().add(newCh);
+			newCh.setPending(true);	
+			newCh.setScheduled(false);
 			checkupRepository.save(newCh);
-			//}
-			
+						
 			return true;
 		}
 		
