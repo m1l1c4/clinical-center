@@ -68,6 +68,9 @@ public class Checkup {
 	/*@JsonBackReference(value = "ca_mov")
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private ClinicAdministrator clinicAdministrator;*/
+	
+	@Column(name = "pending", nullable = true)
+	private boolean pending;	// T or F depending on whether a patient sent request or not
 
 	public Checkup() {
 
@@ -110,7 +113,7 @@ public class Checkup {
 		this.discount = discount;
 	}
 
-	public boolean isScheduled() {
+	public boolean getScheduled() {
 		return scheduled;
 	}
 
@@ -205,5 +208,15 @@ public class Checkup {
 	public void setReport(Report report) {
 		this.report = report;
 	}
+
+	public boolean getPending() {
+		return pending;
+	}
+
+	public void setPending(boolean pending) {
+		this.pending = pending;
+	}
+	
+	
 
 }

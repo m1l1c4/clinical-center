@@ -46,5 +46,5 @@ INSERT INTO room(first_free_date, is_free, room_name, room_number, type, clinic_
 
 INSERT INTO medical_record(blood_type, diopter, height, weight, patient_id) VALUES ('0-', 0, 175, 70, 1);
 
-INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1);
+INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, type, check_up_type_id, clinic_id, medical_worker_id, patient_id, room_id, pending) VALUES ('2019-12-20', 20, 1, 100, true, '12', 'appointment', 1, 1, 2, 1, 1, false);
 

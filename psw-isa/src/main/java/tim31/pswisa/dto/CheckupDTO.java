@@ -19,7 +19,7 @@ public class CheckupDTO {
 	private CheckUpTypeDTO checkUpType;
 
 	public CheckupDTO(Checkup c) {
-		this(c.getId(), c.getDiscount(), c.isScheduled(), c.getDate(), c.getTime(), c.getType(), c.getDuration(),
+		this(c.getId(), c.getDiscount(), c.getScheduled(), c.getDate(), c.getTime(), c.getType(), c.getDuration(),
 				c.getDiscount(), new RoomDTO(c.getRoom()), new PatientDTO(c.getPatient()), new ClinicDTO(c.getClinic()),
 				new MedicalWorkerDTO(c.getMedicalWorker()), new CheckUpTypeDTO(c.getCheckUpType()));
 	}

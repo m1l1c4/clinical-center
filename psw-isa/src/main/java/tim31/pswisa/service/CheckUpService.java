@@ -131,9 +131,10 @@ public class CheckUpService {
 			newCh.setMedicalWorker(mw);
 			newCh.setClinic(c);
 			newCh.setCheckUpType(chType);
+			newCh.setPending(true);
 			//for (ClinicAdministrator clinicAdministrator : clAdmins) {
 				//clinicAdministrator.getCheckupRequests().add(newCh);
-				checkupRepository.save(newCh);
+			checkupRepository.save(newCh);
 			//}
 			
 			return true;
