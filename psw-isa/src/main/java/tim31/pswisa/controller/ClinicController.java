@@ -230,8 +230,8 @@ public class ClinicController {
 	}
 
 	@PostMapping(value = "/searchClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Clinic>> searchClinics(@RequestBody String[] params) {
-		List<Clinic> ret = clinicService.searchClinics(params);
+	public ResponseEntity<List<ClinicDTO>> searchClinics(@RequestBody String[] params) {
+		List<ClinicDTO> ret = clinicService.searchClinics(params);
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 
@@ -568,6 +568,18 @@ public class ClinicController {
 		for (Clinic clinic : clinics) {
 			ret.add(new ClinicDTO(clinic));
 		}
+		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/getSelectedDoctor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorkerDTO> getSelectedDoctor(@RequestBody String[] docId, HttpServletRequest request) {
+		MedicalWorkerDTO ret = clinicService.getSelectedDoctor(Long.parseLong(docId[0]), docId[1]);
+		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/allDocsOneClinic/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> getAllDoctorsInOneClinic(@PathVariable String id, HttpServletRequest request) {
+		List<MedicalWorkerDTO> ret = clinicService.getAllDoctorsInOneClinic(Long.parseLong(id));
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 

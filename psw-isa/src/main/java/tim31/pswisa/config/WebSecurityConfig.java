@@ -88,14 +88,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/register", "/clinic", "/addAdmin", "/codebook", "/codebook/*", "/updateMedicalWorker",
 				"/updateAdministrator", "/clinic/updateClinic", "/sendConfirm", "/addMedicalWorker", "/activateEmail/*",
 				"/checkup/addReport", "/clinic/addRoom", "/clinic/deleteRoom", "/checkUpType/deleteType/*",
+
+				"/checkup/addAppointment", "/checkUpType/addType", "/clinic/searchClinic", "/searchDoctors", "/clinic/getSelectedDoctor" ,
+				"/clinic/clinicDoctors", "/clinic/filterClinic/**", "/clinic/addRooms/*", "/editPatient", "/checkup/checkupRequest" ,
+				"/changePassword", "/checkup/addRecipes/*", "/verifyRecipe/*", "/clinic/filterRooms", "/clinic/allDocsOneClinic/**" ,
+				"/clinic/searchRooms", "/clinic/deleteRoom/*", "/deleteDoctor", "/findDoctors" , "/clinic/changeRoom", "/findPatients", 
+				"/filterPatients", "/canAccessToMedicalRecord", "/bookForPatient" );
+		web.ignoring().antMatchers(HttpMethod.GET, "/getAllDoctors", "/patientsRequests", "/getMedicalWorker", 
+				"/codebook", "/getAdministrator", "/getUser", "/clinic/getClinic", "/clinic/getDoctors", 
 				"/checkup/addAppointment", "/checkUpType/addType", "/clinic/searchClinic", "/searchDoctors",
 				"/clinic/clinicDoctors", "/clinic/filterClinic/**", "/clinic/addRooms/*", "/editPatient",
 				"/changePassword", "/checkup/addRecipes/*", "/verifyRecipe/*", "/clinic/filterRooms",
 				"/clinic/searchRooms", "/clinic/deleteRoom/*", "/deleteDoctor", "/findDoctors", "/clinic/changeRoom",
 				"/findPatients", "/filterPatients", "/canAccessToMedicalRecord", "/bookForPatient",
-				"/editMedicalRecord", "/checkup/update", "/changeDate/*", "/checkup/addDoctors/*", "/clinic/getRevenue", "/requestVacation/*");
-		web.ignoring().antMatchers(HttpMethod.GET, "/getAllDoctors", "/patientsRequests", "/getMedicalWorker",
-				"/codebook", "/getAdministrator", "/getUser", "/clinic/getClinic", "/clinic/getDoctors",
+				"/editMedicalRecord", "/checkup/update", "/changeDate/*", "/checkup/addDoctors/*", "/clinic/getRevenue", "/requestVacation/*",
+
 				"/getPatientProfile", "/clinic/getAllTypes", "/clinic/getRooms", "/patientsRequests",
 				"/checkUpType/addTypes", "/clinic/getClinics", "/getTypes", "/checkUpType/allTypes", "/checkup/*",
 				"/getRecipes", "/clinic/getClinicsByType/*", "/getPatients" , "/requestsForRoom" , "/clinic/getClinicRaiting",
