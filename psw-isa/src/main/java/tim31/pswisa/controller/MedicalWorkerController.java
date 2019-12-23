@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,6 @@ import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RecipeDTO;
 import tim31.pswisa.dto.UserDTO;
-import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
@@ -49,9 +49,12 @@ public class MedicalWorkerController {
 	@Autowired
 	private RecipeService recipeService;
 
-	// method returns medical worker by email
-
-	// This method returns medical worker for update
+	/**
+	 * This method servers for getting medical worker for update
+	 * 
+	 * @param request -
+	 * @return - (MedicalWorkerDTO) This method returns updated medical worker
+	 */
 	@GetMapping(value = "/getMedicalWorker", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorkerDTO> getMedicalWorker(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -66,6 +69,15 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * This method servers for getting answer can doctor access to medical record of
+	 * patient
+	 * 
+	 * @param request -
+	 * @param pom     - email of patient
+	 * @return - (String) This method returns string 'da' or 'ne' depending of
+	 *         conditions
+	 */
 	@PostMapping(value = "/canAccessToMedicalRecord", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> canAccessController(HttpServletRequest request, @RequestBody String pom) {
 		String token = tokenUtils.getToken(request);
@@ -79,8 +91,16 @@ public class MedicalWorkerController {
 		}
 	}
 
+	/**
+	 * This method servers for implement booking for patient by doctor patient
+	 * 
+	 * @param c       - check-up of patient
+	 * @param request -
+	 * @return - (String) This method returns string ok when booking is finished
+	 */
 	@PostMapping(value = "/bookForPatient", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> bookForPatientController(@RequestBody CheckupDTO c, HttpServletRequest request) {
+	public ResponseEntity<String> bookForPatientController(@RequestBody CheckupDTO c, HttpServletRequest request)
+			throws MailException, InterruptedException {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
@@ -88,6 +108,14 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>("ok", HttpStatus.OK);
 	}
 
+	/**
+	 * This method servers for deleting doctor in clinic by administrator
+	 * 
+	 * @param user    - doctor that have to be deleted
+	 * @param request -
+	 * @return - (String) This method returns string after deleting, Obrisano or
+	 *         Greska
+	 */
 	@PostMapping(value = "/deleteDoctor")
 	public ResponseEntity<String> deleteDoctorController(@RequestBody UserDTO userDTO, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -107,6 +135,14 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>("Greska", HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * This method servers for finding doctor by criteria
+	 * 
+	 * @param params  - criteria for finding doctors in clinic
+	 * @param request -
+	 * @return - (List<MedicalWorkerDTO>) This method returns list of found doctors
+	 *         in clinic
+	 */
 	@PostMapping(value = "/findDoctors", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalWorkerDTO>> findDoctorsController(@RequestBody String[] params,
 			HttpServletRequest request) {
@@ -130,7 +166,13 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 
-	// This method updates medical worker who sends request for that
+	/**
+	 * This method servers for updating medical worker
+	 * 
+	 * @param mw      - new information about medical worker
+	 * @param request -
+	 * @return - (MedicalWorkerDTO) This method returns updated medical worker
+	 */
 	@PostMapping(value = "/updateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorkerDTO> updateMedicalWorkerController(@RequestBody MedicalWorkerDTO mw) {
 		User user = userService.findOneByEmail(mw.getUser().getEmail());
@@ -192,6 +234,13 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 	}
 
+	/**
+	 * This method servers for getting all doctors by criteria
+	 * 
+	 * @param request -
+	 * @return - (List<MedicalWorkerDTO>) This method returns list of all doctors in
+	 *         clinic
+	 */
 	@GetMapping(value = "/getAllDoctors", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalWorkerDTO>> getAllDoctors(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -211,6 +260,17 @@ public class MedicalWorkerController {
 			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+	}
+
+	@GetMapping(value = "/getAllAvailable/{id}/{date}/{time}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> getAllAvailableDoctors(@PathVariable Long id,
+			@PathVariable String date, @PathVariable String time) {
+		List<MedicalWorker> doctors = medicalWorkerService.findAllAvailable(id, date, time);
+		List<MedicalWorkerDTO> ret = new ArrayList<>();
+		for (MedicalWorker mw : doctors) {
+			ret.add(new MedicalWorkerDTO(mw));
+		}
+		return new ResponseEntity<List<MedicalWorkerDTO>>(ret, HttpStatus.OK);
 	}
 
 }

@@ -1,5 +1,6 @@
 package tim31.pswisa.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -11,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Absence {
 
@@ -18,63 +21,107 @@ public class Absence {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "email", nullable = false, unique = true)
-	private String email; // to know who sends request
+	@Column(name = "startVacation")
+	private LocalDate startVacation;
 
-	@Column(name = "start", nullable = false)
-	private Date start;
+	@Column(name = "endVacation")
+	private LocalDate endVacation; 
 
-	@Column(name = "duration", nullable = false)
-	private int duration;
-
+	@JsonBackReference(value = "clinicAbsence_mov")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private ClinicAdministrator clinicAdministrator;
+	private Clinic clinicOfAbsence;
 
-	// @JsonBackReference
+	@JsonBackReference(value = "vacation")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker mw;
+	
+	@Column(name="typeOfAbsence")
+	private String typeOfAbsence;
+	
+	// SENT, ACCEPTED, PASSED
+	@Column(name="accepted")
+	private String accepted;
 
 	public Absence() {
 
 	}
+	
 
-	public Absence(String email, Date start, int duration) {
+	public Absence(LocalDate start, LocalDate end, MedicalWorker mw, String t, Clinic c, String a) {
 		super();
-		this.email = email;
-		this.start = start;
-		this.duration = duration;
+		this.startVacation = start;
+		this.endVacation = end;
+		this.mw = mw;
+		this.clinicOfAbsence = c;
+		this.typeOfAbsence = t;
+		this.accepted = a;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getAccepted() {
+		return accepted;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+
+	public void setAccepted(String accepted) {
+		this.accepted = accepted;
 	}
 
-	public Date getStart() {
-		return start;
+
+	public Clinic getClinicOfAbsence() {
+		return clinicOfAbsence;
 	}
 
-	public void setStart(Date start) {
-		this.start = start;
+
+	public void setClinicOfAbsence(Clinic clinicOfAbsence) {
+		this.clinicOfAbsence = clinicOfAbsence;
 	}
 
-	public int getDuration() {
-		return duration;
+
+	public String getTypeOfAbsence() {
+		return typeOfAbsence;
 	}
 
-	public void setDuration(int duration) {
-		this.duration = duration;
+
+	public void setTypeOfAbsence(String typeOfAbsence) {
+		this.typeOfAbsence = typeOfAbsence;
 	}
 
-	public ClinicAdministrator getClinicAdministrator() {
-		return clinicAdministrator;
+
+	public Long getId() {
+		return id;
 	}
 
-	public void setClinicAdministrator(ClinicAdministrator clinicAdministrator) {
-		this.clinicAdministrator = clinicAdministrator;
+
+	public void setId(Long id) {
+		this.id = id;
 	}
+
+
+	public MedicalWorker getMw() {
+		return mw;
+	}
+
+
+	public void setMw(MedicalWorker mw) {
+		this.mw = mw;
+	}
+
+	public LocalDate getStartVacation() {
+		return startVacation;
+	}
+
+	public void setStartVacation(LocalDate start) {
+		this.startVacation = start;
+	}
+
+	public LocalDate getEndVacation() {
+		return endVacation;
+	}
+
+	public void setEndVacation(LocalDate end) {
+		this.endVacation = end;
+	}
+
+
 
 }

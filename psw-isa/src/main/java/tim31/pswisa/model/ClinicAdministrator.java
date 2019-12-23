@@ -31,6 +31,7 @@ public class ClinicAdministrator {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
+
 	@OneToMany(mappedBy = "clinicAdministrator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Absence> absences;
 	
@@ -39,10 +40,11 @@ public class ClinicAdministrator {
 	private Set<Checkup> checkupRequests;*/
 
 
+
 	public ClinicAdministrator() {
 	}
 
-	public ClinicAdministrator(Clinic clinic, ArrayList<Absence> absences) {
+	public ClinicAdministrator(Clinic clinic) {
 		super();
 		this.clinic = clinic;
 	}

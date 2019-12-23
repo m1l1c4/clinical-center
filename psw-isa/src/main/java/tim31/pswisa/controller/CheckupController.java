@@ -1,5 +1,7 @@
 package tim31.pswisa.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.ClinicAdministrator;
@@ -68,9 +71,13 @@ public class CheckupController {
 		return new ResponseEntity<>(new ReportDTO(report), HttpStatus.CREATED);
 	}
 
-	// have to modify just for doctors
-	// This method adding new appointment created by clinic administrator. Patients
-	// can booked this with one click
+	/**
+	 * This method servers for adding new appointment for booking with one click
+	 * 
+	 * @param c       - check-up that have to be added
+	 * @param request -
+	 * @return - This method returns added appointment if doctor are not busy
+	 */
 	@PostMapping(value = "/addAppointment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> addAppointmentController(@RequestBody CheckupDTO c, HttpServletRequest request) {
 		User doctorOne = userService.findOneByEmail(c.getMedicalWorker().getUser().getEmail());
@@ -83,8 +90,6 @@ public class CheckupController {
 			if (clinicAdministrator != null) {
 				Checkup check = checkupService.addAppointment(c, doctorOne1, clinicAdministrator);
 				if (check == null) {
-					// return new ResponseEntity<>(new CheckupDTO(check),
-					// HttpStatus.ALREADY_REPORTED);
 					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 				} else {
 					// return new ResponseEntity<>(new CheckupDTO(check), HttpStatus.OK);
@@ -116,6 +121,7 @@ public class CheckupController {
 		return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
 	}
 	
+
 	@PostMapping(value = "/checkupRequest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReportDTO> checkupRequest(@RequestBody CheckupDTO ch, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -128,5 +134,23 @@ public class CheckupController {
 	}
 	
 	
+
+	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<CheckupDTO> addRecipes(@RequestBody CheckupDTO c) {
+		Checkup checkup = checkupService.update(c);
+		if (checkup != null) {
+			return new ResponseEntity<CheckupDTO>(new CheckupDTO(checkup), HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	@PostMapping(value = "/addDoctors/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> addDoctors(@RequestBody Long[] doctors, @PathVariable Long id) {
+		Checkup checkup = checkupService.addDoctors(id, doctors);
+		if (checkup != null) {
+			return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
+	}
 
 }

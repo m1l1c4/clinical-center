@@ -8,10 +8,28 @@ import tim31.pswisa.model.CheckUpType;
 
 public interface CheckUpTypeRepository extends JpaRepository<CheckUpType, Long> {
 
+	/**
+	 * This method servers for getting all type check-ups from database
+	 * 
+	 * @return - (List<CheckUpType>) This method returns list of type check-ups from
+	 *         database
+	 */
 	List<CheckUpType> findAll();
 
+	/**
+	 * This method servers for getting one type of check-up by name
+	 * 
+	 * @param name - name of type of check-up that has to be returned
+	 * @return - (CheckUpType) This method returns searched type of check-up
+	 */
 	CheckUpType findOneByName(String name);
 
+	/**
+	 * This method servers for getting one type of check-up by id
+	 * 
+	 * @param id - id of type of check-up that has to be returned
+	 * @return - (CheckUpType) This method returns searched type of check-up
+	 */
 	CheckUpType findOneById(Long id);
 
 }

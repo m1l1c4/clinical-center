@@ -1,12 +1,16 @@
 package tim31.pswisa.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RoomDTO;
@@ -16,6 +20,7 @@ import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
+import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpTypeRepository;
 import tim31.pswisa.repository.ClinicRepository;
 import tim31.pswisa.repository.RoomRepository;
@@ -39,47 +44,190 @@ public class ClinicService {
 	private CheckUpTypeRepository checkupTypeRepository;
 
 	@Autowired
+	private ClinicAdministratorService clinicAdministratorService;
+
+	@Autowired
 	private MedicalWorkerService medicalWorkerService;
+
+	@Autowired
+	private CheckUpService checkupService;
 
 	@Autowired
 	private RoomRepository roomRepository;
 
+	/**
+	 * This method servers for finding room in clinic by room id
+	 * 
+	 * @param id - id of room that has to be found
+	 * @return - (Room) This method returns found room
+	 */
 	public Room findRoomById(Long id) {
 		return clinicRepository.findRoomById(id);
 	}
 
+	/**
+	 * This method servers for finding all rooms from database
+	 * 
+	 * @return - (List<Room>) This method returns all room from database
+	 */
 	public List<Clinic> findAll() {
 		return clinicRepository.findAll();
 	}
 
+	/**
+	 * This method servers for finding clinic by clinic id
+	 * 
+	 * @param id - id of clinic that has to be found
+	 * @return - (Clinic) This method returns found clinic
+	 */
 	public Clinic findOneById(Long id) {
 		return clinicRepository.findOneById(id);
 	}
 
+	/**
+	 * This method servers for finding clinic by clinic name
+	 * 
+	 * @param id - id of room that has to be found
+	 * @return - (Clinic) This method returns found clinic
+	 */
 	public Clinic findOneByName(String clinic) {
 		return clinicRepository.findOneByName(clinic);
 	}
 
-	public boolean whoIsBigger(String d1, String d2) {
-		String[] datum1 = d1.split("-");
-		String[] datum2 = d2.split("-");
-		int god1 = Integer.parseInt(datum1[0]);
-		int god2 = Integer.parseInt(datum2[0]);
-		int mjesec1 = Integer.parseInt(datum1[1]);
-		int mjesec2 = Integer.parseInt(datum2[1]);
-		int dan1 = Integer.parseInt(datum1[2]);
-		int dan2 = Integer.parseInt(datum2[2]);
-		if (god1 > god2)
-			return true;
-		if (god1 < god2)
-			return false;
-		if (mjesec1 > mjesec2)
-			return true;
-		if (mjesec1 < mjesec2)
-			return false;
-		if (dan1 >= dan2)
-			return true;
-		return false;
+	/**
+	 * This method servers for getting raiting of clinic
+	 * 
+	 * @param user - logged clinic administrator
+	 * @return - (double) This method returns raiting of clinic
+	 */
+	public double getClinicRaiting(User user) {
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		Clinic clinic = clinicAdministrator.getClinic();
+		return clinic.getRating();
+	}
+
+	/**
+	 * This method servers for getting revenue in clinic for entered period
+	 * 
+	 * @param user   - scheduled or not scheduled
+	 * @param params - two date / period for getting revenue
+	 * @return - (Double) This method returns revenue for entered period
+	 */
+	public Double getRevenue(User user, String[] params) {
+		String date1 = params[0];
+		String date2 = params[1];
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		Clinic clinic = clinicAdministrator.getClinic();
+		LocalDate date1Local = LocalDate.parse(date1);
+		LocalDate date2Local = LocalDate.parse(date2);
+		Double retValue = 0.0;
+		System.out.println(date1Local.toString());
+		System.out.println(date2Local.toString());
+		if (date1Local.compareTo(date2Local) >= 0) {
+			return null;
+		} else {
+			List<Checkup> checkups = checkupService.findAll();
+			for (Checkup c : checkups) {
+				if (c.getClinic().getId() == clinic.getId() && c.isScheduled()) {
+					LocalDate temp = c.getDate();
+					System.out.println(temp.toString());
+					System.out.println(c.getDate());
+					if (temp.compareTo(date1Local) >= 0 && temp.compareTo(date2Local) <= 0) {
+						retValue += c.getPrice();
+					}
+				}
+			}
+		}
+		return retValue;
+	}
+
+	/**
+	 * This method servers for getting report for week
+	 * 
+	 * @param user - logged clinic administrator
+	 * @return - (Integer[]) This method returns list of numbers (numbers of
+	 *         operations or appointments of the seven days before current date
+	 */
+	public Integer[] getReportForWeek(User user) {
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		Clinic clinic = clinicAdministrator.getClinic();
+		Integer[] retValue = new Integer[7];
+		for (int i = 0; i < retValue.length; i++) {
+			retValue[i] = 0;
+		}
+		LocalDate date = LocalDate.now();
+		date = LocalDate.parse(date.toString());
+		List<Checkup> checkups = checkupService.findAll();
+		for (Checkup c : checkups) {
+			if (c.getClinic().getId() == clinic.getId() && c.isScheduled()) {
+				if (c.getDate().equals(date.minusDays(1).toString())) {
+					retValue[6] += 1;
+				} else if (c.getDate().equals(date.minusDays(2).toString())) {
+					retValue[5] += 1;
+				} else if (c.getDate().equals(date.minusDays(3).toString())) {
+					retValue[4] += 1;
+				} else if (c.getDate().equals(date.minusDays(4).toString())) {
+					retValue[3] += 1;
+				} else if (c.getDate().equals(date.minusDays(5).toString())) {
+					retValue[2] += 1;
+				} else if (c.getDate().equals(date.minusDays(6).toString())) {
+					retValue[1] += 1;
+				} else if (c.getDate().equals(date.minusDays(7).toString())) {
+					retValue[0] += 1;
+				}
+			}
+		}
+		return retValue;
+	}
+
+	/**
+	 * This method servers for getting report for month
+	 * 
+	 * @param user - logged clinic administrator
+	 * @return - (Integer[]) This method returns list of numbers (numbers of
+	 *         operations or appointments of themonth
+	 */
+	public Integer[] getReportForMonth(User user) {
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		Clinic clinic = clinicAdministrator.getClinic();
+		Integer[] retValue = new Integer[12];
+		for (int i = 0; i < retValue.length; i++) {
+			retValue[i] = 0;
+		}
+		List<Checkup> checkups = checkupService.findAll();
+		for (Checkup c : checkups) {
+			if (c.getClinic().getId() == clinic.getId() && c.isScheduled()) {
+				String temp = c.getDate().toString();
+				String[] temp1 = temp.split("-");
+				String temp2 = temp1[1];
+				if (temp2.equals("01")) {
+					retValue[0] += 1;
+				} else if (temp2.equals("02")) {
+					retValue[1] += 1;
+				} else if (temp2.equals("03")) {
+					retValue[2] += 1;
+				} else if (temp2.equals("04")) {
+					retValue[3] += 1;
+				} else if (temp2.equals("05")) {
+					retValue[4] += 1;
+				} else if (temp2.equals("06")) {
+					retValue[5] += 1;
+				} else if (temp2.equals("07")) {
+					retValue[6] += 1;
+				} else if (temp2.equals("08")) {
+					retValue[7] += 1;
+				} else if (temp2.equals("09")) {
+					retValue[8] += 1;
+				} else if (temp2.equals("10")) {
+					retValue[9] += 1;
+				} else if (temp2.equals("11")) {
+					retValue[10] += 1;
+				} else if (temp2.equals("12")) {
+					retValue[11] += 1;
+				}
+			}
+		}
+		return retValue;
 	}
 
 	public Clinic save(ClinicDTO c) {
@@ -87,10 +235,18 @@ public class ClinicService {
 		clinic.setName(c.getName());
 		clinic.setCity(c.getCity());
 		clinic.setAddress(c.getAddress());
+		clinic.setCountry(c.getCountry());
 		clinic.setDescription(c.getDescription());
 		return clinicRepository.save(clinic);
 	}
 
+	/**
+	 * This method servers for updating clinic
+	 * 
+	 * @param clinicAdministrator - logged clinic administrator
+	 * @param clinic              - new data of clinic
+	 * @return - (Clinic) This method returns updated clinic
+	 */
 	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, ClinicDTO clinic) {
 		Clinic nameOfClinic = clinicAdministrator.getClinic();
 		List<Clinic> temp = findAll();
@@ -111,8 +267,16 @@ public class ClinicService {
 			return null;
 	}
 
-	// can't edit the name of type if there is just one appointment with that type
-	// in just one clinic of clinical center
+	/**
+	 * This method servers for editing type of check-up
+	 * 
+	 * @param clinic - clinic of logged clinic administrator
+	 * @param before - older name of type
+	 * @param after  - new name of type
+	 * @param price  - new price of type
+	 * @return - (CheckUpType) This method returns updated check-up type or null if
+	 *         there is check-up type with same name
+	 */
 	public CheckUpType editType(Clinic clinic, String before, String after, String price) {
 		CheckUpType retVal = new CheckUpType();
 		List<Clinic> clinics = findAll();
@@ -134,6 +298,36 @@ public class ClinicService {
 		}
 	}
 
+	/**
+	 * This method servers for getting one type of check-up
+	 * 
+	 * @param clinicAdministrator - logged clinic administrator
+	 * @param name                - name of type that have to be gotten
+	 * @return - (ArrayList<CheckUpTypeDTO>) This method returns one type in list
+	 */
+	public ArrayList<CheckUpTypeDTO> getOneTypeInClinic(ClinicAdministrator clinicAdministrator, String name) {
+		Clinic clinic = clinicAdministrator.getClinic();
+		ArrayList<CheckUpTypeDTO> temp = new ArrayList<CheckUpTypeDTO>();
+		if (clinic != null) {
+			Set<CheckUpType> temps = clinic.getCheckUpTypes();
+			for (CheckUpType c : temps) {
+				if (c.getName().equals(name)) {
+					temp.add(new CheckUpTypeDTO(c));
+				}
+			}
+			return temp;
+		}
+		return null;
+	}
+
+	/**
+	 * This method servers for filter rooms in clinic
+	 * 
+	 * @param clinic - clinic of logged clinic administrator
+	 * @param number - number of room
+	 * @return - (List<RoomDTO>) This method returns list of rooms with entered
+	 *         number (one room)
+	 */
 	public List<RoomDTO> filterRooms(Clinic clinic, int number) {
 		Set<Room> temp = clinic.getRooms();
 		List<RoomDTO> ret = new ArrayList<RoomDTO>();
@@ -146,10 +340,87 @@ public class ClinicService {
 		return null;
 	}
 
+	/**
+	 * This method servers for getting all doctors in clinic
+	 * 
+	 * @param user - logged clinic administrator
+	 * @return - (ArrayList<MedicalWorkerDTO>>) This method returns list of doctors
+	 *         in clinic
+	 */
+	public ArrayList<MedicalWorkerDTO> getAllDoctors(User user) {
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		ArrayList<MedicalWorkerDTO> dtos = new ArrayList<MedicalWorkerDTO>();
+		if (clinicAdministrator != null) {
+			Clinic clinic = clinicAdministrator.getClinic();
+			if (clinic != null) {
+				List<MedicalWorker> workers = medicalWorkerService.findAllByClinicId(clinic.getId());
+				for (MedicalWorker d : workers) {
+					dtos.add(new MedicalWorkerDTO(d));
+				}
+				return dtos;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * This method servers for getting all types of check-ups
+	 * 
+	 * @param user - logged clinic administrator
+	 * @return - (ArrayList<CheckUpTypeDTO>>) This method returns list of check-up
+	 *         types
+	 */
+	public ArrayList<CheckUpTypeDTO> getAllTypes(User user) {
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		ArrayList<CheckUpTypeDTO> dtos = new ArrayList<CheckUpTypeDTO>();
+		if (clinicAdministrator != null) {
+			Clinic clinic = clinicAdministrator.getClinic();
+			if (clinic != null) {
+				Set<CheckUpType> tmp = clinic.getCheckUpTypes();
+				for (CheckUpType c : tmp) {
+					dtos.add(new CheckUpTypeDTO(c));
+				}
+			}
+			return dtos;
+		}
+		return null;
+	}
+
+	/**
+	 * This method servers for getting all rooms in clinic
+	 * 
+	 * @param user - logged clinic administrator
+	 * @return - (List<RoomDTO>>) This method returns list rooms in clinic
+	 */
+	public List<RoomDTO> getAllRooms(User user) {
+		ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
+		if (clinicAdministrator != null) {
+			Clinic clinic = clinicAdministrator.getClinic();
+			if (clinic != null) {
+				List<Room> rooms = roomService.findAllByClinicId(clinic.getId());
+				List<RoomDTO> dtos = new ArrayList<RoomDTO>();
+				for (Room r : rooms) {
+					dtos.add(new RoomDTO(r));
+				}
+				return dtos;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * This method servers for searching rooms in clinic by criteria
+	 * 
+	 * @param clinic - clinic of logged clinic administrator
+	 * @param params - criteria of searching, params[0] is name, params[1] is type
+	 *               of room and params[2] is date when it is free
+	 * @return - (List<RoomDTO>) This method returns list of rooms with enterd
+	 *         criteria
+	 */
 	public List<RoomDTO> searchRooms(Clinic clinic, String[] params) {
 		String name = params[0];
 		String type = params[1];
-		String date = params[2];
+		LocalDate date = LocalDate.parse(params[2]);
 		List<RoomDTO> ret = new ArrayList<RoomDTO>();
 		Set<Room> temp = clinic.getRooms();
 		int counter = 0;
@@ -190,6 +461,13 @@ public class ClinicService {
 		}
 	}
 
+	/**
+	 * This method servers for deleting room in clinic by name
+	 * 
+	 * @param name                - name of room that has to be deleted
+	 * @param clinicAdministrator - logged clinic administrator
+	 * @return - (String) This method string 'Obrisano' or ''
+	 */
 	public String deleteRoom(String name, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
@@ -204,6 +482,13 @@ public class ClinicService {
 		return "";
 	}
 
+	/**
+	 * This method servers for deleting room in clinic by number
+	 * 
+	 * @param number              - clinic of logged clinic administrator
+	 * @param clinicAdministrator - logged clinic administrator
+	 * @return - (String) This method returns string 'Obrisano' or ''
+	 */
 	public String deleteRoomN(int number, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
@@ -221,6 +506,13 @@ public class ClinicService {
 		return "";
 	}
 
+	/**
+	 * This method servers for adding room in clinic
+	 * 
+	 * @param room                - room that has to be added
+	 * @param clinicAdministrator - logged clinic administrator
+	 * @return - (Room) This method returns added room
+	 */
 	public Room addRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Room room1 = new Room();
 		room1.setName(room.getName());
@@ -230,7 +522,7 @@ public class ClinicService {
 		klinika = findOneById(clinicAdministrator.getClinic().getId());
 		List<Room> allRooms = roomService.findAllByClinicId(klinika.getId());
 		for (Room r : allRooms) {
-			if ((r.getNumber() == room.getNumber())) {
+			if ((r.getNumber() == room.getNumber()) && r.getClinic() != null) {
 				return null;
 			}
 		}
@@ -241,6 +533,13 @@ public class ClinicService {
 		return room1;
 	}
 
+	/**
+	 * This method servers for changing room in clinic
+	 * 
+	 * @param room                - room that has to be changed
+	 * @param clinicAdministrator - logged clinic administrator
+	 * @return - (Room) This method returns changed room
+	 */
 	public Room changeRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Clinic klinika = findOneById(clinicAdministrator.getClinic().getId());
 		Room room1 = roomRepository.findOneByClinicIdAndNumber(klinika.getId(), room.getNumber());
@@ -310,7 +609,6 @@ public class ClinicService {
 	public List<MedicalWorkerDTO> doctorsInClinic(String name, String type, String date) {
 		Clinic cl = clinicRepository.findOneByName(name);
 		List<MedicalWorkerDTO> doctors = new ArrayList<MedicalWorkerDTO>();
-		List<String> temp = new ArrayList<String>(); // list of times of appointments for specific date
 		int counter = 0;
 		if (cl != null) {
 			for (MedicalWorker medicalWorker : cl.getMedicalStuff()) {
@@ -328,7 +626,7 @@ public class ClinicService {
 				}
 			}
 			boolean taken = false;
-			ArrayList<String> pom = new ArrayList<String>();
+			ArrayList<String> pom = new ArrayList<String>(); // list of times of appointments for specific date
 			for (MedicalWorkerDTO mw : doctors) {
 				MedicalWorker medicalWorker = medicalWorkerService.findOneById(mw.getId());
 				for (int i = medicalWorker.getStartHr(); i < medicalWorker.getEndHr(); i++) {

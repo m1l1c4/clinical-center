@@ -1,5 +1,9 @@
 package tim31.pswisa.model;
 
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +11,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -26,13 +33,13 @@ public class Checkup {
 	private boolean scheduled;
 
 	@Column(name = "DateOfCheckup", nullable = true)
-	private String date;
+	private LocalDate date;
 
 	@Column(name = "TimeOfCheckup", nullable = true)
 	private String time;
 
 	// operation or appointment
-	@Column(name = "type", nullable = false)
+	@Column(name = "type", nullable = true)
 	private String type;
 
 	@Column(name = "duration", nullable = true)
@@ -53,9 +60,11 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
-	@JsonBackReference(value = "doktor_mov")
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private MedicalWorker medicalWorker;
+	@JsonBackReference(value = "doctor_checkup_mov")
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "DOCTOR_AND_CHECKUP", joinColumns = {
+			@JoinColumn(name = "checkup_id") }, inverseJoinColumns = { @JoinColumn(name = "medical_worker_id") })
+	private Set<MedicalWorker> doctors = new HashSet<MedicalWorker>();
 
 	@JsonBackReference(value = "checkup")
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -76,7 +85,7 @@ public class Checkup {
 
 	}
 
-	public Checkup(double discount, boolean scheduled, String date, String time, String type, int duration,
+	public Checkup(double discount, boolean scheduled, LocalDate date, String time, String type, int duration,
 			double price, Room room) {
 		super();
 		this.discount = discount;
@@ -121,11 +130,11 @@ public class Checkup {
 		this.scheduled = scheduled;
 	}
 
-	public String getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
@@ -143,14 +152,6 @@ public class Checkup {
 
 	public void setClinic(Clinic clinic) {
 		this.clinic = clinic;
-	}
-
-	public MedicalWorker getMedicalWorker() {
-		return medicalWorker;
-	}
-
-	public void setMedicalWorker(MedicalWorker medicalWorker) {
-		this.medicalWorker = medicalWorker;
 	}
 
 	public CheckUpType getCheckUpType() {
@@ -209,6 +210,7 @@ public class Checkup {
 		this.report = report;
 	}
 
+
 	public boolean getPending() {
 		return pending;
 	}
@@ -217,6 +219,14 @@ public class Checkup {
 		this.pending = pending;
 	}
 	
-	
+
+	public Set<MedicalWorker> getDoctors() {
+		return doctors;
+	}
+
+	public void setDoctors(Set<MedicalWorker> doctors) {
+		this.doctors = doctors;
+	}
+
 
 }
