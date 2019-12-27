@@ -1,6 +1,8 @@
 package tim31.pswisa.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,9 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
-import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.ReportDTO;
+import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.Codebook;
@@ -26,6 +29,7 @@ import tim31.pswisa.model.Recipe;
 import tim31.pswisa.model.Report;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
+import tim31.pswisa.service.AbsenceService;
 import tim31.pswisa.service.CheckUpService;
 import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
@@ -61,6 +65,9 @@ public class CheckupController {
 
 	@Autowired
 	private CodebookService codebookService;
+
+	@Autowired
+	private AbsenceService absenceService;
 
 	@PostMapping(value = "/addReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReportDTO> saveReport(@RequestBody ReportDTO r) {
@@ -120,16 +127,16 @@ public class CheckupController {
 		}
 		return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CheckupDTO> addRecipes(@RequestBody CheckupDTO c) {
+	public ResponseEntity<CheckupDTO> updateCheckup(@RequestBody CheckupDTO c) {
 		Checkup checkup = checkupService.update(c);
 		if (checkup != null) {
 			return new ResponseEntity<CheckupDTO>(new CheckupDTO(checkup), HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}
-	
+
 	@PostMapping(value = "/addDoctors/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addDoctors(@RequestBody Long[] doctors, @PathVariable Long id) {
 		Checkup checkup = checkupService.addDoctors(id, doctors);
@@ -137,5 +144,25 @@ public class CheckupController {
 			return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
+	}
+
+	@PostMapping(value = "/getCheckups/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<CheckupDTO>> getCheckups(@PathVariable Long id) {
+		Set<Checkup> checkups = medicalWorkerService.getAllCheckups(id);
+		List<CheckupDTO> ret = new ArrayList<>();
+		for (Checkup c : checkups) {
+			ret.add(new CheckupDTO(c));
+		}
+		return new ResponseEntity<List<CheckupDTO>>(ret, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/getVacations/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<AbsenceDTO>> getVacations(@PathVariable Long id) {
+		List<Absence> absences = absenceService.findAllByMedicalWorkerId(id);
+		List<AbsenceDTO> ret = new ArrayList<>();
+		for (Absence absence : absences) {
+			ret.add(new AbsenceDTO(absence));
+		}
+		return new ResponseEntity<List<AbsenceDTO>>(ret, HttpStatus.OK);
 	}
 }

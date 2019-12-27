@@ -31,4 +31,6 @@ public interface AbsenceRepository extends JpaRepository<Absence, Long> {
 	 */
 	List<Absence> findAllByClinicOfAbsenceId(Long id);
 
+	List<Absence> findAllByMedicalWorkerId(Long id);
+
 }

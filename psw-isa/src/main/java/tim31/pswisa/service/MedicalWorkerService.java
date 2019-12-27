@@ -177,11 +177,10 @@ public class MedicalWorkerService {
 		Patient p = patientService.findOneByUserId(user1.getId());
 		MedicalWorker medWorker = findByUser(user.getId());
 		/*
-		for (Checkup c : p.getAppointments()) {
-			if (c.getMedicalWorker().getUser().getEmail().equals((medWorker.getUser().getEmail()))) {
-				retVal = "DA";
-			}
-		*/
+		 * for (Checkup c : p.getAppointments()) { if
+		 * (c.getMedicalWorker().getUser().getEmail().equals((medWorker.getUser().
+		 * getEmail()))) { retVal = "DA"; }
+		 */
 		if (retVal.equals("DA")) {
 			return retVal;
 		} else {
@@ -286,23 +285,29 @@ public class MedicalWorkerService {
 
 		return true;
 	}
-	
-	public List<MedicalWorker> findAllAvailable(Long id, String date, String t){
+
+	public List<MedicalWorker> findAllAvailable(Long id, String date, String t) {
 		List<MedicalWorker> doctors = medicalWorkerRepository.findAllByClinicId(id);
 		int time = Integer.parseInt(t);
 		List<MedicalWorker> ret = new ArrayList<>();
 		List<Checkup> checkups = checkupService.findOneByTimeAndDate(t, LocalDate.parse(date));
-		for(Checkup checkup : checkups) {
+		for (Checkup checkup : checkups) {
 			for (MedicalWorker doctor : checkup.getDoctors()) {
 				doctors.remove(doctor);
 			}
 		}
-		for(MedicalWorker doctor : doctors) {
-			if(time < doctor.getEndHr() && time >= doctor.getStartHr() && doctor.getUser().getType().equals("DOKTOR")) {
+		for (MedicalWorker doctor : doctors) {
+			if (time < doctor.getEndHr() && time >= doctor.getStartHr()
+					&& doctor.getUser().getType().equals("DOKTOR")) {
 				ret.add(doctor);
 			}
 		}
 		// dodati jos za godisnje odmore
 		return ret;
+	}
+
+	public Set<Checkup> getAllCheckups(Long id) {
+		MedicalWorker worker = medicalWorkerRepository.findOneById(id);
+		return worker.getCheckUps();
 	}
 }

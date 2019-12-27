@@ -5,14 +5,21 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.model.Absence;
+import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.repository.AbsenceRepository;
+import tim31.pswisa.repository.ClinicRepository;
 
 @Service
 public class AbsenceService {
 
 	@Autowired
 	private AbsenceRepository abesenceRepository;
+
+	@Autowired
+	private ClinicRepository clinicRepository;
 
 	/**
 	 * This method servers for getting all absences in database
@@ -51,6 +58,22 @@ public class AbsenceService {
 	 */
 	public List<Absence> findAllByClinicOfAbsenceId(Long id) {
 		return abesenceRepository.findAllByClinicOfAbsenceId(id);
+	}
+
+	public List<Absence> findAllByMedicalWorkerId(Long id) {
+		return abesenceRepository.findAllByMedicalWorkerId(id);
+	}
+
+	public Absence create(AbsenceDTO a, MedicalWorker mw) {
+		Absence absence = new Absence();
+		absence.setAccepted("SENT");
+		Clinic clinic = clinicRepository.getOne(a.getClinicOfAbsence().getId());
+		absence.setClinicOfAbsence(clinic);
+		absence.setEndVacation(a.getEndVacation());
+		absence.setStartVacation(a.getStartVacation());
+		absence.setMw(mw);
+		absence.setTypeOfAbsence(a.getTypeOfAbsence());
+		return absence;
 	}
 
 }
