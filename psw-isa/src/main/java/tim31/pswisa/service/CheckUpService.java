@@ -2,13 +2,13 @@ package tim31.pswisa.service;
 
 
 import java.time.LocalDate;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.CheckupDTO;
@@ -254,8 +254,7 @@ public class CheckUpService {
 		}
 		return checkupRepository.save(checkup);
 	}
-	
-	
+		
 	public List<CheckupDTO> getAllQuicks(Long id) {		
 		List<MedicalWorker> doctors = medicalWorkerService.findAllDoctors("DOKTOR", id);
 		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
@@ -267,6 +266,34 @@ public class CheckUpService {
 				}
 			}
 		}
+		
+		return ret;		
+	}
+	
+	public boolean bookQuickApp(Long id, String email) {		
+		boolean ret = true;
+		Checkup foundCheckup = checkupRepository.findOneById(id);
+		if (foundCheckup == null) {
+			ret = false;
+		} else {
+			User u = userService.findOneByEmail(email);
+			Patient p = patientService.findOneByUserId(u.getId());
+			foundCheckup.setPatient(p);
+			double price = foundCheckup.getPrice() - foundCheckup.getPrice()*(foundCheckup.getDiscount() / 100) ;
+			foundCheckup.setPrice(price);		// when checkup is finished, set price to previous without discount
+			checkupRepository.save(foundCheckup);	// because of adding patient to checkup
+			
+			try {
+				emailService.quickAppConfirmationEmail(email, foundCheckup);
+			} catch (MailException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ret = true;
+		}	
 		
 		return ret;		
 	}

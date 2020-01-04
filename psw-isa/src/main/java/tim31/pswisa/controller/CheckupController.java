@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -158,6 +159,23 @@ public class CheckupController {
 		List<CheckupDTO> checkups = checkupService.getAllQuicks(id);
 		if (checkups != null) {
 			return new ResponseEntity<>(checkups, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	/**
+	 * method for booking predefined checkup 
+	 * @param id - key for finding available checkup
+	 * @return string - message for successful / unsuccessful booking
+	 */
+	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	//@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<String> bookQuickApp(@PathVariable Long id, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		boolean success = checkupService.bookQuickApp(id, email);
+		if (success) {
+			return new ResponseEntity<>("Uspešno zakazivanje pregleda", HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}

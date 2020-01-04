@@ -88,7 +88,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/register", "/clinic", "/addAdmin", "/codebook", "/codebook/*", "/updateMedicalWorker",
 				"/updateAdministrator", "/clinic/updateClinic", "/sendConfirm", "/addMedicalWorker", "/activateEmail/*",
 				"/checkup/addReport", "/clinic/addRoom", "/clinic/deleteRoom", "/checkUpType/deleteType/*", "/checkup/getAllQuickApp/**" ,
-
+				"/checkup/bookQuickApp/*",
 				"/checkup/addAppointment", "/checkUpType/addType", "/clinic/searchClinic", "/searchDoctors", "/clinic/getSelectedDoctor" ,
 				"/clinic/clinicDoctors", "/clinic/filterClinic/**", "/clinic/addRooms/*", "/editPatient", "/checkup/checkupRequest" ,
 				"/changePassword", "/checkup/addRecipes/*", "/verifyRecipe/*", "/clinic/filterRooms", "/clinic/allDocsOneClinic/**" ,
