@@ -600,5 +600,24 @@ public class ClinicController {
 		ArrayList<Integer> roomAvailability  = roomService.findRoomAvailability(id, date);
 		return new ResponseEntity<List<Integer>>(roomAvailability, HttpStatus.OK);
 	}
+	
+	/**
+	 * method for getting clinic object when given clinic id
+	 * 
+	 * @param id - clinic id in database
+	 * @param request - HttpServletRequest, to find logged in user
+	 * @return ClinicDTO clinic - clinic object found in database
+	 */
+	@GetMapping(value = "/getDetails/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ClinicDTO> getClinicDetails(@PathVariable Long id, HttpServletRequest request) {
+		Clinic ret = clinicService.findOneById(id);
+		if (ret == null)
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		else {
+			ClinicDTO newRet = new ClinicDTO(ret);
+			return new ResponseEntity<>(newRet, HttpStatus.OK);
+		}
+		
+	}
 
 }

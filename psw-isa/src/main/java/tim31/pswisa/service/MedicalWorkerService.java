@@ -255,6 +255,7 @@ public class MedicalWorkerService {
 	}
 
 	public List<MedicalWorkerDTO> searchDoctors(String[] params) {
+		//if (params[0].typ)
 		List<MedicalWorkerDTO> forSearch = clinicService.doctorsInClinic(params[0], params[1], params[2]);
 		String name = params[3].equals("") ? "" : params[3];
 		String surname = params[4].equals("") ? "" : params[4];
@@ -277,9 +278,9 @@ public class MedicalWorkerService {
 
 	public boolean checkParams(MedicalWorkerDTO mw, String name, String surname, int rating) {
 
-		if (!name.equals("") && !mw.getUser().getName().equals(name))
+		if (!name.equals("") && !mw.getUser().getName().contains(name))
 			return false;
-		if (!surname.equals("") && !mw.getUser().getSurname().equals(surname))
+		if (!surname.equals("") && !mw.getUser().getSurname().contains(surname))
 			return false;
 		if (rating != 0 && mw.getRating() != rating)
 			return false;

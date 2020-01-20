@@ -102,7 +102,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/clinic/searchRooms", "/clinic/deleteRoom/*", "/deleteDoctor", "/findDoctors", "/clinic/changeRoom",
 				"/findPatients", "/filterPatients", "/canAccessToMedicalRecord", "/bookForPatient",
 				"/editMedicalRecord", "/checkup/update", "/changeDate/*", "/checkup/addDoctors/*", "/clinic/getRevenue", "/requestVacation/*",
-
+				"/checkUpType/allTypesOneClinic/**", "/clinic/getDetails/*",
 				"/getPatientProfile", "/clinic/getAllTypes", "/clinic/getRooms", "/patientsRequests",
 				"/checkUpType/addTypes", "/clinic/getClinics", "/getTypes", "/checkUpType/allTypes", "/checkup/*",
 				"/getRecipes", "/clinic/getClinicsByType/*", "/getPatients" , "/requestsForRoom" , "/clinic/getClinicRaiting",
