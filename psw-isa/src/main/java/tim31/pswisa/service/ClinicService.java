@@ -33,6 +33,9 @@ public class ClinicService {
 
 	@Autowired
 	private RoomService roomService;
+	
+	@Autowired
+	private CheckUpService checkupService;
 
 	@Autowired
 	private CheckUpTypeService checkUpTypeService;
@@ -45,10 +48,7 @@ public class ClinicService {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
-
-	@Autowired
-	private CheckUpService checkupService;
-
+	
 	@Autowired
 	private RoomRepository roomRepository;
 
@@ -549,9 +549,9 @@ public class ClinicService {
 		return room1;
 	}
 
-	public List<Clinic> searchClinics(String[] params) {
+	public List<ClinicDTO> searchClinics(String[] params) {
 		List<Clinic> retClinics = new ArrayList<Clinic>();
-		List<Clinic> result = new ArrayList<Clinic>();
+		List<ClinicDTO> result = new ArrayList<ClinicDTO>();
 		int counter = 0; // assuming there are 7 checkups in one day
 		CheckUpType srchType = checkupTypeRepository.findOneByName(params[0]);
 
@@ -574,7 +574,9 @@ public class ClinicService {
 
 						}
 						if (counter < 7) {
-							result.add(cl);
+							ClinicDTO pom = new ClinicDTO(cl);
+							pom.setAppPrice(srchType.getTypePrice());
+							result.add(pom);
 							break;
 						}
 					}
@@ -616,7 +618,7 @@ public class ClinicService {
 					if (counter < 7) {
 						MedicalWorkerDTO mw = new MedicalWorkerDTO(medicalWorker);
 						doctors.add(mw);
-						break;
+						//break;
 					}
 				}
 			}
@@ -626,13 +628,15 @@ public class ClinicService {
 				MedicalWorker medicalWorker = medicalWorkerService.findOneById(mw.getId());
 				for (int i = medicalWorker.getStartHr(); i < medicalWorker.getEndHr(); i++) {
 					for (Checkup ch : medicalWorker.getCheckUps()) {
-						if (Integer.parseInt(ch.getTime()) == i) {
+						if (Integer.parseInt(ch.getTime()) == i || ch.getPending()) {
 							taken = true;
 							break;
 						}
 					}
 					if (!taken) {
 						pom.add(Integer.toString(i));
+					}else {
+						taken = false;
 					}
 				}
 
@@ -650,6 +654,35 @@ public class ClinicService {
 			r.setClinic(clinic);
 		return clinicRepository.save(clinic);
 	}
+	
+	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
+		LocalDate realDate = LocalDate.parse(date);
+		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
+		
+		if (mww != null) {
+			MedicalWorkerDTO mw = new MedicalWorkerDTO(mww);
+			boolean taken = false;
+			ArrayList<String> pom = new ArrayList<String>();			
+			for (int i = mww.getStartHr(); i < mww.getEndHr(); i++) {
+				for (Checkup ch : mww.getCheckUps()) {
+					if (Integer.parseInt(ch.getTime()) == i) {
+						taken = true;	
+						break;
+					}
+				}
+				if (!taken) {
+					pom.add(Integer.toString(i));					
+				}else {
+					taken = false;
+				}
+			}	
+
+			mw.getAvailableCheckups().put(date, pom);
+			return mw;
+		}
+		
+		return  null;
+	}
 
 	public Room addRoom(Clinic clinic, RoomDTO r) {
 		Room room = new Room();
@@ -660,6 +693,19 @@ public class ClinicService {
 		room.setNumber(r.getNumber());
 		room.setFirstFreeDate(r.getFirstFreeDate());
 		return roomService.save(room);
+	}
+	
+	public List<MedicalWorkerDTO> getAllDoctorsInOneClinic(Long parametar) {
+		List<MedicalWorker> doctors = (List<MedicalWorker>) medicalWorkerService.findAllByClinicId(parametar) ;
+		List<MedicalWorkerDTO> ret = new ArrayList<MedicalWorkerDTO>() ;
+		
+		for (MedicalWorker mw : doctors) {
+			if (mw.getUser().getType().equals("DOKTOR")) {
+				ret.add(new MedicalWorkerDTO(mw));
+			}
+		}
+		
+		return  ret;
 	}
 
 }

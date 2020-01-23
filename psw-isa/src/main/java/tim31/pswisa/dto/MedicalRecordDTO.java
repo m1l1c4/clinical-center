@@ -1,5 +1,8 @@
 package tim31.pswisa.dto;
 
+import java.util.List;
+import java.util.Set;
+
 import tim31.pswisa.model.MedicalRecord;
 
 public class MedicalRecordDTO {
@@ -10,6 +13,7 @@ public class MedicalRecordDTO {
 	private Double diopter;
 	private Double height;
 	private Double weight;
+	private List<DiagnoseDTO> diagnoses;
 
 	public MedicalRecordDTO(MedicalRecord mr) {
 		this(mr.getId(), new PatientDTO(mr.getPatient()), mr.getBloodType(), mr.getDiopter(), mr.getHeight(),
@@ -79,5 +83,13 @@ public class MedicalRecordDTO {
 	public void setWeight(Double weight) {
 		this.weight = weight;
 	}
+
+	public List<DiagnoseDTO> getDiagnoses() {
+		return diagnoses;
+	}
+
+	public void setDiagnoses(List<DiagnoseDTO> diagnoses) {
+		this.diagnoses = diagnoses;
+	}	
 
 }

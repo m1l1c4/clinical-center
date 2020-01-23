@@ -48,9 +48,7 @@ public class EmailService {
 		System.out.println("Sending email...");
 		User u = userService.findOneByEmail(email);
 		String path = "http://localhost:3000/activateAccount/" + u.getId();
-		// String path = "<html><a href='" + varifyUrl + "'>" + varifyUrl + "</a></html>
-		// ";
-
+		
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
@@ -162,6 +160,34 @@ public class EmailService {
 		msg.setSubject("Account confirmation");
 		msg.setText("You must attend operatin on " + c.getDate().toString() + " " + c.getTime() + " in the room ."
 				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
+		System.out.println("Email sent.");
+	}
+	/**
+	 * method for sending email to patient after successfully booked predefined appointment
+	 * @param email
+	 * @param text
+	 * @throws MailException
+	 * @throws InterruptedException
+	 */
+	@Async
+	public void quickAppConfirmationEmail(String email, Checkup checkup) throws MailException, InterruptedException {
+		User u = userService.findOneByEmail(email);	
+		String text = "";
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo("pswisa.tim31.2019@gmail.com");
+		msg.setFrom(env.getProperty("spring.mail.username"));
+		msg.setSubject("Booking checkup confirmation");
+		MedicalWorker doc = (MedicalWorker) checkup.getDoctors().toArray()[0] ;
+		text = "We announce you that you successfully booked medical appointment for " + checkup.getDate();
+		text += "\nCheckup details: \n"
+				+ "Date and time: " + checkup.getDate() + " " + checkup.getTime() + "h\n"
+				+ "Clinic: " + checkup.getClinic().getName() + ", " + checkup.getClinic().getAddress() + "\n"
+				+ "Doctor: " + doc.getUser().getName() + "\n" 
+				+ "Room: " + checkup.getRoom().getName() + "\n" 
+				+ "Price: " + checkup.getPrice() ;
+		msg.setText(text);
+		javaMailSender.send(msg);
+
 		System.out.println("Email sent.");
 	}
 

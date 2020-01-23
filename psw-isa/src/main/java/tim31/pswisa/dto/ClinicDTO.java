@@ -9,10 +9,15 @@ public class ClinicDTO {
 	private String address;
 	private double rating;
 	private String description;
+
+	private double appPrice;		// used when searching clinics by type, to set price for that type of appointment 
+
+	
 	private String country;
 
 	public ClinicDTO(Clinic c) {
 		this(c.getId(), c.getName(), c.getCity(), c.getAddress(), c.getRating(), c.getDescription(), c.getCountry());
+
 	}
 
 	public ClinicDTO() {
@@ -85,6 +90,14 @@ public class ClinicDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public double getAppPrice() {
+		return appPrice;
+	}
+
+	public void setAppPrice(double appPrice) {
+		this.appPrice = appPrice;
 	}
 
 }

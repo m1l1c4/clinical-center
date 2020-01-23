@@ -24,12 +24,15 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 */
 	List<Checkup> findAllByClinicId(Long id);
 
+
+
 	/**
 	 * This method servers for getting one check-up by id
 	 * 
 	 * @param id - check-up id that has to be returned
 	 * @return - (Checkup) This method returns one check-up
 	 */
+
 	Checkup findOneById(Long id);
 
 	/**

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -128,6 +129,17 @@ public class CheckupController {
 		return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
 	}
 
+	@PostMapping(value = "/checkupRequest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ReportDTO> checkupRequest(@RequestBody CheckupDTO ch, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		if (checkupService.checkupToAdmin(ch, email)) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		}
+	}
+
 	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> updateCheckup(@RequestBody CheckupDTO c) {
 		Checkup checkup = checkupService.update(c);
@@ -165,4 +177,31 @@ public class CheckupController {
 		}
 		return new ResponseEntity<List<AbsenceDTO>>(ret, HttpStatus.OK);
 	}
+	
+	@PostMapping(value = "/getAllQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<CheckupDTO>> getAllQuickApp(@PathVariable Long id) {
+		List<CheckupDTO> checkups = checkupService.getAllQuicks(id);
+		if (checkups != null) {
+			return new ResponseEntity<>(checkups, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	/**
+	 * method for booking predefined checkup 
+	 * @param id - key for finding available checkup
+	 * @return string - message for successful / unsuccessful booking
+	 */
+	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	//@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<String> bookQuickApp(@PathVariable Long id, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		boolean success = checkupService.bookQuickApp(id, email);
+		if (success) {
+			return new ResponseEntity<>("Uspešno zakazivanje pregleda", HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+
 }

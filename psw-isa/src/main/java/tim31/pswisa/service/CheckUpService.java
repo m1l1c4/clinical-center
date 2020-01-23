@@ -1,13 +1,14 @@
 package tim31.pswisa.service;
 
-import java.time.LocalDate;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.CheckupDTO;
@@ -18,7 +19,9 @@ import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.User;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Room;
+import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpRepository;
 
 @Service
@@ -35,6 +38,18 @@ public class CheckUpService {
 
 	@Autowired
 	private RoomService roomService;
+	
+	@Autowired
+	private ClinicService clinicService;
+	
+	@Autowired
+	private PatientService patientService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private ClinicAdministratorService cladminService;
 
 	@Autowired
 	private CheckUpRepository checkupRepository;
@@ -180,6 +195,36 @@ public class CheckUpService {
 			return null;
 		}
 	}
+	
+	/**
+	 * adds new checkup request to all clinical administrators, after that method calls aspect for sending email to all clinical administrators
+	 * @input CheckupDTO ch - checkup that needs to be booked
+	 * @output boolean flag - defining wheather and request is successfully added or not 
+	 */
+	public boolean checkupToAdmin(CheckupDTO ch, String email) {
+		Checkup newCh = new Checkup(0, false, ch.getDate(), ch.getTime(), ch.getType(), 1, 0, null);
+		User u = userService.findOneByEmail(email);
+		Patient p = patientService.findOneByUserId(u.getId());		
+		MedicalWorker mw = medicalWorkerService.findOneById(ch.getMedicalWorker().getId());
+		Clinic c = clinicService.findOneByName(ch.getClinic().getName()) ;
+		CheckUpType chType = checkUpTypeService.findOneByName(ch.getCheckUpType().getName()) ;
+		ArrayList<ClinicAdministrator> clAdmins = (ArrayList<ClinicAdministrator>) cladminService.findAll() ;
+		
+		if (u == null || p == null || mw == null || c == null || clAdmins == null || chType == null ) {
+			return false;
+		} else  {
+			newCh.setPatient(p);
+			newCh.getDoctors().add(mw);
+			newCh.setClinic(c);
+			newCh.setCheckUpType(chType);
+			newCh.setPending(true);	
+			newCh.setScheduled(false);
+			checkupRepository.save(newCh);
+						
+			return true;
+		}
+		
+	}
 
 	public List<Checkup> findAllByRoomIdAndScheduledAndDate(Long id, boolean scheduled, LocalDate date) {
 		return checkupRepository.findAllByRoomIdAndScheduledAndDate(id, scheduled, date);
@@ -209,4 +254,49 @@ public class CheckUpService {
 		}
 		return checkupRepository.save(checkup);
 	}
+		
+	public List<CheckupDTO> getAllQuicks(Long id) {		
+		List<MedicalWorker> doctors = medicalWorkerService.findAllDoctors("DOKTOR", id);
+		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
+		for (MedicalWorker mw : doctors) {
+			for (Checkup ch : mw.getCheckUps()) {
+				if (ch.getPatient() == null) {
+					CheckupDTO chDto = new CheckupDTO(ch) ;					
+					ret.add(new CheckupDTO(ch));
+				}
+			}
+		}
+		
+		return ret;		
+	}
+	
+	public boolean bookQuickApp(Long id, String email) {		
+		boolean ret = true;
+		Checkup foundCheckup = checkupRepository.findOneById(id);
+		if (foundCheckup == null) {
+			ret = false;
+		} else {
+			User u = userService.findOneByEmail(email);
+			Patient p = patientService.findOneByUserId(u.getId());
+			foundCheckup.setPatient(p);
+			double price = foundCheckup.getPrice() - foundCheckup.getPrice()*(foundCheckup.getDiscount() / 100) ;
+			foundCheckup.setPrice(price);		// when checkup is finished, set price to previous without discount
+			checkupRepository.save(foundCheckup);	// because of adding patient to checkup
+			
+			try {
+				emailService.quickAppConfirmationEmail(email, foundCheckup);
+			} catch (MailException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ret = true;
+		}	
+		
+		return ret;		
+	}
+	
+	
 }

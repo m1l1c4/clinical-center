@@ -12,7 +12,7 @@ public class CheckupDTO {
 	private boolean scheduled;
 	private LocalDate date;
 	private String time;
-	private String type;
+	private String type;			// appointment or operation
 	private int duration;
 	private double price;
 	private RoomDTO room;
@@ -22,8 +22,9 @@ public class CheckupDTO {
 	private CheckUpTypeDTO checkUpType;
 
 	public CheckupDTO(Checkup c) {
+		
 		this(c.getId(), c.getDiscount(), c.isScheduled(), c.getDate(), c.getTime(), c.getType(), c.getDuration(),
-				c.getDiscount(), new RoomDTO(c.getRoom()), new PatientDTO(c.getPatient()), new ClinicDTO(c.getClinic()),
+				c.getDiscount(), new RoomDTO(c.getRoom()), null, new ClinicDTO(c.getClinic()),
 				new MedicalWorkerDTO((MedicalWorker) c.getDoctors().toArray()[0]), new CheckUpTypeDTO(c.getCheckUpType()));
 	}
 	

@@ -230,8 +230,8 @@ public class ClinicController {
 	}
 
 	@PostMapping(value = "/searchClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Clinic>> searchClinics(@RequestBody String[] params) {
-		List<Clinic> ret = clinicService.searchClinics(params);
+	public ResponseEntity<List<ClinicDTO>> searchClinics(@RequestBody String[] params) {
+		List<ClinicDTO> ret = clinicService.searchClinics(params);
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 
@@ -570,6 +570,18 @@ public class ClinicController {
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
+	
+	@PostMapping(value = "/getSelectedDoctor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalWorkerDTO> getSelectedDoctor(@RequestBody String[] docId, HttpServletRequest request) {
+		MedicalWorkerDTO ret = clinicService.getSelectedDoctor(Long.parseLong(docId[0]), docId[1]);
+		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/allDocsOneClinic/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MedicalWorkerDTO>> getAllDoctorsInOneClinic(@PathVariable String id, HttpServletRequest request) {
+		List<MedicalWorkerDTO> ret = clinicService.getAllDoctorsInOneClinic(Long.parseLong(id));
+		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
 
 
 	@GetMapping(value = "/getRooms/{roomType}/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -587,6 +599,25 @@ public class ClinicController {
 	public ResponseEntity<List<Integer>> getRoomVailability(@PathVariable Long id, @PathVariable String date) {
 		ArrayList<Integer> roomAvailability  = roomService.findRoomAvailability(id, date);
 		return new ResponseEntity<List<Integer>>(roomAvailability, HttpStatus.OK);
+	}
+	
+	/**
+	 * method for getting clinic object when given clinic id
+	 * 
+	 * @param id - clinic id in database
+	 * @param request - HttpServletRequest, to find logged in user
+	 * @return ClinicDTO clinic - clinic object found in database
+	 */
+	@GetMapping(value = "/getDetails/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ClinicDTO> getClinicDetails(@PathVariable Long id, HttpServletRequest request) {
+		Clinic ret = clinicService.findOneById(id);
+		if (ret == null)
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		else {
+			ClinicDTO newRet = new ClinicDTO(ret);
+			return new ResponseEntity<>(newRet, HttpStatus.OK);
+		}
+		
 	}
 
 }

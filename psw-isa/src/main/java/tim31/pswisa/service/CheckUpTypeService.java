@@ -187,4 +187,22 @@ public class CheckUpTypeService {
 		CheckUpType type = checkUpTypeRepository.findOneByName(name);
 		return type.getClinics();
 	}
+	
+	/** ZA SADA NADJI RUCNO, A PITAJ KAKO ZA MEDJURELACIJU
+	 * method for getting all checkup types in one clinic from database
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<CheckUpType> findAllByClinicId(Long id) {
+		Clinic cl = clinicService.findOneById(id);
+		List<CheckUpType> ret = new ArrayList<CheckUpType>();
+		for (CheckUpType type : cl.getCheckUpTypes()) {
+			ret.add(type);
+		}
+		
+		return ret;
+	}
+	
+	
 }

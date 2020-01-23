@@ -73,6 +73,13 @@ public class Checkup {
 	@JsonBackReference(value = "checkup_report_mov")
 	@OneToOne(mappedBy = "checkUp", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Report report;
+	
+	/*@JsonBackReference(value = "ca_mov")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private ClinicAdministrator clinicAdministrator;*/
+	
+	@Column(name = "pending", nullable = true)
+	private boolean pending;	// T or F depending on whether a patient sent request or not
 
 	public Checkup() {
 
@@ -203,6 +210,16 @@ public class Checkup {
 		this.report = report;
 	}
 
+
+	public boolean getPending() {
+		return pending;
+	}
+
+	public void setPending(boolean pending) {
+		this.pending = pending;
+	}
+	
+
 	public Set<MedicalWorker> getDoctors() {
 		return doctors;
 	}
@@ -210,5 +227,6 @@ public class Checkup {
 	public void setDoctors(Set<MedicalWorker> doctors) {
 		this.doctors = doctors;
 	}
+
 
 }

@@ -31,5 +31,13 @@ public interface CheckUpTypeRepository extends JpaRepository<CheckUpType, Long> 
 	 * @return - (CheckUpType) This method returns searched type of check-up
 	 */
 	CheckUpType findOneById(Long id);
+	
+	/**
+	 * method for getting all checkup types by clinic id
+	 * 
+	 * @param id - clinic id
+	 * @return List<CheckUpType> - list of all checkup types
+	 */
+	//List<CheckUpType> findAllByClinicId(Long id);
 
 }
