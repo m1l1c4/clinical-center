@@ -9,7 +9,7 @@ import java.util.Date;
  *
  */
 public class DiagnoseDTO {
-	private String name;	// String diagnose in Report
+	private String name;	
 	private LocalDate diagnostingDate;
 	private String doctorName;
 	private String doctorSurname;
