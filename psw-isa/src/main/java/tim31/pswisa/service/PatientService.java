@@ -1,21 +1,32 @@
 package tim31.pswisa.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tim31.pswisa.dto.DiagnoseDTO;
+import tim31.pswisa.dto.MedicalRecordDTO;
+import tim31.pswisa.dto.PatientDTO;
+import tim31.pswisa.model.Checkup;
+import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Patient;
+import tim31.pswisa.model.Recipe;
+import tim31.pswisa.model.Report;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.PatientRepository;
-import tim31.pswisa.dto.PatientDTO;
-import tim31.pswisa.model.Patient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class PatientService {
 
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private UserService userService;
 
 	public List<PatientDTO> getAllPatients() {
 		List<Patient> temp = patientRepository.findAll();
@@ -102,6 +113,65 @@ public class PatientService {
 		patient.setPhoneNumber(editp.getPhoneNumber());
 		patient.setState(editp.getState());
 		return patient;
+	}
+	
+	public MedicalRecordDTO getMedicalRecord(String email) {
+		MedicalRecordDTO ret = new MedicalRecordDTO();
+		User loggedUser = userService.findOneByEmail(email);		
+		
+		if (loggedUser == null) {		// invalid email
+			return null;
+		} 
+		
+		Patient loggedPatient = findOneByUserId(loggedUser.getId());
+		
+		if (loggedPatient == null) {		
+			return null;
+		}	
+		
+		ret.setHeight(loggedPatient.getMedicalRecord().getHeight());
+		ret.setWeight(loggedPatient.getMedicalRecord().getWeight());
+		ret.setDiopter(loggedPatient.getMedicalRecord().getDiopter());
+		ret.setBloodType(loggedPatient.getMedicalRecord().getBloodType());
+		ret.setDiagnoses(patientDiagnoses(loggedPatient));
+		
+		return ret;
+	}
+	
+	private List<DiagnoseDTO> patientDiagnoses(Patient loggedPatient) {
+		List<DiagnoseDTO> patientDiagnoses = new ArrayList<DiagnoseDTO>();
+		LocalDate currentDate = LocalDate.now();
+		for (Checkup ch : loggedPatient.getAppointments()) {
+			if (ch.isScheduled() && ch.getDate().isBefore(currentDate) 
+					&& ch.getType().equals("appointment")) {
+				MedicalWorker doctor = findDoctor(ch) ; // getDcotors should work bc I assume there is one doctor per checkup
+				if (doctor != null) {
+				/* ovaj if zbog predefinisanih pregleda pa je report prazan a pregled se kao desio,
+				 * realno pregledi ce se zakazivati kroz aplikaciju a ne povlaciti iz skripte
+				 */
+				Report temp = new Report();
+				if (ch.getReport() == null) {
+					temp = new Report(new HashSet<Recipe>(), loggedPatient.getMedicalRecord() , ch, "neke info", "dijagnoza");
+				}
+				
+				patientDiagnoses.add(new DiagnoseDTO(temp.getDiagnose() ,				
+									ch.getDate() , doctor.getUser().getName() , 
+									doctor.getUser().getSurname(), doctor.getClinic().getName())) ;
+				}
+			}			
+		}
+		return patientDiagnoses;
+	}
+	
+	private MedicalWorker findDoctor(Checkup c) {
+		MedicalWorker ret = null;
+		for (MedicalWorker mw : c.getDoctors()) {
+			if (mw.getUser().getType().equals("DOKTOR")) {
+				ret = new MedicalWorker(mw);
+				break;
+			}				
+		}
+		return ret;
 	}
 
 }
