@@ -455,15 +455,15 @@ public class ClinicController {
 			if (clinicAdministrator != null) {
 				Room room1 = clinicService.changeRoom(room, clinicAdministrator);
 				if (room1 == null) {
-					return new ResponseEntity<>(room, HttpStatus.ALREADY_REPORTED);
+					return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 				} else {
 					return new ResponseEntity<>(new RoomDTO(room1), HttpStatus.OK);
 				}
 			} else {
-				return new ResponseEntity<>(room, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 		} else {
-			return new ResponseEntity<>(room, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -584,10 +584,9 @@ public class ClinicController {
 	}
 
 
-	@GetMapping(value = "/getRooms/{roomType}/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<RoomDTO>> getRoomsByClinicIdAndType(@PathVariable String roomType, @PathVariable Long id,
-			@PathVariable String date, HttpServletRequest request) {
-		List<Room> rooms = roomService.findAllByClinicIdAndTypeRoom(id, roomType, date);
+	@GetMapping(value = "/getRooms/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<RoomDTO>> getRoomsByClinicIdAndType(@PathVariable Long id) {
+		List<Room> rooms = roomService.findAllByClinicIdAndTypeRoom(id);
 		List<RoomDTO> ret = new ArrayList<>();
 		for (Room room : rooms) {
 			ret.add(new RoomDTO(room));

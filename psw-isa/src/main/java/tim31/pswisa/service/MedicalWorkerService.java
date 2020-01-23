@@ -71,6 +71,10 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllByClinicId(id);
 	}
 
+	public Set<MedicalWorker> findAllByTipAndClinicId(String type, Long id){
+		return medicalWorkerRepository.findAllByTipAndClinicId(type,id);
+	}
+	
 	/**
 	 * This method servers for updating medical worker
 	 * 
@@ -147,7 +151,7 @@ public class MedicalWorkerService {
 			Patient p = patientService.findOneByUserId(patient.getId());
 			checkup.setPatient(p);
 			checkup.setScheduled(false);
-			checkup.setType(c.getType());
+			checkup.setTip(c.getType());
 			checkup.getDoctors().add(medWorker);
 			checkup.setTime(c.getTime());
 			checkup.setDuration(1);
@@ -189,24 +193,25 @@ public class MedicalWorkerService {
 	}
 
 	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {
-		List<MedicalWorker> temp = findAllByClinicId(clinic.getId());
+		Set<MedicalWorker> temp = findAllByTipAndClinicId(typeD, clinic.getId());
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
 		if (name.equals("")) {
+				for (MedicalWorker med : temp) {
+						returnVal.add(new MedicalWorkerDTO(med));
+				}
+		}
+	
+		else {
 			for (MedicalWorker med : temp) {
-				if (med.getType().equals(typeD)) {
+				if (med.getUser().getName().equals(name)) {
 					returnVal.add(new MedicalWorkerDTO(med));
-					return returnVal;
 				}
 			}
 		}
-
-		for (MedicalWorker med : temp) {
-			if (med.getUser().getName().equals(name) && med.getType().equals(typeD)) {
-				returnVal.add(new MedicalWorkerDTO(med));
-			}
-		}
+		
 		return returnVal;
+		
 	}
 
 	public MedicalWorker findOne(Long id) {
@@ -238,6 +243,7 @@ public class MedicalWorkerService {
 		medicalWorker.getUser().setFirstLogin(false);
 		medicalWorker.getUser().setEnabled(true);
 		medicalWorker.getUser().setActivated(true);
+		medicalWorker.setType(mw.getType());
 		if (user.getType().equals("MEDICINAR")) {
 			medicalWorker.setType("");
 		} else {
@@ -310,6 +316,7 @@ public class MedicalWorkerService {
 	public Set<Checkup> getAllCheckups(Long id) {
 		MedicalWorker worker = medicalWorkerRepository.findOneById(id);
 		return worker.getCheckUps();
+	}
 	
 	public List<MedicalWorker> findAllDoctors(String type, Long id) {
 		return medicalWorkerRepository.findAllDoctors(type, id);

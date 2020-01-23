@@ -47,7 +47,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	 * @return - (Room) This method returns searched room
 	 */
 
-	List<Room> findAllByClinicIdAndTypeRoom(Long clinicId, String type);
+	List<Room> findAllByClinicIdAndTipRoom(Long clinicId, String type);
 	
 
 	Room findOneByNumber(int number);

@@ -48,7 +48,7 @@ public class ClinicService {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
-	
+		
 	@Autowired
 	private RoomRepository roomRepository;
 
@@ -157,19 +157,19 @@ public class ClinicService {
 		List<Checkup> checkups = checkupService.findAll();
 		for (Checkup c : checkups) {
 			if (c.getClinic().getId() == clinic.getId() && c.isScheduled()) {
-				if (c.getDate().equals(date.minusDays(1).toString())) {
+				if (c.getDate().equals(date.minusDays(1))) {
 					retValue[6] += 1;
-				} else if (c.getDate().equals(date.minusDays(2).toString())) {
+				} else if (c.getDate().equals(date.minusDays(2))) {
 					retValue[5] += 1;
-				} else if (c.getDate().equals(date.minusDays(3).toString())) {
+				} else if (c.getDate().equals(date.minusDays(3))) {
 					retValue[4] += 1;
-				} else if (c.getDate().equals(date.minusDays(4).toString())) {
+				} else if (c.getDate().equals(date.minusDays(4))) {
 					retValue[3] += 1;
-				} else if (c.getDate().equals(date.minusDays(5).toString())) {
+				} else if (c.getDate().equals(date.minusDays(5))) {
 					retValue[2] += 1;
-				} else if (c.getDate().equals(date.minusDays(6).toString())) {
+				} else if (c.getDate().equals(date.minusDays(6))) {
 					retValue[1] += 1;
-				} else if (c.getDate().equals(date.minusDays(7).toString())) {
+				} else if (c.getDate().equals(date.minusDays(7))) {
 					retValue[0] += 1;
 				}
 			}
@@ -281,7 +281,7 @@ public class ClinicService {
 		for (Clinic klinika : clinics) {
 			if (klinika.getAvailableAppointments() != null) {
 				for (Checkup c : klinika.getAvailableAppointments()) {
-					if (c.getType().equals(before)) {
+					if (c.getTip().equals(before)) {
 						return null; // returns null if can't change name of type
 					}
 				}
@@ -396,8 +396,18 @@ public class ClinicService {
 			if (clinic != null) {
 				List<Room> rooms = roomService.findAllByClinicId(clinic.getId());
 				List<RoomDTO> dtos = new ArrayList<RoomDTO>();
-				for (Room r : rooms) {
-					dtos.add(new RoomDTO(r));
+				for (Room room : rooms) {
+					LocalDate date = LocalDate.now();
+					boolean found = false;
+					while (!found) {
+						List<Checkup> checkups = checkupService.findAllByRoomIdAndScheduledAndDate(room.getId(), true, date);
+						if (checkups == null || checkups.size() < 13) {
+							found = true;
+							room.setFirstFreeDate(date);
+							dtos.add(new RoomDTO(room));
+						}
+						date = date.plusDays(1);
+					}
 				}
 				return dtos;
 			}
@@ -417,43 +427,30 @@ public class ClinicService {
 	public List<RoomDTO> searchRooms(Clinic clinic, String[] params) {
 		String name = params[0];
 		String type = params[1];
-		LocalDate date = LocalDate.parse(params[2]);
-		List<RoomDTO> ret = new ArrayList<RoomDTO>();
-		Set<Room> temp = clinic.getRooms();
-		int counter = 0;
-		if (name.equals("undefined") || name.equals("")) {
-			for (Room r : temp) {
-				if (r.getTypeRoom().equals(type)) {
-					Set<Checkup> checkups = r.getBookedCheckups();
-					for (Checkup c : checkups) {
-						if (c.getDate().equals(date)) {
-							counter++;
-						}
-					}
-					if (counter < 8) {
-						ret.add(new RoomDTO(r));
-					}
-				}
+		LocalDate dateTemp = LocalDate.parse(params[2]);
+		List<RoomDTO> ret = new ArrayList<RoomDTO>();		
+		List<Room> rooms = roomRepository.findAllByClinicIdAndTipRoom(clinic.getId(), type);
+		for (Room room : rooms) {			
+			boolean found = false;
+			if(!name.equals("") && !name.equals(room.getName())) {
+				found = true;
 			}
-		} else {
-			counter = 0;
-			for (Room r : temp) {
-				if (r.getName().equals(name) && r.getTypeRoom().equals(type)) {
-					Set<Checkup> checkups = r.getBookedCheckups();
-					for (Checkup c : checkups) {
-						if (c.getDate().equals(date)) {
-							counter++;
-						}
-					}
-					if (counter < 8) {
-						ret.add(new RoomDTO(r));
-					}
+			LocalDate date = dateTemp;
+			while (!found) {
+				List<Checkup> checkups = checkupService.findAllByRoomIdAndScheduledAndDate(room.getId(), true, date);
+				if (checkups == null || checkups.size() < 13) {
+					found = true;
+					room.setFirstFreeDate(date);
+					ret.add(new RoomDTO(room));
 				}
+				date = date.plusDays(1);
 			}
 		}
+		
 		if (ret.size() == 0) {
 			return null;
 		} else {
+			
 			return ret;
 		}
 	}
@@ -540,7 +537,7 @@ public class ClinicService {
 	public Room changeRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Clinic klinika = findOneById(clinicAdministrator.getClinic().getId());
 		Room room1 = roomRepository.findOneByClinicIdAndNumber(klinika.getId(), room.getNumber());
-		if (!room1.isFree() || room1.getBookedCheckups().size() == 0) {
+		if (room1.getBookedCheckups().size() > 0) {
 			return null;
 		}
 		room1.setName(room.getName());

@@ -42,7 +42,7 @@ public class MedicalWorker {
 	private Set<Patient> patients;
 	*/
 	@JsonManagedReference(value = "vacation")
-	@OneToMany(mappedBy = "mw", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "medicalWorker", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Absence> hollydays;
 	
 	@JsonManagedReference(value = "nurse_recipe_mov")
@@ -60,8 +60,8 @@ public class MedicalWorker {
 	@Column(name = "endHr", unique = false, nullable = true)
 	private int endHr;
 
-	@Column(name = "typeOfDoctor", unique = false, nullable = true)
-	private String type;
+	@Column(name = "tip", unique = false, nullable = true)
+	private String tip;
 
 	@JsonManagedReference(value = "doctor_checkup_mov")
 	@ManyToMany(mappedBy = "doctors")
@@ -85,7 +85,7 @@ public class MedicalWorker {
 		this.rating = m.rating;
 		this.recipes  = m.recipes;
 		this.startHr = m.startHr ;
-		this.type = m.type ;
+		this.tip = m.tip ;
 		this.user = m.user ;
 	}
 	
@@ -126,7 +126,7 @@ public class MedicalWorker {
 	}
 
 	public String getType() {
-		return type;
+		return tip;
 	}
 
 	public void setClinic(Clinic clinic) {
@@ -144,7 +144,7 @@ public class MedicalWorker {
 	}
 
 	public void setType(String type) {
-		this.type = type;
+		this.tip = type;
 	}
 
 	public void setHollydays(Set<Absence> hollydays) {

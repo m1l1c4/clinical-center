@@ -27,8 +27,8 @@ public class Room {
 	@Column(name = "roomName", unique = false, nullable = false)
 	private String name;
 
-	@Column(name = "typeRoom", unique = false, nullable = true)
-	private String typeRoom;
+	@Column(name = "tipRoom", unique = false, nullable = true)
+	private String tipRoom;
 
 	@Column(name = "isFree", unique = false, nullable = true)
 	private boolean isFree;
@@ -56,7 +56,7 @@ public class Room {
 		super();
 		this.id = id;
 		this.name = name;
-		this.typeRoom = type;
+		this.tipRoom = type;
 		this.isFree = isFree;
 		this.number = number;
 		this.clinic = clinic;
@@ -72,11 +72,11 @@ public class Room {
 	}
 
 	public String getTypeRoom() {
-		return typeRoom;
+		return tipRoom;
 	}
 
 	public void setTypeRoom(String type) {
-		this.typeRoom = type;
+		this.tipRoom = type;
 	}
 
 	public boolean isFree() {

@@ -143,7 +143,7 @@ public class PatientService {
 		LocalDate currentDate = LocalDate.now();
 		for (Checkup ch : loggedPatient.getAppointments()) {
 			if (ch.isScheduled() && ch.getDate().isBefore(currentDate) 
-					&& ch.getType().equals("appointment")) {
+					&& ch.getTip().equals("appointment")) {
 				MedicalWorker doctor = findDoctor(ch) ; // getDcotors should work bc I assume there is one doctor per checkup
 				if (doctor != null) {
 				/* ovaj if zbog predefinisanih pregleda pa je report prazan a pregled se kao desio,
