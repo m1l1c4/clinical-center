@@ -16,16 +16,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RecipeDTO;
 import tim31.pswisa.dto.UserDTO;
+import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Recipe;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
+import tim31.pswisa.service.AbsenceService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.MedicalWorkerService;
 import tim31.pswisa.service.RecipeService;
@@ -48,6 +51,9 @@ public class MedicalWorkerController {
 
 	@Autowired
 	private RecipeService recipeService;
+	
+	@Autowired
+	private AbsenceService absenceService;
 
 	/**
 	 * This method servers for getting medical worker for update
@@ -271,6 +277,19 @@ public class MedicalWorkerController {
 			ret.add(new MedicalWorkerDTO(mw));
 		}
 		return new ResponseEntity<List<MedicalWorkerDTO>>(ret, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/vacationRequest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<AbsenceDTO> vacationRequest(@RequestBody AbsenceDTO absence, HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		MedicalWorker mw = medicalWorkerService.findByUser(user.getId());
+		Absence a = absenceService.create(absence, mw);
+		if (a != null) {
+			return new ResponseEntity<>(new AbsenceDTO(a), HttpStatus.CREATED);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 }

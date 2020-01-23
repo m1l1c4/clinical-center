@@ -1,7 +1,6 @@
 package tim31.pswisa.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,7 +24,7 @@ public class Absence {
 	private LocalDate startVacation;
 
 	@Column(name = "endVacation")
-	private LocalDate endVacation; 
+	private LocalDate endVacation;
 
 	@JsonBackReference(value = "clinicAbsence_mov")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -34,18 +33,17 @@ public class Absence {
 	@JsonBackReference(value = "vacation")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker mw;
-	
-	@Column(name="typeOfAbsence")
+
+	@Column(name = "typeOfAbsence")
 	private String typeOfAbsence;
-	
+
 	// SENT, ACCEPTED, PASSED
-	@Column(name="accepted")
+	@Column(name = "accepted")
 	private String accepted;
 
 	public Absence() {
 
 	}
-	
 
 	public Absence(LocalDate start, LocalDate end, MedicalWorker mw, String t, Clinic c, String a) {
 		super();
@@ -61,46 +59,37 @@ public class Absence {
 		return accepted;
 	}
 
-
 	public void setAccepted(String accepted) {
 		this.accepted = accepted;
 	}
-
 
 	public Clinic getClinicOfAbsence() {
 		return clinicOfAbsence;
 	}
 
-
 	public void setClinicOfAbsence(Clinic clinicOfAbsence) {
 		this.clinicOfAbsence = clinicOfAbsence;
 	}
-
 
 	public String getTypeOfAbsence() {
 		return typeOfAbsence;
 	}
 
-
 	public void setTypeOfAbsence(String typeOfAbsence) {
 		this.typeOfAbsence = typeOfAbsence;
 	}
-
 
 	public Long getId() {
 		return id;
 	}
 
-
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-
 	public MedicalWorker getMw() {
 		return mw;
 	}
-
 
 	public void setMw(MedicalWorker mw) {
 		this.mw = mw;
@@ -121,7 +110,5 @@ public class Absence {
 	public void setEndVacation(LocalDate end) {
 		this.endVacation = end;
 	}
-
-
 
 }
