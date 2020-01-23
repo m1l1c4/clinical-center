@@ -75,6 +75,20 @@ public class MedicalWorker {
 		super();
 	}
 
+	public MedicalWorker(MedicalWorker m) {
+		this.id = m.id ;
+		this.checkUps = m.getCheckUps();
+		this.clinic = m.clinic ;
+		this.endHr  = m.endHr;
+		this.hollydays = m.hollydays;
+		this.phone = m.phone;
+		this.rating = m.rating;
+		this.recipes  = m.recipes;
+		this.startHr = m.startHr ;
+		this.type = m.type ;
+		this.user = m.user ;
+	}
+	
 	public String getPhone() {
 		return phone;
 	}

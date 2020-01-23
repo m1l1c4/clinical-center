@@ -45,6 +45,20 @@ public class Report {
 		super();
 	}
 
+	
+	
+	public Report(Set<Recipe> recipes, MedicalRecord medicalRecord,
+			Checkup checkUp, String informations, String diagnose) {
+		super();
+		this.recipes = recipes;
+		this.medicalRecord = medicalRecord;
+		this.checkUp = checkUp;
+		this.informations = informations;
+		this.diagnose = diagnose;
+	}
+
+
+
 	public MedicalRecord getMedicalRecord() {
 		return medicalRecord;
 	}

@@ -119,5 +119,21 @@ public class PatientController {
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
+	
+	/**
+	 * method for getting medical record of one patient
+	 * @param request
+	 * @return
+	 */
+	@GetMapping(value = "/getMedicalRecord", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalRecordDTO> getMedicalRecord(HttpServletRequest request) {
+		String jwt_token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(jwt_token);
+		MedicalRecordDTO ret = patientService.getMedicalRecord(email);		
+		if (ret != null) {
+			return new ResponseEntity<MedicalRecordDTO>(ret,HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
 
 }
