@@ -31,8 +31,8 @@ public class Absence {
 	private Clinic clinicOfAbsence;
 
 	@JsonBackReference(value = "vacation")
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private MedicalWorker mw;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private MedicalWorker medicalWorker;
 
 	@Column(name = "typeOfAbsence")
 	private String typeOfAbsence;
@@ -49,7 +49,7 @@ public class Absence {
 		super();
 		this.startVacation = start;
 		this.endVacation = end;
-		this.mw = mw;
+		this.medicalWorker = mw;
 		this.clinicOfAbsence = c;
 		this.typeOfAbsence = t;
 		this.accepted = a;
@@ -88,11 +88,11 @@ public class Absence {
 	}
 
 	public MedicalWorker getMw() {
-		return mw;
+		return medicalWorker;
 	}
 
 	public void setMw(MedicalWorker mw) {
-		this.mw = mw;
+		this.medicalWorker = mw;
 	}
 
 	public LocalDate getStartVacation() {

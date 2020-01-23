@@ -81,11 +81,12 @@ public class RoomService {
 		return roomRepository.findOneByClinicIdAndNumber(clinicId, number);
 	}
 
-	public List<Room> findAllByClinicIdAndTypeRoom(Long id, String type, String d) {
-		List<Room> rooms = roomRepository.findAllByClinicIdAndTypeRoom(id, type);
+	public List<Room> findAllByClinicIdAndTypeRoom(Long id) {
+		Checkup checkup = checkUpService.findOneById(id);
+		List<Room> rooms = roomRepository.findAllByClinicIdAndTipRoom(checkup.getClinic().getId(), checkup.getTip());
 		List<Room> ret = new ArrayList<>();
 		for (Room room : rooms) {
-			LocalDate date = LocalDate.parse(d);
+			LocalDate date = checkup.getDate();
 			boolean found = false;
 			while (!found) {
 				List<Checkup> checkups = checkUpService.findAllByRoomIdAndScheduledAndDate(room.getId(), true, date);

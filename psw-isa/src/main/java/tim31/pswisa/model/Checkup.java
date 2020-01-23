@@ -39,8 +39,8 @@ public class Checkup {
 	private String time;
 
 	// operation or appointment
-	@Column(name = "type", nullable = true)
-	private String type;
+	@Column(name = "tip", nullable = true)
+	private String tip;
 
 	@Column(name = "duration", nullable = true)
 	private int duration;
@@ -91,7 +91,7 @@ public class Checkup {
 		this.discount = discount;
 		this.scheduled = scheduled;
 		this.date = date;
-		this.type = type;
+		this.tip = type;
 		this.duration = duration;
 		this.price = price;
 		this.room = room;
@@ -162,12 +162,12 @@ public class Checkup {
 		this.checkUpType = checkUpType;
 	}
 
-	public String getType() {
-		return type;
+	public String getTip() {
+		return tip;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setTip(String type) {
+		this.tip = type;
 	}
 
 	public int getDuration() {

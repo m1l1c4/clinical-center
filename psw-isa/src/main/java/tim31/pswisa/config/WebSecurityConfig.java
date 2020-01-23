@@ -102,7 +102,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/checkUpType/addTypes", "/clinic/getClinics", "/getTypes", "/checkUpType/allTypes", "/checkup/*",
 				"/getRecipes", "/clinic/getClinicsByType/*", "/getPatients", "/requestsForRoom",
 				"/clinic/getClinicRaiting", "/clinic/getReportForMonth", "/clinic/getReportForWeek",
-				"/getRequestForVacation", "/clinic/getRooms/*/*/*", "/clinic/roomAvailability/*/*",
+				"/getRequestForVacation", "/clinic/getRooms/*", "/clinic/roomAvailability/*/*",
 				"/getAllAvailable/*/*/*", "/checkup/getVacations/*", "/checkup/getCheckups/*");
 		// web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html",
 		// "/favicon.ico", "/**/*.html",

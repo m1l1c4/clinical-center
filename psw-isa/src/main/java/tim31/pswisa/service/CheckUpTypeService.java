@@ -14,8 +14,10 @@ import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
+import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpTypeRepository;
+import tim31.pswisa.repository.MedicalWorkerRepository;
 
 @Service
 public class CheckUpTypeService {
@@ -26,6 +28,9 @@ public class CheckUpTypeService {
 	@Autowired
 	private CheckUpTypeRepository checkUpTypeRepository;
 
+	@Autowired
+	private MedicalWorkerService medicalWorkerService;
+	
 	@Autowired
 	private ClinicAdministratorService clinicAdministratorService;
 
@@ -78,6 +83,10 @@ public class CheckUpTypeService {
 			Set<CheckUpType> tipovi = clinic.getCheckUpTypes();
 			for (CheckUpType t : tipovi) {
 				if (t.getName().equals(name)) {
+					Set<MedicalWorker>pomDoctors = medicalWorkerService.findAllByTipAndClinicId(name,clinic.getId());
+					if(pomDoctors.size()>0) {
+						return null;
+					}
 					clinic.getCheckUpTypes().remove(t);
 					clinic = clinicService.update(clinic); // delete type from clinic
 					CheckUpType temp = findOneByName(name);

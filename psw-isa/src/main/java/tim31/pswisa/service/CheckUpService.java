@@ -152,7 +152,7 @@ public class CheckUpService {
 			}
 			checkup.setDate(c.getDate());
 			checkup.setTime(c.getTime());
-			checkup.setType(c.getType());
+			checkup.setTip(c.getType());
 			checkup.setDuration(1);
 			checkup.setDiscount(0);
 			Room room = new Room();
@@ -181,7 +181,7 @@ public class CheckUpService {
 					}
 				}
 				room.getBookedCheckups().add(checkup);
-				checkup.setType(c.getType());
+				checkup.setTip(c.getType());
 				checkup = save(checkup);
 				mw.getCheckUps().add(checkup);
 
