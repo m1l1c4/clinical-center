@@ -3,7 +3,10 @@ package tim31.pswisa.repository;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import tim31.pswisa.model.MedicalWorker;
@@ -24,6 +27,7 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 	 * @param id - id of medical worker
 	 * @return - (MedicalWorker) This method returns searched medical worker
 	 */
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	MedicalWorker findOneById(Long id);
 
 	Set<MedicalWorker> findAllByTipAndClinicId(String type, Long id);

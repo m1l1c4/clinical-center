@@ -9,6 +9,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.model.Absence;
@@ -24,6 +25,7 @@ import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class CheckUpService {
 
 	@Autowired
@@ -234,7 +236,7 @@ public class CheckUpService {
 		return checkupRepository.findAllByRoomIdAndScheduledAndDate(id, scheduled, date);
 	}
 
-	public List<Checkup> findOneByTimeAndDate(String time, LocalDate date) {
+	public List<Checkup> findAllByTimeAndDate(String time, LocalDate date) {
 		return checkupRepository.findAllByTimeAndDate(time, date);
 	}
 
@@ -248,15 +250,33 @@ public class CheckUpService {
 		return checkupRepository.save(checkup);
 	}
 
-	public Checkup addDoctors(Long id, Long[] workers) {
+	@Transactional(readOnly = false)
+	public Checkup addDoctors(Long id, Long[] workers) throws Exception {
 		Checkup checkup = checkupRepository.findOneById(id);
 		checkup.setDoctors(new HashSet<MedicalWorker>());
 		for (Long doctorId : workers) {
 			MedicalWorker mw = medicalWorkerService.findOneById(doctorId);
-			checkup.getDoctors().add(mw);
-			emailService.notifyDoctor(doctorId, checkup);
+			List<Checkup> checkups = checkupRepository.findAllByTimeAndDate(checkup.getTime(), checkup.getDate());
+
+			for (Checkup c : checkups) {
+				if (!c.isScheduled()) {
+					for (MedicalWorker doctor : c.getDoctors()) {
+						if (doctor.getId() == mw.getId()) {
+
+						} else {
+							emailService.notifyDoctor(doctorId, checkup);
+							checkup.getDoctors().add(mw);
+						}
+					}
+				}
+			}
 		}
-		return checkupRepository.save(checkup);
+		if(checkup.getDoctors().size() == 0) {
+			return null;
+		}
+		else {
+			return checkupRepository.save(checkup);
+		}
 	}
 
 	public List<CheckupDTO> getAllQuicks(Long id) {

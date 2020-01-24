@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -47,6 +48,9 @@ public class Recipe {
 
 	@Column(name = "verified", unique = false, nullable = false)
 	private Boolean verified;
+	
+	@Version
+	private Long version;
 
 	public Recipe() {
 

@@ -4,17 +4,20 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Recipe;
 import tim31.pswisa.repository.RecipeRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class RecipeService {
 
 	@Autowired
 	private RecipeRepository recipeRepository;
 
+	@Transactional(readOnly = false)
 	public Recipe save(Recipe r) {
 		return recipeRepository.save(r);
 	}
@@ -31,7 +34,8 @@ public class RecipeService {
 		return recipeRepository.findOneById(id);
 	}
 
-	public Recipe verify(Recipe recipe, MedicalWorker nurse) {
+	@Transactional(readOnly = false)
+	public Recipe verify(Recipe recipe, MedicalWorker nurse) throws Exception{
 		recipe.setVerified(true);
 		recipe.setNurse(nurse);
 		return recipeRepository.save(recipe);

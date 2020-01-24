@@ -71,10 +71,10 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllByClinicId(id);
 	}
 
-	public Set<MedicalWorker> findAllByTipAndClinicId(String type, Long id){
-		return medicalWorkerRepository.findAllByTipAndClinicId(type,id);
+	public Set<MedicalWorker> findAllByTipAndClinicId(String type, Long id) {
+		return medicalWorkerRepository.findAllByTipAndClinicId(type, id);
 	}
-	
+
 	/**
 	 * This method servers for updating medical worker
 	 * 
@@ -197,11 +197,11 @@ public class MedicalWorkerService {
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
 		if (name.equals("")) {
-				for (MedicalWorker med : temp) {
-						returnVal.add(new MedicalWorkerDTO(med));
-				}
+			for (MedicalWorker med : temp) {
+				returnVal.add(new MedicalWorkerDTO(med));
+			}
 		}
-	
+
 		else {
 			for (MedicalWorker med : temp) {
 				if (med.getUser().getName().equals(name)) {
@@ -209,9 +209,9 @@ public class MedicalWorkerService {
 				}
 			}
 		}
-		
+
 		return returnVal;
-		
+
 	}
 
 	public MedicalWorker findOne(Long id) {
@@ -260,7 +260,7 @@ public class MedicalWorkerService {
 	}
 
 	public List<MedicalWorkerDTO> searchDoctors(String[] params) {
-		//if (params[0].typ)
+		// if (params[0].typ)
 		List<MedicalWorkerDTO> forSearch = clinicService.doctorsInClinic(params[0], params[1], params[2]);
 		String name = params[3].equals("") ? "" : params[3];
 		String surname = params[4].equals("") ? "" : params[4];
@@ -297,10 +297,12 @@ public class MedicalWorkerService {
 		List<MedicalWorker> doctors = medicalWorkerRepository.findAllByClinicId(id);
 		int time = Integer.parseInt(t);
 		List<MedicalWorker> ret = new ArrayList<>();
-		List<Checkup> checkups = checkupService.findOneByTimeAndDate(t, LocalDate.parse(date));
+		List<Checkup> checkups = checkupService.findAllByTimeAndDate(t, LocalDate.parse(date));
 		for (Checkup checkup : checkups) {
-			for (MedicalWorker doctor : checkup.getDoctors()) {
-				doctors.remove(doctor);
+			if (!checkup.isScheduled()) {
+				for (MedicalWorker doctor : checkup.getDoctors()) {
+					doctors.remove(doctor);
+				}
 			}
 		}
 		for (MedicalWorker doctor : doctors) {
@@ -317,7 +319,7 @@ public class MedicalWorkerService {
 		MedicalWorker worker = medicalWorkerRepository.findOneById(id);
 		return worker.getCheckUps();
 	}
-	
+
 	public List<MedicalWorker> findAllDoctors(String type, Long id) {
 		return medicalWorkerRepository.findAllDoctors(type, id);
 	}

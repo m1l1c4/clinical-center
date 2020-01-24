@@ -151,11 +151,18 @@ public class CheckupController {
 
 	@PostMapping(value = "/addDoctors/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addDoctors(@RequestBody Long[] doctors, @PathVariable Long id) {
-		Checkup checkup = checkupService.addDoctors(id, doctors);
-		if (checkup != null) {
-			return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
+		Checkup checkup;
+		try {
+			checkup = checkupService.addDoctors(id, doctors);
+			if (checkup != null) {
+				return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
+			}
+			return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 		}
-		return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 	}
 
 	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
