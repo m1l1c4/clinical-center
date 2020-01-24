@@ -2,7 +2,10 @@ package tim31.pswisa.repository;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 
 import tim31.pswisa.model.Room;
 
@@ -29,6 +32,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	 * @param id - room id
 	 * @return - (Room) This method returns one room
 	 */
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Room findOneById(Long id);
 
 	/**

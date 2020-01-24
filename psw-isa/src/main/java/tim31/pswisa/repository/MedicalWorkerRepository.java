@@ -26,7 +26,15 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 	 */
 	MedicalWorker findOneById(Long id);
 
+	/**
+	 * This method servers for finding all medical worker by type of specialization and clinic id
+	 * 
+	 * @param id - clinic id
+	 * @return - (List<MedicalWorker>) This method returns all medical workers in
+	 *         clinic
+	 */
 	Set<MedicalWorker> findAllByTipAndClinicId(String type, Long id);
+
 	/**
 	 * This method servers for getting all medical workers from one clinic
 	 * 
@@ -34,9 +42,9 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 	 * @return - (List<MedicalWorker>) This method returns all medical workers in
 	 *         clinic
 	 */
-  
+
 	List<MedicalWorker> findAllByClinicId(Long id);
-	
+
 	@Query("select s from MedicalWorker s where s.user.type = ?1 and s.clinic.id = ?2")
 	List<MedicalWorker> findAllDoctors(String type, Long id);
 

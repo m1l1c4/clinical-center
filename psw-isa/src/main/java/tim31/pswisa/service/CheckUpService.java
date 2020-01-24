@@ -9,6 +9,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.model.Absence;
@@ -24,6 +26,8 @@ import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpRepository;
 
 @Service
+@Transactional(readOnly = true)
+
 public class CheckUpService {
 
 	@Autowired
@@ -82,6 +86,7 @@ public class CheckUpService {
 	 * @param c - check-up that have to be saved
 	 * @return - (Checkup) This method returns saved check-up
 	 */
+	@Transactional(readOnly = false)
 	public Checkup save(Checkup c) {
 		return checkupRepository.save(c);
 	}
@@ -124,6 +129,7 @@ public class CheckUpService {
 	 * @param clinicAdministrator - clinic administrator who adding new appointment
 	 * @return - (Checkup) added check-up or null if doctor is busy at that moment
 	 */
+	@Transactional(readOnly = false)
 	public Checkup addAppointment(CheckupDTO c, MedicalWorker mw, ClinicAdministrator clinicAdministrator) {
 		Checkup checkup = new Checkup();
 		int ok = 0;
@@ -205,6 +211,7 @@ public class CheckUpService {
 	 * @output boolean flag - defining wheather and request is successfully added or
 	 *         not
 	 */
+	@Transactional(readOnly = false)
 	public boolean checkupToAdmin(CheckupDTO ch, String email) {
 		Checkup newCh = new Checkup(0, false, ch.getDate(), ch.getTime(), ch.getType(), 1, 0, null);
 		User u = userService.findOneByEmail(email);
@@ -238,16 +245,24 @@ public class CheckUpService {
 		return checkupRepository.findAllByTimeAndDate(time, date);
 	}
 
-	public Checkup update(CheckupDTO c) {
+	@Transactional(readOnly = false)
+	public Checkup update(CheckupDTO c) throws Exception {
 		Checkup checkup = checkupRepository.findOneById(c.getId());
-		checkup.setDate(c.getDate());
-		checkup.setTime(c.getTime());
 		Room room = roomService.findOneById(c.getRoom().getId());
-		checkup.setRoom(room);
-		checkup.setScheduled(true);
-		return checkupRepository.save(checkup);
+		List<Checkup>temp = checkupRepository.findAllByRoomIdAndTimeAndDate(room.getId(), c.getTime(),c.getDate());
+		if(temp.size() == 0) {
+			checkup.setDate(c.getDate());
+			checkup.setTime(c.getTime());
+			checkup.setRoom(room);
+			checkup.setScheduled(true);
+			return checkupRepository.save(checkup);
+		}else {
+			return null;
+		}
+		
 	}
 
+	@Transactional(readOnly = false)
 	public Checkup addDoctors(Long id, Long[] workers) {
 		Checkup checkup = checkupRepository.findOneById(id);
 		checkup.setDoctors(new HashSet<MedicalWorker>());
@@ -274,6 +289,7 @@ public class CheckUpService {
 		return ret;
 	}
 
+	@Transactional(readOnly = false)
 	public boolean bookQuickApp(Long id, String email) {
 		boolean ret = true;
 		Checkup foundCheckup = checkupRepository.findOneById(id);
