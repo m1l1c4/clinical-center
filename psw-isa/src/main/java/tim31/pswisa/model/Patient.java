@@ -67,7 +67,6 @@ public class Patient {
 
 	public Patient() {
 		super();
-		this.medicalRecord = new MedicalRecord(this, "A+", -0.25, 0.0, 0.0);		// set default values for medical rec when creating new patient
 	}
 
 	public User getUser() {

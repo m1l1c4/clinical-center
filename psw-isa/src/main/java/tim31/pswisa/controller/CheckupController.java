@@ -158,7 +158,7 @@ public class CheckupController {
 		return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 	}
 
-	@PostMapping(value = "/getCheckups/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CheckupDTO>> getCheckups(@PathVariable Long id) {
 		Set<Checkup> checkups = medicalWorkerService.getAllCheckups(id);
 		List<CheckupDTO> ret = new ArrayList<>();

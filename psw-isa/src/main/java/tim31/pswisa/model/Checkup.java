@@ -60,12 +60,12 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
-	@JsonBackReference(value = "doctor_checkup_mov")
+	//@JsonBackReference(value = "doctor_checkup_mov")
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "DOCTOR_AND_CHECKUP", joinColumns = {
 			@JoinColumn(name = "checkup_id") }, inverseJoinColumns = { @JoinColumn(name = "medical_worker_id") })
 	private Set<MedicalWorker> doctors = new HashSet<MedicalWorker>();
-
+	
 	@JsonBackReference(value = "checkup")
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private CheckUpType checkUpType;
