@@ -143,7 +143,7 @@ public class PatientService {
 		LocalDate currentDate = LocalDate.now();
 		for (Checkup ch : loggedPatient.getAppointments()) {
 			if (ch.isScheduled() && ch.getDate().isBefore(currentDate) 
-					&& ch.getTip().equals("appointment")) {
+					&& ch.getTip().equals("PREGLED")) {
 				MedicalWorker doctor = findDoctor(ch) ; // getDcotors should work bc I assume there is one doctor per checkup
 				if (doctor != null) {
 				/* ovaj if zbog predefinisanih pregleda pa je report prazan a pregled se kao desio,
@@ -163,7 +163,12 @@ public class PatientService {
 		return patientDiagnoses;
 	}
 	
-	private MedicalWorker findDoctor(Checkup c) {
+	/**
+	 * used for finding first doc in checkup, assuming there is only one doctor per checkup
+	 * @param c
+	 * @return
+	 */
+	public MedicalWorker findDoctor(Checkup c) {
 		MedicalWorker ret = null;
 		for (MedicalWorker mw : c.getDoctors()) {
 			if (mw.getUser().getType().equals("DOKTOR")) {

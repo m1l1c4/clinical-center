@@ -94,7 +94,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/changePassword", "/checkup/addRecipes/*", "/verifyRecipe/*", "/clinic/filterRooms", "/clinic/allDocsOneClinic/**" ,
 				"/clinic/searchRooms", "/clinic/deleteRoom/*", "/deleteDoctor", "/findDoctors" , "/clinic/changeRoom", "/findPatients", 
 				"/filterPatients", "/canAccessToMedicalRecord", "/bookForPatient", "/editMedicalRecord", "/checkup/update", "/changeDate/*",
-        "/checkup/addDoctors/*", "/clinic/getRevenue", "/requestVacation/*", "/vacationRequest" );
+        "/checkup/addDoctors/*", "/clinic/getRevenue", "/requestVacation/*", "/vacationRequest" ,
+        "/checkup/patientHistory");
 		web.ignoring().antMatchers(HttpMethod.GET, "/getAllDoctors", "/patientsRequests", "/getMedicalWorker", 
 				"/codebook", "/getAdministrator", "/getUser", "/clinic/getClinic", "/clinic/getDoctors", 
 				"/checkUpType/allTypesOneClinic/**", "/clinic/getDetails/*", "/getMedicalRecord" ,
@@ -103,7 +104,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/getRecipes", "/clinic/getClinicsByType/*", "/getPatients", "/requestsForRoom",
 				"/clinic/getClinicRaiting", "/clinic/getReportForMonth", "/clinic/getReportForWeek",
 				"/getRequestForVacation", "/clinic/getRooms/*", "/clinic/roomAvailability/*/*",
-				"/getAllAvailable/*/*/*", "/checkup/getVacations/*", "/checkup/getCheckups/*");
+				"/getAllAvailable/*/*/*", "/checkup/getVacations/*", "/checkup/getCheckups/*" ,
+				"/rollingInTheDeep"
+				);
 		// web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html",
 		// "/favicon.ico", "/**/*.html",
 		// "/**/*.css", "/**/*.js");

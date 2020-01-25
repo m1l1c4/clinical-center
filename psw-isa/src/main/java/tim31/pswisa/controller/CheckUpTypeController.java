@@ -126,8 +126,8 @@ public class CheckUpTypeController {
 	}
 
 	@GetMapping(value = "/allTypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CheckUpType>> allTypes() {
-		List<CheckUpType> chTypes = checkUpTypeService.findAll();
+	public ResponseEntity<List<CheckUpTypeDTO>> allTypes() {
+		List<CheckUpTypeDTO> chTypes = checkUpTypeService.findAllOptimised();
 		if (chTypes != null) {
 			return new ResponseEntity<>(chTypes, HttpStatus.OK);
 		}
@@ -141,8 +141,8 @@ public class CheckUpTypeController {
 	 * @return List<CheckUpTypeDTO> - list of all available checkup types
 	 */
 	@GetMapping(value = "/allTypesOneClinic/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CheckUpType>> allTypesInClinic(@PathVariable Long id) {		
-		List<CheckUpType> chTypes = checkUpTypeService.findAllByClinicId(id);
+	public ResponseEntity<List<CheckUpTypeDTO>> allTypesInClinic(@PathVariable Long id) {		
+		List<CheckUpTypeDTO> chTypes = checkUpTypeService.findAllByClinicId(id);
 		if (chTypes.size() > 0) {
 			return new ResponseEntity<>(chTypes, HttpStatus.OK);
 		}

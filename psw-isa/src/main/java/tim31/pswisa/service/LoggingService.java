@@ -49,12 +49,9 @@ public class LoggingService implements UserDetailsService {
 	}
 
 	public User loginUser(User u) {
-
 		User user = (User) loadUserByUsername(u.getEmail());
-
 		if (user == null)
 			return null;
-
 		if (user != null && user.getType().equals("PACIJENT") /* && user.getActivated() */)
 			return user;
 		else if (!user.getFirstLogin() && !user.getType().equals("PACIJENT")) {
@@ -64,7 +61,6 @@ public class LoggingService implements UserDetailsService {
 			return user;
 		else
 			return null;
-
 	}
 
 	@Override
@@ -77,5 +73,18 @@ public class LoggingService implements UserDetailsService {
 		 */
 		return user;
 
+	}
+	/**
+	 * method for getting user role according to email of logged user
+	 * @param email
+	 * @return
+	 */
+	public String getRole(String email) {
+		User loggedUser =userRepo.findOneByEmail(email);
+		if (loggedUser != null) {
+			return loggedUser.getType();	// what if 
+		} else {
+			return "NONEXISTENT";			//in case of empthy string in user.getType()
+		}
 	}
 }

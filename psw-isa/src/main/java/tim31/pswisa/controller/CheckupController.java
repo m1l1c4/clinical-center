@@ -1,6 +1,8 @@
 package tim31.pswisa.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -200,6 +201,22 @@ public class CheckupController {
 		boolean success = checkupService.bookQuickApp(id, email);
 		if (success) {
 			return new ResponseEntity<>("Uspešno zakazivanje pregleda", HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	/**
+	 * find 2 lists for patient checkups, one for history and one for incoming checkups
+	 * @param request - HttpServerRequest request - used for finding logged user
+	 * @return
+	 */
+	@PostMapping(value = "/patientHistory", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email);
+		if (patientCheckups != null) {
+			return new ResponseEntity<>(patientCheckups, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}

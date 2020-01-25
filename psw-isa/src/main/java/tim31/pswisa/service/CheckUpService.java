@@ -3,6 +3,7 @@ package tim31.pswisa.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,7 @@ import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
@@ -296,6 +298,54 @@ public class CheckUpService {
 		}	
 		
 		return ret;		
+	}
+	
+	public HashMap<Integer, List<CheckupDTO>> getPatientCheckups(String email) {
+		User loggedUser = userService.findOneByEmail(email);
+		HashMap<Integer, List<CheckupDTO>> ret = new HashMap<Integer, List<CheckupDTO>>(2);
+		if (loggedUser == null) {
+			return null;
+		}
+		Patient loggedPatient = patientService.findOneByUserId(loggedUser.getId());
+		if (loggedPatient == null) {
+			return null;
+		}
+		List<CheckupDTO> incomingCheckups = getIncomingChps(loggedPatient);
+		List<CheckupDTO> historyCheckups = getChpsFromPast(loggedPatient);
+		ret.put(1, incomingCheckups);
+		ret.put(2, historyCheckups);
+		
+		return ret;
+	}
+	
+	private List<CheckupDTO> getIncomingChps(Patient p) {
+		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
+		for (Checkup checkup : p.getAppointments()) {
+			if (checkup.getDate().isAfter(LocalDate.now()) && checkup.isScheduled() ) {
+				CheckupDTO temp = new CheckupDTO(checkup);
+				MedicalWorker doctor = patientService.findDoctor(checkup);
+				if (doctor != null) {
+					temp.setMedicalWorker(new MedicalWorkerDTO(doctor));
+				}
+				ret.add(temp);
+			}
+		}
+		return ret;
+	}
+	
+	private List<CheckupDTO> getChpsFromPast(Patient p) {
+		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
+		for (Checkup checkup : p.getAppointments()) {
+			if (checkup.getDate().isBefore(LocalDate.now())) {
+				CheckupDTO temp = new CheckupDTO(checkup);
+				MedicalWorker doctor = patientService.findDoctor(checkup);
+				if (doctor != null) {
+					temp.setMedicalWorker(new MedicalWorkerDTO(doctor));
+				}
+				ret.add(temp);
+			}
+		}
+		return ret;
 	}
 	
 	
