@@ -45,8 +45,8 @@ public class Clinic {
 	private String address;
 
 	@Column(name = "rating", unique = false, nullable = true)
-	private double rating;
-
+	private double rating;	
+	
 	@Column(name = "description", unique = false, nullable = false)
 	private String description;
 
@@ -199,10 +199,5 @@ public class Clinic {
 		this.absences = absences;
 	}
 
-	/*
-	 * public HashMap<String, Double> getPricelist() { return pricelist; }
-	 * 
-	 * public void setPricelist(HashMap<String, Double> pricelist) { this.pricelist
-	 * = pricelist; }
-	 */
+	
 }

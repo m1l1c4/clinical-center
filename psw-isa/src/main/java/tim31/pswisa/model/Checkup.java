@@ -74,6 +74,12 @@ public class Checkup {
 	@OneToOne(mappedBy = "checkUp", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Report report;
 	
+	@Column(name = "isRatedDoctor", nullable = true)
+	private boolean isRatedDoctor;
+	
+	@Column(name = "isRatedClinic", nullable = true)
+	private boolean isRatedClinic;
+	
 	/*@JsonBackReference(value = "ca_mov")
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private ClinicAdministrator clinicAdministrator;*/
@@ -96,6 +102,8 @@ public class Checkup {
 		this.price = price;
 		this.room = room;
 		this.time = time;
+		this.isRatedClinic = false;
+		this.isRatedDoctor = false;
 	}
 
 //	public MedicalWorker getMedicalWorker() {
@@ -228,5 +236,23 @@ public class Checkup {
 		this.doctors = doctors;
 	}
 
+	public boolean isRatedDoctor() {
+		return isRatedDoctor;
+	}
 
+	public void setRatedDoctor(boolean isRatedDoctor) {
+		this.isRatedDoctor = isRatedDoctor;
+	}
+
+	public boolean isRatedClinic() {
+		return isRatedClinic;
+	}
+
+	public void setRatedClinic(boolean isRatedClinic) {
+		this.isRatedClinic = isRatedClinic;
+	}
+
+	
+
+	
 }
