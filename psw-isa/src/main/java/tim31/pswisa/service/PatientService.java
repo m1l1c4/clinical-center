@@ -148,8 +148,13 @@ public class PatientService {
 		}
 		return patientDiagnoses;
 	}
-
-	private MedicalWorker findDoctor(Checkup c) {
+	
+	/**
+	 * used for finding first doc in checkup, assuming there is only one doctor per checkup
+	 * @param c
+	 * @return
+	 */
+	public MedicalWorker findDoctor(Checkup c) {
 		MedicalWorker ret = null;
 		for (MedicalWorker mw : c.getDoctors()) {
 			if (mw.getUser().getType().equals("DOKTOR")) {
@@ -159,5 +164,7 @@ public class PatientService {
 		}
 		return ret;
 	}
+	
+	
 
 }

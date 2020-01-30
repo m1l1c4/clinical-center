@@ -26,6 +26,7 @@ import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
+import tim31.pswisa.repository.CheckUpRepository;
 import tim31.pswisa.repository.ClinicRepository;
 import tim31.pswisa.repository.MedicalWorkerRepository;
 import tim31.pswisa.repository.UserRepository;
@@ -65,7 +66,14 @@ public class MedicalWorkerService {
 
 	@Autowired
 	private ClinicRepository clinicRepository;
+	
+	@Autowired
+	private CheckUpRepository checkupRepository;;
 
+	public MedicalWorker findOneByUserId(Long id) {
+		return medicalWorkerRepository.findOneByUserId(id);
+	}
+	
 	@Autowired
 	private CheckUpService checkupService;
 
@@ -124,17 +132,17 @@ public class MedicalWorkerService {
 		Clinic clinic = clinicService.findOneById(clinicAdministrator.getClinic().getId());
 		User user = userService.findOneByEmail(email);
 		MedicalWorker med = findByUser(user.getId());
-		// if(med.getCheckUps().size() != 0) {
-		clinic.getMedicalStuff().remove(med);
-		clinicRepository.save(clinic);
-		med.setClinic(null);
-		medicalWorkerRepository.save(med);
-		return "Obrisano";
-		// }
-		// else {
-		// return "Greska";
-		// }
-
+		Set<CheckupDTO>allCek = checkupRepository.findAllByScheduledAndMedicalWorkerIdAndFinished(true, med.getId(), false);
+		if(allCek.size()!=0) {
+			return "";
+		}
+		else {
+			clinic.getMedicalStuff().remove(med);
+			clinicRepository.save(clinic);
+			med.setClinic(null);
+			medicalWorkerRepository.save(med);
+			return "Obrisano";
+		}
 	}
 
 	/**
@@ -145,30 +153,50 @@ public class MedicalWorkerService {
 	 * @return - (void) This method has no return value
 	 */
 	@Transactional(readOnly = false)
-	public void bookForPatient(User user, CheckupDTO c) throws MailException, InterruptedException {
+	public boolean bookForPatient(User user, CheckupDTO c) throws MailException, InterruptedException {
+		int ok = 0;
 		if (user != null) {
 			MedicalWorker medWorker = findByUser(user.getId());
 			Clinic clinic = medWorker.getClinic();
 			Checkup checkup = new Checkup();
 			User patient = userService.findOneByEmail(c.getPatient().getUser().getEmail());
 			Patient p = patientService.findOneByUserId(patient.getId());
-			checkup.setPatient(p);
-			checkup.setScheduled(false);
-			checkup.setTip(c.getType());
-			checkup.getDoctors().add(medWorker);
-			checkup.setTime(c.getTime());
-			checkup.setDuration(1);
-			checkup.setClinic(clinic);
-			CheckUpType temp = checkUpTypeService.findOneByName(medWorker.getType());
-			checkup.setCheckUpType(temp);
-			List<Room> rooms = roomService.findAllByClinicId(clinic.getId());
-			checkup.setPrice(temp.getTypePrice());
-			checkup.setDate(c.getDate());
-			checkup.setRoom(rooms.get(1));
-			checkupService.save(checkup);
-			emailService.sendNotificationToAmin(clinic, medWorker, p);
+			for (Checkup cek : medWorker.getCheckUps()) {
+				if (cek.getDate().equals(c.getDate()) && cek.getTime().equals(c.getTime())) {
+					ok = 1;
+				}
+			}
+			for (Absence a : medWorker.getHollydays()) {
+				LocalDate d = c.getDate();
+				if (((a.getStartVacation().isBefore(d) || a.getStartVacation().isEqual(d)) && a.getAccepted().equals("ACCEPTED"))
+						&&( (a.getEndVacation().isAfter(d) || a.getEndVacation().isEqual(d))) && a.getAccepted().equals("ACCEPTED")) {
+					ok = 1;
+				}
+			}
+			
+			if (ok == 0) {
+				checkup.setPatient(p);
+				checkup.setScheduled(false);
+				checkup.setTip(c.getType());
+				checkup.getDoctors().add(medWorker);
+				checkup.setTime(c.getTime());
+				checkup.setDuration(1);
+				checkup.setClinic(clinic);
+				CheckUpType temp = checkUpTypeService.findOneByName(medWorker.getType());
+				checkup.setCheckUpType(temp);
+				List<Room> rooms = roomService.findAllByClinicId(clinic.getId());
+				checkup.setPrice(temp.getTypePrice());
+				checkup.setDate(c.getDate());
+				checkup.setRoom(rooms.get(1));
+				checkupService.save(checkup);
+				emailService.sendNotificationToAmin(clinic, medWorker, p);
+				return true;
+			}
+			
 		}
+		return false;
 	}
+	
 
 	/**
 	 * This method servers for checking if doctor can access to medical record of
@@ -343,7 +371,33 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllDoctors(type, id);
 	}
 	
-	public MedicalWorker findOneByUserId(Long id) {
-		return medicalWorkerRepository.findOneByUserId(id);
+
+	public boolean rateDoctor(String email, String[] param) {	
+		Long checkupId ;
+		double rating;
+		boolean ok = false;
+		try {
+			checkupId = Long.parseLong(param[0]);		
+			rating = Double.parseDouble(param[1]);
+			Checkup checkupForRating = checkupService.findOneById(checkupId);
+			MedicalWorker doctor = patientService.findDoctor(checkupForRating);
+			if (!checkupForRating.isRatedDoctor() && doctor != null) {
+				doctor.setRating(doTheMath(doctor.getRating() , rating));
+				checkupForRating.setRatedDoctor(true);
+				update(doctor);		// this should save doctor with new rating				
+				checkupService.save(checkupForRating);
+				ok = true;
+			}			
+		}catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
+		
+		return ok;		
 	}
+	
+	public double doTheMath(double prevRating, double rating) {		
+		return (prevRating + rating) / 2;		
+	}
+	
+	
 }

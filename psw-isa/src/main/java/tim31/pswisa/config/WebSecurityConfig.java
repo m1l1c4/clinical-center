@@ -87,6 +87,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers(HttpMethod.POST, "/login", "/clinic/changeNameOfType", "/clinic/searchOneType/*",
 				"/register", "/clinic", "/addAdmin", "/codebook", "/codebook/*", "/updateMedicalWorker",
 				"/updateAdministrator", "/clinic/updateClinic", "/sendConfirm", "/addMedicalWorker", "/activateEmail/*",
+
+				"/checkup/addReport", "/clinic/addRoom", "/clinic/deleteRoom", "/checkUpType/deleteType/*", "/checkup/getAllQuickApp/**" ,
+				"/checkup/bookQuickApp/*",
+				"/checkup/addAppointment", "/checkUpType/addType", "/clinic/searchClinic", "/searchDoctors", "/clinic/getSelectedDoctor" ,
+				"/clinic/clinicDoctors", "/clinic/filterClinic/**", "/clinic/addRooms/*", "/editPatient", "/checkup/checkupRequest" ,
+				"/changePassword", "/checkup/addRecipes/*", "/verifyRecipe/*", "/clinic/filterRooms", "/clinic/allDocsOneClinic/**" ,
+				"/clinic/searchRooms", "/clinic/deleteRoom/*", "/deleteDoctor", "/findDoctors" , "/clinic/changeRoom", "/findPatients", 
+				"/filterPatients", "/canAccessToMedicalRecord", "/bookForPatient", "/editMedicalRecord", "/checkup/update", "/changeDate/*",
+        "/checkup/addDoctors/*", "/clinic/getRevenue", "/requestVacation/*", "/vacationRequest" , "/clinic/rateClinic", "/rateMedicalWorker",
+        "/checkup/patientHistory", "/checkup/scheduleCheckup/*" , "/checkup/cancelCheckup/*");
+		web.ignoring().antMatchers(HttpMethod.GET, "/getAllDoctors", "/patientsRequests", "/getMedicalWorker", 
+				"/codebook", "/getAdministrator", "/getUser", "/clinic/getClinic", "/clinic/getDoctors", 
+				"/checkUpType/allTypesOneClinic/**", "/clinic/getDetails/*", "/getMedicalRecord" ,
+
 				"/checkup/addReport", "/clinic/addRoom", "/clinic/deleteRoom", "/checkUpType/deleteType/*",
 				"/checkup/getAllQuickApp/**", "/checkup/bookQuickApp/*", "/checkup/addAppointment",
 				"/checkUpType/addType", "/clinic/searchClinic", "/searchDoctors", "/clinic/getSelectedDoctor",
@@ -96,16 +110,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/deleteDoctor", "/findDoctors", "/clinic/changeRoom", "/findPatients", "/filterPatients",
 				"/canAccessToMedicalRecord", "/bookForPatient", "/editMedicalRecord", "/checkup/update",
 				"/changeDate/*", "/checkup/addDoctors/*", "/clinic/getRevenue", "/requestVacation/*",
-				"/vacationRequest", "/notifyPatient/*", "/notifyDoctor/*", "/changeDate/*");
-		web.ignoring().antMatchers(HttpMethod.GET, "/getAllDoctors", "/patientsRequests", "/getMedicalWorker",
-				"/codebook", "/getAdministrator", "/getUser", "/clinic/getClinic", "/clinic/getDoctors",
-				"/checkUpType/allTypesOneClinic/**", "/clinic/getDetails/*", "/getMedicalRecord/*",
+				"/vacationRequest", "/notifyPatient/*", "/notifyDoctor/*", "/changeDate/*",
+		
+				
 				"/getPatientProfile", "/clinic/getAllTypes", "/clinic/getRooms", "/patientsRequests",
 				"/checkUpType/addTypes", "/clinic/getClinics", "/getTypes", "/checkUpType/allTypes", "/patientHistory",
 				"/checkup/*", "/getRecipes", "/clinic/getClinicsByType/*", "/getPatients", "/requestsForRoom",
 				"/clinic/getClinicRaiting", "/clinic/getReportForMonth", "/clinic/getReportForWeek",
 				"/getRequestForVacation", "/clinic/getRooms/*", "/clinic/roomAvailability/*/*",
-				"/getAllAvailable/*/*/*", "/checkup/getVacations/*", "/checkup/getCheckups/*", "/checkup/getCheckup/*");
+
+				"/getAllAvailable/*/*/*", "/checkup/getVacations/*", "/checkup/getCheckups/*" ,
+				"/rollingInTheDeep"
+	, "/checkup/getCheckup/*");
+
 		// web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html",
 		// "/favicon.ico", "/**/*.html",
 		// "/**/*.css", "/**/*.js");

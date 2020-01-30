@@ -204,7 +204,45 @@ public class EmailService {
 	}
 
 	/**
-	 * Method for sending email to the patient after reserving a room for the operation
+	 * This method servers for sending email to medical workers and patients at the
+	 * end of day to notify when they have appointment or operation
+	 * 
+	 * @param c   - check-up that has all required information
+	 * @return - (void) This method has no return value
+	 */
+	@Async
+	public void sendEmailToDoctorAndPatient(CheckupDTO c) {
+		MedicalWorkerDTO mw = c.getMedicalWorker();
+		PatientDTO p = c.getPatient();
+		// patientEmail and doctorEmail, for real system
+		String patientEmail = p.getUser().getEmail();
+		String doctorEmail = mw.getUser().getEmail();
+		SimpleMailMessage msg = new SimpleMailMessage();
+		String path = "http://localhost:3000/ConfirmCheckup/" + c.getId();
+		System.out.println("Sending email...");
+		msg.setTo("pswisa.tim31.2019@gmail.com");
+		msg.setFrom(env.getProperty("spring.mail.username"));
+		msg.setSubject("Notification for doctor");
+		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + "\nDate: " + c.getDate() + "  " + "\nTime: "
+				+ c.getTime() + "h " + "\nRoom: " + c.getRoom().getName() + " " + c.getRoom().getNumber()
+				+ "\nPatient: " + c.getPatient().getUser().getName() + " " + c.getPatient().getUser().getSurname()
+				+ " ");
+		javaMailSender.send(msg);
+		System.out.println("Email sent.");
+
+		System.out.println("Sending email...");
+		msg.setSubject("Notification for patient");
+		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + "\nDate: " + c.getDate() + "  " + "\nTime: "
+				+ c.getTime() + "h  " + "\nDoctor: " + c.getMedicalWorker().getUser().getName() + " "
+				+ c.getMedicalWorker().getUser().getSurname() + " " + "\nSpecialization: "
+				+ c.getMedicalWorker().getType() + " " + "\nConfirmation: " + path);
+		javaMailSender.send(msg);
+		System.out.println("Email sent.");
+
+	}
+
+  /**
+   * Method for sending email to the patient after reserving a room for the operation
 	 * @param id - id of the check-up in the database with the all necessary informations
 	 * @return - (String) Confirmation that email has been sent successfully
 	 */
@@ -234,6 +272,7 @@ public class EmailService {
 	 */
 	@Async
 	public void quickAppConfirmationEmail(String email, Checkup checkup) throws MailException, InterruptedException {
+		User u = userService.findOneByEmail(email);
 		String text = "";
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");

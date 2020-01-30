@@ -46,7 +46,7 @@ public class CheckUpTypeController {
 	 * administrator
 	 * 
 	 * @param name    - the name of check-up type that have to be deleted
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (String) This method returns string "Obrisano" if type is deleted
 	 *         or "Greska" can't delete that type
 	 */
@@ -69,7 +69,7 @@ public class CheckUpTypeController {
 	/**
 	 * This method servers getting all types of check-ups in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ArrayList<CheckUpTypeDTO>) This method returns list of all
 	 *         check-ups type in clinic if user is not null
 	 */
@@ -90,7 +90,7 @@ public class CheckUpTypeController {
 	 * This method servers for adding new appointment for booking with one click
 	 * 
 	 * @param type    - check-up type that have to be added
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (CheckUpTypeDTO) This method returns added check-up type in clinic
 	 * 
 	 */

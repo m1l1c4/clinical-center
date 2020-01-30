@@ -50,8 +50,8 @@ public class MedicalWorker {
 	// just for doctors
 
 	@Column(name = "rating", unique = false, nullable = true)
-	private int rating;
-
+	private double rating;
+	
 	@Column(name = "startHr", unique = false, nullable = true)
 	private int startHr;
 
@@ -149,11 +149,11 @@ public class MedicalWorker {
 		this.hollydays = hollydays;
 	}
 
-	public int getRating() {
+	public double getRating() {
 		return rating;
 	}
 
-	public void setRating(int rating) {
+	public void setRating(double rating) {
 		this.rating = rating;
 	}
 

@@ -60,7 +60,7 @@ public class ClinicController {
 	 * This method servers for updating clinic by administrator
 	 * 
 	 * @param clinic  - new information about clinic that have to be updated
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ClinicDTO) This method returns updated clinic
 	 * 
 	 */
@@ -74,16 +74,26 @@ public class ClinicController {
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			if (clinicAdministrator != null) {
-				Clinic temp = clinicService.updateClinic(clinicAdministrator, clinic);
-				if (temp != null) {
-					return new ResponseEntity<>(new ClinicDTO(temp), HttpStatus.OK);
-				} else {
-					return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+				Clinic temp;
+				try {
+					temp = clinicService.updateClinic(clinicAdministrator, clinic);
+					if (temp != null) {
+						return new ResponseEntity<>(new ClinicDTO(temp), HttpStatus.OK);
+					} else {
+						return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
+
 			} else
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} else
+
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
 	}
 
 	@GetMapping(value = "/getClinics", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -108,7 +118,7 @@ public class ClinicController {
 	 * This method servers for updating type of check-up
 	 * 
 	 * @param params  - new information about type that have to be changed
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (CheckUpTypeDTO) This method returns updated check-up type
 	 * 
 	 */
@@ -141,7 +151,7 @@ public class ClinicController {
 	 * This method servers for updating type of check-up
 	 * 
 	 * @param name    - the name of type that have to be returned
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ArrayList<CheckUpTypeDTO>) This method returns one type with
 	 *         entered name
 	 * 
@@ -163,13 +173,12 @@ public class ClinicController {
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 
-
 	/**
 	 * This method servers for searching rooms in clinic
 	 * 
 	 * @param params  - the criteria for searching room: name, number or type
 	 *                (appointment or operation)
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<RoomDTO>) This methods return all room with entered criteria
 	 * 
 	 */
@@ -199,7 +208,7 @@ public class ClinicController {
 	 * This method servers for filter room by criteria
 	 * 
 	 * @param number  - number of filtering room
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<RoomDTO>) This method returns room with entered criteria
 	 *         (entered number)
 	 * 
@@ -268,7 +277,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting all rooms in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<RoomDTO>) This method returns rooms in clinic
 	 * 
 	 */
@@ -313,7 +322,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting all doctors in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ArrayList<MedicalWorkerDTO>) This method returns all medical
 	 *         workers in clinic
 	 */
@@ -335,7 +344,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting all types in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ArrayList<CheckUpTypesDTO>) This method returns all type of
 	 *         check-ups in clinic
 	 */
@@ -357,8 +366,8 @@ public class ClinicController {
 	/**
 	 * This method servers for getting clinic of logged administrator
 	 * 
-	 * @param request -
-	 * @return - (ClinicDTO) This method returns clinic of user who is administratos
+	 * @param request - information of logged user
+	 * @return - (ClinicDTO) This method returns clinic of user who is administrators
 	 *         of clinic and who is logged
 	 */
 	@GetMapping(value = "/getClinic", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -408,7 +417,7 @@ public class ClinicController {
 	 * This method servers for adding room in clinic
 	 * 
 	 * @param room    - room that have to be added in clinic
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (RoomDTO) This method returns added room in clinic
 	 */
 	@PostMapping(value = "/addRoom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -439,7 +448,7 @@ public class ClinicController {
 	 * This method servers for updating room in clinic by administrator
 	 * 
 	 * @param room    - room that have to be updated
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (RoomDTO) This method returns updated room
 	 */
 
@@ -470,7 +479,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting clinic raiting
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (Double) This method returns raiting of clinic
 	 */
 	@GetMapping(value = "/getClinicRaiting", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -488,7 +497,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting report for month in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (Integer[]) This method returns the numbers of appointment or
 	 *         operations in clinic at one month
 	 */
@@ -508,7 +517,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting revenue in clinic for entered period
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @param params  - start date an end date
 	 * @return - (Double) This method returns how much clinic is earned in entered
 	 *         period
@@ -533,7 +542,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting report for week in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (Integer[]) This method returns the numbers of appointment or
 	 *         operations in clinic at one week
 	 */
@@ -577,15 +586,16 @@ public class ClinicController {
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/getSelectedDoctor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorkerDTO> getSelectedDoctor(@RequestBody String[] docId, HttpServletRequest request) {
 		MedicalWorkerDTO ret = clinicService.getSelectedDoctor(Long.parseLong(docId[0]), docId[1]);
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/allDocsOneClinic/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MedicalWorkerDTO>> getAllDoctorsInOneClinic(@PathVariable String id, HttpServletRequest request) {
+	public ResponseEntity<List<MedicalWorkerDTO>> getAllDoctorsInOneClinic(@PathVariable String id,
+			HttpServletRequest request) {
 		List<MedicalWorkerDTO> ret = clinicService.getAllDoctorsInOneClinic(Long.parseLong(id));
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
@@ -612,14 +622,14 @@ public class ClinicController {
 	 */
 	@GetMapping(value = "/roomAvailability/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Integer>> getRoomVailability(@PathVariable Long id, @PathVariable String date) {
-		ArrayList<Integer> roomAvailability  = roomService.findRoomAvailability(id, date);
+		ArrayList<Integer> roomAvailability = roomService.findRoomAvailability(id, date);
 		return new ResponseEntity<List<Integer>>(roomAvailability, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * method for getting clinic object when given clinic id
 	 * 
-	 * @param id - clinic id in database
+	 * @param id      - clinic id in database
 	 * @param request - HttpServletRequest, to find logged in user
 	 * @return ClinicDTO clinic - clinic object found in database
 	 */
@@ -632,7 +642,24 @@ public class ClinicController {
 			ClinicDTO newRet = new ClinicDTO(ret);
 			return new ResponseEntity<>(newRet, HttpStatus.OK);
 		}
-		
+
+	}
+	
+	/**
+	 * method for rating clinic that logged patient visited
+	 * @param request
+	 * @param param - param[0] is checkup id , param[1] is given rating
+	 * @return
+	 */
+	@PostMapping(value = "/rateClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> rateVisitedClinic(HttpServletRequest request, @RequestBody String[] param) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		boolean ok = clinicService.rateClinic(email, param);
+		if (ok) {
+			return new ResponseEntity<>("uspesno ocenjen", HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 }

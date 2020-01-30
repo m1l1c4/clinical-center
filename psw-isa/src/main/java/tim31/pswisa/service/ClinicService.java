@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.dto.ClinicDTO;
@@ -24,6 +26,8 @@ import tim31.pswisa.repository.ClinicRepository;
 import tim31.pswisa.repository.RoomRepository;
 
 @Service
+@Transactional(readOnly = true)
+
 public class ClinicService {
 
 	@Autowired
@@ -31,7 +35,7 @@ public class ClinicService {
 
 	@Autowired
 	private RoomService roomService;
-	
+
 	@Autowired
 	private CheckUpService checkupService;
 
@@ -46,19 +50,9 @@ public class ClinicService {
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
-		
+
 	@Autowired
 	private RoomRepository roomRepository;
-
-	/**
-	 * This method servers for finding room in clinic by room id
-	 * 
-	 * @param id - id of room that has to be found
-	 * @return - (Room) This method returns found room
-	 */
-	public Room findRoomById(Long id) {
-		return clinicRepository.findRoomById(id);
-	}
 
 	/**
 	 * This method servers for finding all rooms from database
@@ -230,6 +224,7 @@ public class ClinicService {
 	 * @param c - new clinic that has to be created
 	 * @return - (ClinicDTO) This method returns created clinic
 	 */
+	@Transactional(readOnly = false)
 	public Clinic save(ClinicDTO c) {
 		Clinic clinic = new Clinic();
 		clinic.setName(c.getName());
@@ -247,7 +242,8 @@ public class ClinicService {
 	 * @param clinic              - new data of clinic
 	 * @return - (Clinic) This method returns updated clinic
 	 */
-	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, ClinicDTO clinic) {
+	@Transactional(readOnly = false)
+	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, ClinicDTO clinic) throws Exception {
 		Clinic nameOfClinic = clinicAdministrator.getClinic();
 		List<Clinic> temp = findAll();
 		String name1 = clinic.getName();
@@ -260,11 +256,10 @@ public class ClinicService {
 		nameOfClinic.setAddress(clinic.getAddress());
 		nameOfClinic.setCity(clinic.getCity());
 		nameOfClinic.setDescription(clinic.getDescription());
-		nameOfClinic = update(nameOfClinic);
-		if (nameOfClinic != null)
-			return nameOfClinic;
-		else
-			return null;
+		for (Room r : nameOfClinic.getRooms())
+			r.setClinic(nameOfClinic);
+		return clinicRepository.save(nameOfClinic);
+
 	}
 
 	/**
@@ -277,6 +272,7 @@ public class ClinicService {
 	 * @return - (CheckUpType) This method returns updated check-up type or null if
 	 *         there is check-up type with same name
 	 */
+	@Transactional(readOnly = false)
 	public CheckUpType editType(Clinic clinic, String before, String after, String price) {
 		CheckUpType retVal = new CheckUpType();
 		List<Clinic> clinics = findAll();
@@ -403,7 +399,8 @@ public class ClinicService {
 					LocalDate date = LocalDate.now();
 					boolean found = false;
 					while (!found) {
-						List<Checkup> checkups = checkupService.findAllByRoomIdAndScheduledAndDate(room.getId(), true, date);
+						List<Checkup> checkups = checkupService.findAllByRoomIdAndScheduledAndDate(room.getId(), true,
+								date);
 						if (checkups == null || checkups.size() < 13) {
 							found = true;
 							room.setFirstFreeDate(date);
@@ -431,11 +428,11 @@ public class ClinicService {
 		String name = params[0];
 		String type = params[1];
 		LocalDate dateTemp = LocalDate.parse(params[2]);
-		List<RoomDTO> ret = new ArrayList<RoomDTO>();		
+		List<RoomDTO> ret = new ArrayList<RoomDTO>();
 		List<Room> rooms = roomRepository.findAllByClinicIdAndTipRoom(clinic.getId(), type);
-		for (Room room : rooms) {			
+		for (Room room : rooms) {
 			boolean found = false;
-			if(!name.equals("") && !name.equals(room.getName())) {
+			if (!name.equals("") && !name.equals(room.getName())) {
 				found = true;
 			}
 			LocalDate date = dateTemp;
@@ -449,11 +446,11 @@ public class ClinicService {
 				date = date.plusDays(1);
 			}
 		}
-		
+
 		if (ret.size() == 0) {
 			return null;
 		} else {
-			
+
 			return ret;
 		}
 	}
@@ -465,13 +462,19 @@ public class ClinicService {
 	 * @param clinicAdministrator - logged clinic administrator
 	 * @return - (String) This method string 'Obrisano' or ''
 	 */
+	@Transactional(readOnly = false)
 	public String deleteRoom(String name, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
 		for (Room r : sobe) {
 			if (r.getName().equals(name)) {
 				clinic.getRooms().remove(r);
-				clinic = updateClinic(clinicAdministrator, new ClinicDTO(clinic));
+				try {
+					clinic = updateClinic(clinicAdministrator, new ClinicDTO(clinic));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				roomRepository.delete(r);
 				return "Obrisano";
 			}
@@ -486,20 +489,25 @@ public class ClinicService {
 	 * @param clinicAdministrator - logged clinic administrator
 	 * @return - (String) This method returns string 'Obrisano' or ''
 	 */
+	@Transactional(readOnly = false)
 	public String deleteRoomN(int number, ClinicAdministrator clinicAdministrator) {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
 		for (Room r : sobe) {
-			if ((r.getNumber() == number) && (r.isFree() == true) && (r.getBookedCheckups().size() == 0)) {
-				System.out.println(clinic.getRooms().size());
-				clinic.getRooms().remove(r);
-				clinic = update(clinic);
-				System.out.println(clinic.getRooms().size());
-				r.setClinic(null);
-				roomRepository.save(r);
-				return "Obrisano";
+			if (r.getNumber() == number) {
+				Set<Checkup> ceks = r.getBookedCheckups();
+				for (Checkup c : ceks) {
+					if (c.isFinished() == false) {
+						return "";
+					}
+				}
 			}
+			clinic.getRooms().remove(r);
+			r.setClinic(null);
+			roomRepository.save(r);
+			return "Obrisano";
 		}
+
 		return "";
 	}
 
@@ -510,6 +518,7 @@ public class ClinicService {
 	 * @param clinicAdministrator - logged clinic administrator
 	 * @return - (Room) This method returns added room
 	 */
+	@Transactional(readOnly = false)
 	public Room addRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Room room1 = new Room();
 		room1.setName(room.getName());
@@ -531,17 +540,21 @@ public class ClinicService {
 	}
 
 	/**
-	 * This method servers for changing room in clinic
+	 * This method servers for changing room in clinic transaction (D)
 	 * 
 	 * @param room                - room that has to be changed
 	 * @param clinicAdministrator - logged clinic administrator
 	 * @return - (Room) This method returns changed room
 	 */
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public Room changeRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Clinic klinika = findOneById(clinicAdministrator.getClinic().getId());
 		Room room1 = roomRepository.findOneByClinicIdAndNumber(klinika.getId(), room.getNumber());
-		if (room1.getBookedCheckups().size() > 0) {
-			return null;
+		Set<Checkup> ceks = room1.getBookedCheckups();
+		for (Checkup c : ceks) {
+			if (c.isFinished() == false) {
+				return null;
+			}
 		}
 		room1.setName(room.getName());
 		room1.setTypeRoom(room.getTypeRoom());
@@ -618,7 +631,7 @@ public class ClinicService {
 					if (counter < 7) {
 						MedicalWorkerDTO mw = new MedicalWorkerDTO(medicalWorker);
 						doctors.add(mw);
-						//break;
+						// break;
 					}
 				}
 			}
@@ -635,7 +648,7 @@ public class ClinicService {
 					}
 					if (!taken) {
 						pom.add(Integer.toString(i));
-					}else {
+					} else {
 						taken = false;
 					}
 				}
@@ -649,38 +662,32 @@ public class ClinicService {
 
 	}
 
-	public Clinic update(Clinic clinic) {
-		for (Room r : clinic.getRooms())
-			r.setClinic(clinic);
-		return clinicRepository.save(clinic);
-	}
-	
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
 		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
-		
+
 		if (mww != null) {
 			MedicalWorkerDTO mw = new MedicalWorkerDTO(mww);
 			boolean taken = false;
-			ArrayList<String> pom = new ArrayList<String>();			
+			ArrayList<String> pom = new ArrayList<String>();
 			for (int i = mww.getStartHr(); i < mww.getEndHr(); i++) {
 				for (Checkup ch : mww.getCheckUps()) {
-					if (Integer.parseInt(ch.getTime()) == i) {
+					if (Integer.parseInt(ch.getTime()) == i && ch.getDate()==(realDate)) {
 						taken = true;	
 						break;
 					}
 				}
 				if (!taken) {
-					pom.add(Integer.toString(i));					
-				}else {
+					pom.add(Integer.toString(i));
+				} else {
 					taken = false;
 				}
-			}	
+			}
 
 			mw.getAvailableCheckups().put(date, pom);
 			return mw;
 		}
-		
-		return  null;
+
+		return null;
 	}
 
 	/**
@@ -690,6 +697,7 @@ public class ClinicService {
 	 * @return - (Room) This method returns added room in clinic
 	 * 
 	 */
+	@Transactional(readOnly = false)
 	public Room addRoom(Clinic clinic, RoomDTO r) {
 		Room room = new Room();
 		room.setClinic(clinic);
@@ -700,18 +708,48 @@ public class ClinicService {
 		room.setFirstFreeDate(r.getFirstFreeDate());
 		return roomService.save(room);
 	}
-	
+
 	public List<MedicalWorkerDTO> getAllDoctorsInOneClinic(Long parametar) {
-		List<MedicalWorker> doctors = (List<MedicalWorker>) medicalWorkerService.findAllByClinicId(parametar) ;
-		List<MedicalWorkerDTO> ret = new ArrayList<MedicalWorkerDTO>() ;
-		
+		List<MedicalWorker> doctors = (List<MedicalWorker>) medicalWorkerService.findAllByClinicId(parametar);
+		List<MedicalWorkerDTO> ret = new ArrayList<MedicalWorkerDTO>();
+
 		for (MedicalWorker mw : doctors) {
 			if (mw.getUser().getType().equals("DOKTOR")) {
 				ret.add(new MedicalWorkerDTO(mw));
 			}
 		}
-		
-		return  ret;
-	}
 
+		return ret;
+	}
+	
+	public boolean rateClinic(String email, String[] param) {	
+		Long checkupId ;
+		double rating;
+		boolean ok = false;
+		try {
+			checkupId = Long.parseLong(param[0]);		
+			rating = Double.parseDouble(param[1]);
+			Checkup checkupForRating = checkupService.findOneById(checkupId);
+			Clinic clinicForRating = checkupForRating.getClinic();
+			if (clinicForRating != null && !checkupForRating.isRatedClinic()) {
+				double newRating = medicalWorkerService.doTheMath(clinicForRating.getRating(), rating);
+				clinicForRating.setRating(newRating);
+				checkupForRating.setRatedClinic(true);
+				update(clinicForRating);
+				checkupService.save(checkupForRating);
+				ok = true;
+			}
+		}catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
+		
+		return ok;		
+	}
+	
+	public Clinic update(Clinic clinic) {
+		for (Room r : clinic.getRooms())
+			r.setClinic(clinic);
+		return clinicRepository.save(clinic);
+	}
+	
 }

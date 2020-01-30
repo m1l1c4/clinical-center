@@ -2,6 +2,7 @@ package tim31.pswisa.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,19 +10,23 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpRepository;
+
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
+import tim31.pswisa.model.Report;
 import tim31.pswisa.model.Room;
 
 @Service
@@ -57,6 +62,9 @@ public class CheckUpService {
 
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private ReportService reportService;
 
 	/**
 	 * This method servers for getting all check-up from database
@@ -84,6 +92,7 @@ public class CheckUpService {
 	 * @param c - check-up that have to be saved
 	 * @return - (Checkup) This method returns saved check-up
 	 */
+	@Transactional(readOnly = false)
 	public Checkup save(Checkup c) {
 		return checkupRepository.save(c);
 	}
@@ -126,19 +135,20 @@ public class CheckUpService {
 	 * @param clinicAdministrator - clinic administrator who adding new appointment
 	 * @return - (Checkup) added check-up or null if doctor is busy at that moment
 	 */
+	@Transactional(readOnly = false)
 	public Checkup addAppointment(CheckupDTO c, MedicalWorker mw, ClinicAdministrator clinicAdministrator) {
 		Checkup checkup = new Checkup();
 		int ok = 0;
 		int ok1 = 0;
 		for (Checkup cek : mw.getCheckUps()) {
-			if (cek.getDate().equals(c.getDate()) || cek.getTime().equals(c.getTime())) {
+			if (cek.getDate().equals(c.getDate()) && cek.getTime().equals(c.getTime())) {
 				ok = 1;
 			}
 		}
 		for (Absence a : mw.getHollydays()) {
 			LocalDate d = c.getDate();
-			if ((a.getStartVacation().isBefore(d) || a.getStartVacation().isEqual(d))
-					&& (a.getEndVacation().isAfter(d) || a.getEndVacation().isEqual(d))) {
+			if ( ((a.getStartVacation().isBefore(d) || a.getStartVacation().isEqual(d)) && a.getAccepted().equals("ACCEPTED"))
+					&& (((a.getEndVacation().isAfter(d) || a.getEndVacation().isEqual(d)) )&& a.getAccepted().equals("ACCEPTED") )) {
 				ok = 1;
 			}
 		}
@@ -158,6 +168,7 @@ public class CheckUpService {
 			checkup.setTip(c.getType());
 			checkup.setDuration(1);
 			checkup.setDiscount(0);
+			checkup.setScheduled(true);
 			Room room = new Room();
 			Set<Room> rooms = new HashSet<Room>();
 			Clinic clinic = new Clinic();
@@ -207,6 +218,7 @@ public class CheckUpService {
 	 * @output boolean flag - defining wheather and request is successfully added or
 	 *         not
 	 */
+	@Transactional(readOnly = false)
 	public boolean checkupToAdmin(CheckupDTO ch, String email) {
 		Checkup newCh = new Checkup(0, false, ch.getDate(), ch.getTime(), ch.getType(), 1, 0, null, false);
 		User u = userService.findOneByEmail(email);
@@ -263,12 +275,18 @@ public class CheckUpService {
 	@Transactional(readOnly = false)
 	public Checkup update(CheckupDTO c) {
 		Checkup checkup = checkupRepository.findOneById(c.getId());
-		checkup.setDate(c.getDate());
-		checkup.setTime(c.getTime());
 		Room room = roomService.findOneById(c.getRoom().getId());
-		checkup.setRoom(room);
-		checkup.setScheduled(true);
-		return checkupRepository.save(checkup);
+		List<Checkup>temp = checkupRepository.findAllByRoomIdAndTimeAndDate(room.getId(), c.getTime(),c.getDate());
+		if(temp.size() == 0) {
+			checkup.setDate(c.getDate());
+			checkup.setTime(c.getTime());
+			checkup.setRoom(room);
+			checkup.setScheduled(true);
+			return checkupRepository.save(checkup);
+		}else {
+			return null;
+		}
+		
 	}
 
 	/**
@@ -322,6 +340,7 @@ public class CheckUpService {
 		return ret;
 	}
 
+	@Transactional(readOnly = false)
 	public boolean bookQuickApp(Long id, String email) {
 		boolean ret = true;
 		Checkup foundCheckup = checkupRepository.findOneById(id);
@@ -404,6 +423,99 @@ public class CheckUpService {
 			}
 		}
 		return null;
+	}
+
+	
+	public HashMap<Integer, List<CheckupDTO>> getPatientCheckups(String email) {
+		User loggedUser = userService.findOneByEmail(email);
+		HashMap<Integer, List<CheckupDTO>> ret = new HashMap<Integer, List<CheckupDTO>>(2);
+		if (loggedUser == null) {
+			return null;
+		}
+		Patient loggedPatient = patientService.findOneByUserId(loggedUser.getId());
+		if (loggedPatient == null) {
+			return null;
+		}
+		List<CheckupDTO> incomingCheckups = getIncomingChps(loggedPatient);
+		List<CheckupDTO> historyCheckups = getChpsFromPast(loggedPatient);
+		ret.put(1, incomingCheckups);
+		ret.put(2, historyCheckups);
+		
+		return ret;
+	}
+	
+	private List<CheckupDTO> getIncomingChps(Patient p) {
+		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
+		for (Checkup checkup : p.getAppointments()) {
+			if (checkup.getDate().isAfter(LocalDate.now()) && checkup.isScheduled() ) {
+				CheckupDTO temp = new CheckupDTO(checkup);
+				MedicalWorker doctor = patientService.findDoctor(checkup);
+				if (doctor != null) {
+					temp.setMedicalWorker(new MedicalWorkerDTO(doctor));
+				}
+				ret.add(temp);
+			}
+		}
+		return ret;
+	}
+	
+	private List<CheckupDTO> getChpsFromPast(Patient p) {
+		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
+		for (Checkup checkup : p.getAppointments()) {
+			if (checkup.getDate().isBefore(LocalDate.now())) {
+				CheckupDTO temp = new CheckupDTO(checkup);
+				MedicalWorker doctor = patientService.findDoctor(checkup);
+				if (doctor != null) {
+					temp.setMedicalWorker(new MedicalWorkerDTO(doctor));
+				}
+				ret.add(temp);
+			}
+		}
+		return ret;
+	}
+	
+	public boolean scheduleCheckup(Long id) {
+		boolean ok = true;
+		Checkup checkupToSchedule = findOneById(id);
+		if (checkupToSchedule == null) {
+			ok = false;
+		}
+		checkupToSchedule.setScheduled(true);
+		save(checkupToSchedule);
+		return ok;
+	}
+	
+	public boolean cancelCheckup(Long id) {
+		boolean ok = true;
+		Checkup checkupToCancel = findOneById(id);
+		if (checkupToCancel == null) {
+			ok = false;
+		}
+		logicalRemoval(checkupToCancel);
+		return ok;
+	}
+	
+	/**
+	 * logical removal of checkup from clinic, patient and medical worker relation
+	 * @param checkupToCancel
+	 */
+	private void logicalRemoval(Checkup checkupToCancel) {				
+		CheckUpType type = checkupToCancel.getCheckUpType();
+		type.getCheckups().remove(checkupToCancel);
+		checkUpTypeService.saveTwo(type);		
+		for (MedicalWorker mw : checkupToCancel.getDoctors()) {
+			mw.getCheckUps().remove(checkupToCancel);
+			medicalWorkerService.update(mw);
+		}
+		checkupToCancel.getDoctors().clear();
+		Room r = checkupToCancel.getRoom();
+		r.getBookedCheckups().remove(checkupToCancel);
+		roomService.save(r);
+		checkupToCancel.setRoom(null);
+		checkupRepository.save(checkupToCancel);
+		/*Report rep = checkupToCancel.getReport();
+		rep.setCheckUp(null);	
+		reportService.save(rep);*/
 	}
 
 }
