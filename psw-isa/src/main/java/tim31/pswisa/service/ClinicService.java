@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckUpTypeDTO;
@@ -249,7 +250,7 @@ public class ClinicService {
 	 * @return - (Clinic) This method returns updated clinic
 	 */
 	@Transactional(readOnly = false)
-	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, ClinicDTO clinic)  throws Exception{
+	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, ClinicDTO clinic) throws Exception {
 		Clinic nameOfClinic = clinicAdministrator.getClinic();
 		List<Clinic> temp = findAll();
 		String name1 = clinic.getName();
@@ -500,14 +501,20 @@ public class ClinicService {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
 		for (Room r : sobe) {
-			if ((r.getNumber() == number) && (r.isFree() == true) && (r.getBookedCheckups().size() == 0)) {
-				System.out.println(clinic.getRooms().size());
+			if (r.getNumber() == number){
+				Set<Checkup>ceks = r.getBookedCheckups();
+				for(Checkup c:ceks) {
+					if(c.isFinished() == false) {
+						return "";
+					}
+				}
+			}	
 				clinic.getRooms().remove(r);
 				r.setClinic(null);
 				roomRepository.save(r);
 				return "Obrisano";
-			}
 		}
+		
 		return "";
 	}
 
@@ -540,18 +547,21 @@ public class ClinicService {
 	}
 
 	/**
-	 * This method servers for changing room in clinic
+	 * This method servers for changing room in clinic transaction (D)
 	 * 
 	 * @param room                - room that has to be changed
 	 * @param clinicAdministrator - logged clinic administrator
 	 * @return - (Room) This method returns changed room
 	 */
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public Room changeRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Clinic klinika = findOneById(clinicAdministrator.getClinic().getId());
 		Room room1 = roomRepository.findOneByClinicIdAndNumber(klinika.getId(), room.getNumber());
-		if (room1.getBookedCheckups().size() > 0) {
-			return null;
+		Set<Checkup> ceks = room1.getBookedCheckups();
+		for (Checkup c : ceks) {
+			if (c.isFinished() == false) {
+				return null;
+			}
 		}
 		room1.setName(room.getName());
 		room1.setTypeRoom(room.getTypeRoom());

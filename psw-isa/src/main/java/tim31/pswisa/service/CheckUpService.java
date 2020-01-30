@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckupDTO;
@@ -135,14 +136,14 @@ public class CheckUpService {
 		int ok = 0;
 		int ok1 = 0;
 		for (Checkup cek : mw.getCheckUps()) {
-			if (cek.getDate().equals(c.getDate()) || cek.getTime().equals(c.getTime())) {
+			if (cek.getDate().equals(c.getDate()) && cek.getTime().equals(c.getTime())) {
 				ok = 1;
 			}
 		}
 		for (Absence a : mw.getHollydays()) {
 			LocalDate d = c.getDate();
-			if ((a.getStartVacation().isBefore(d) || a.getStartVacation().isEqual(d))
-					&& (a.getEndVacation().isAfter(d) || a.getEndVacation().isEqual(d))) {
+			if ( ((a.getStartVacation().isBefore(d) || a.getStartVacation().isEqual(d)) && a.getAccepted().equals("ACCEPTED"))
+					&& (((a.getEndVacation().isAfter(d) || a.getEndVacation().isEqual(d)) )&& a.getAccepted().equals("ACCEPTED") )) {
 				ok = 1;
 			}
 		}
@@ -162,6 +163,7 @@ public class CheckUpService {
 			checkup.setTip(c.getType());
 			checkup.setDuration(1);
 			checkup.setDiscount(0);
+			checkup.setScheduled(true);
 			Room room = new Room();
 			Set<Room> rooms = new HashSet<Room>();
 			Clinic clinic = new Clinic();
@@ -213,7 +215,7 @@ public class CheckUpService {
 	 */
 	@Transactional(readOnly = false)
 	public boolean checkupToAdmin(CheckupDTO ch, String email) {
-		Checkup newCh = new Checkup(0, false, ch.getDate(), ch.getTime(), ch.getType(), 1, 0, null);
+		Checkup newCh = new Checkup(0, false, ch.getDate(), ch.getTime(), ch.getType(), 1, 0, null,false);
 		User u = userService.findOneByEmail(email);
 		Patient p = patientService.findOneByUserId(u.getId());
 		MedicalWorker mw = medicalWorkerService.findOneById(ch.getMedicalWorker().getId());
@@ -246,6 +248,27 @@ public class CheckUpService {
 	}
 
 	@Transactional(readOnly = false)
+	public Set<Checkup> getAllCheckups(User user, Long id) {
+		if(user == null) {
+			MedicalWorker worker = medicalWorkerService.findOneById(1L);
+			return worker.getCheckUps();
+		}
+		if (user.getType().equals("DOKTOR")) {
+			MedicalWorker worker = medicalWorkerService.findOneByUserId(user.getId());
+			return worker.getCheckUps();
+			}
+		if(user.getType().equals("PACIJENT")) {
+			Patient patient = patientService.findOneByUserId(user.getId());
+			return patient.getAppointments();
+		}
+		if(user.getType().equals("ADMINISTRATOR")){
+			return checkupRepository.findAllByRoomId(id);
+		}
+		return new HashSet<>();
+	}
+	
+	// Transakcija pesimisticko zakljucavanje Dragana
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public Checkup update(CheckupDTO c) throws Exception {
 		Checkup checkup = checkupRepository.findOneById(c.getId());
 		Room room = roomService.findOneById(c.getRoom().getId());
