@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
@@ -217,6 +218,24 @@ public class CheckupController {
 		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email);
 		if (patientCheckups != null) {
 			return new ResponseEntity<>(patientCheckups, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	@PostMapping(value = "/scheduleCheckup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> scheduleCheckup(@PathVariable Long id) {
+		boolean success = checkupService.scheduleCheckup(id);
+		if (success) {
+			return new ResponseEntity<>("confirmed", HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	@PostMapping(value = "/cancelCheckup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> cancelCheckup(@PathVariable Long id) {
+		boolean success = checkupService.cancelCheckup(id);
+		if (success) {
+			return new ResponseEntity<>("confirmed", HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}

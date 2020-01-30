@@ -50,5 +50,9 @@ public class ReportService {
 		recipe.setVerified(false);
 		return recipeService.save(recipe);
 	}
+	
+	public Report save(Report r) {
+		return reportRepository.save(r);
+	}
 
 }

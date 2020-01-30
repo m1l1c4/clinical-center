@@ -115,28 +115,13 @@ public class PatientService {
 		return patient;
 	}
 	
-	public MedicalRecordDTO getMedicalRecord(String email) {
-		MedicalRecordDTO ret = new MedicalRecordDTO();
-		User loggedUser = userService.findOneByEmail(email);		
-		
-		if (loggedUser == null) {		// invalid email
-			return null;
-		} 
-		
-		Patient loggedPatient = findOneByUserId(loggedUser.getId());
-		
-		if (loggedPatient == null) {		
-			return null;
-		}	
-		
-		ret.setHeight(loggedPatient.getMedicalRecord().getHeight());
-		ret.setWeight(loggedPatient.getMedicalRecord().getWeight());
-		ret.setDiopter(loggedPatient.getMedicalRecord().getDiopter());
-		ret.setBloodType(loggedPatient.getMedicalRecord().getBloodType());
-		ret.setDiagnoses(patientDiagnoses(loggedPatient));
-		
-		return ret;
-	}
+	public MedicalRecordDTO getMedicalRecord(Long id) {
+        Patient patient = findOneByUserId(id);
+        MedicalRecordDTO ret = new MedicalRecordDTO(patient.getMedicalRecord());
+        ret.setDiagnoses(patientDiagnoses(patient));
+       
+        return ret;
+    }
 	
 	private List<DiagnoseDTO> patientDiagnoses(Patient loggedPatient) {
 		List<DiagnoseDTO> patientDiagnoses = new ArrayList<DiagnoseDTO>();
@@ -178,5 +163,7 @@ public class PatientService {
 		}
 		return ret;
 	}
+	
+	
 
 }

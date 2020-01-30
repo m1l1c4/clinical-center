@@ -18,10 +18,10 @@ import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
-import tim31.pswisa.model.User;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
+import tim31.pswisa.model.Report;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpRepository;
@@ -58,6 +58,9 @@ public class CheckUpService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private ReportService reportService;
 
 	/**
 	 * This method servers for getting all check-up from database
@@ -348,5 +351,47 @@ public class CheckUpService {
 		return ret;
 	}
 	
+	public boolean scheduleCheckup(Long id) {
+		boolean ok = true;
+		Checkup checkupToSchedule = findOneById(id);
+		if (checkupToSchedule == null) {
+			ok = false;
+		}
+		checkupToSchedule.setScheduled(true);
+		save(checkupToSchedule);
+		return ok;
+	}
 	
+	public boolean cancelCheckup(Long id) {
+		boolean ok = true;
+		Checkup checkupToCancel = findOneById(id);
+		if (checkupToCancel == null) {
+			ok = false;
+		}
+		logicalRemoval(checkupToCancel);
+		return ok;
+	}
+	
+	/**
+	 * logical removal of checkup from clinic, patient and medical worker relation
+	 * @param checkupToCancel
+	 */
+	private void logicalRemoval(Checkup checkupToCancel) {				
+		CheckUpType type = checkupToCancel.getCheckUpType();
+		type.getCheckups().remove(checkupToCancel);
+		checkUpTypeService.saveTwo(type);		
+		for (MedicalWorker mw : checkupToCancel.getDoctors()) {
+			mw.getCheckUps().remove(checkupToCancel);
+			medicalWorkerService.update(mw);
+		}
+		checkupToCancel.getDoctors().clear();
+		Room r = checkupToCancel.getRoom();
+		r.getBookedCheckups().remove(checkupToCancel);
+		roomService.save(r);
+		checkupToCancel.setRoom(null);
+		checkupRepository.save(checkupToCancel);
+		/*Report rep = checkupToCancel.getReport();
+		rep.setCheckUp(null);	
+		reportService.save(rep);*/
+	}
 }

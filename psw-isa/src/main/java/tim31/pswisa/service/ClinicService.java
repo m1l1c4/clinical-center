@@ -662,7 +662,7 @@ public class ClinicService {
 			ArrayList<String> pom = new ArrayList<String>();			
 			for (int i = mww.getStartHr(); i < mww.getEndHr(); i++) {
 				for (Checkup ch : mww.getCheckUps()) {
-					if (Integer.parseInt(ch.getTime()) == i) {
+					if (Integer.parseInt(ch.getTime()) == i && ch.getDate()==(realDate)) {
 						taken = true;	
 						break;
 					}
