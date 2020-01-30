@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,6 @@ import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
-import tim31.pswisa.model.MedicalRecord;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Room;
@@ -207,20 +204,18 @@ public class MedicalWorkerService {
 	 * @return - (String) This method returns string 'DA' or 'NE'
 	 */
 	public String canAccess(User user, String pom) {
-		String retVal = "";
+		String retVal = "NE";
 		User user1 = userService.findOneByEmail(pom);
 		Patient p = patientService.findOneByUserId(user1.getId());
 		MedicalWorker medWorker = findByUser(user.getId());
-		/*
-		 * for (Checkup c : p.getAppointments()) { if
-		 * (c.getMedicalWorker().getUser().getEmail().equals((medWorker.getUser().
-		 * getEmail()))) { retVal = "DA"; }
-		 */
-		if (retVal.equals("DA")) {
-			return retVal;
-		} else {
-			return "NE";
-		}
+		
+		 for (Checkup c : p.getAppointments()) { 
+			 MedicalWorker mw = (MedicalWorker) c.getDoctors().toArray()[0];
+			 if(mw.getUser().getEmail().equals((medWorker.getUser().getEmail())) && c.isFinished()) {
+				 retVal = "DA"; 
+			 }
+		 }
+		 return retVal;
 	}
 
 	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {

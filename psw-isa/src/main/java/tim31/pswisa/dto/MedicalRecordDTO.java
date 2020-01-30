@@ -1,7 +1,6 @@
 package tim31.pswisa.dto;
 
 import java.util.List;
-import java.util.Set;
 
 import tim31.pswisa.model.MedicalRecord;
 

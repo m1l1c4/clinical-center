@@ -241,16 +241,6 @@ public class Checkup {
 		this.doctors = doctors;
 	}
 
-	public boolean isFinished() {
-		return finished;
-	}
-
-	public void setFinished(boolean finished) {
-		this.finished = finished;
-	}
-
-	
-
 	public boolean isRatedDoctor() {
 		return isRatedDoctor;
 	}

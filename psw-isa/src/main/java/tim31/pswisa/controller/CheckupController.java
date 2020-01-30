@@ -2,7 +2,6 @@ package tim31.pswisa.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
-import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
@@ -155,19 +153,7 @@ public class CheckupController {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 	}
-	
-	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CheckupDTO>> getCheckups(HttpServletRequest request, @PathVariable Long id) {
-		String token = tokenUtils.getToken(request);
-		String email = tokenUtils.getUsernameFromToken(token);
-		User user = userService.findOneByEmail(email);
-		Set<Checkup> checkups = checkupService.getAllCheckups(user, id);
-		List<CheckupDTO> ret = new ArrayList<>();
-		for (Checkup c : checkups) {
-			ret.add(new CheckupDTO(c));
-		}
-		return new ResponseEntity<List<CheckupDTO>>(ret, HttpStatus.OK);
-	}
+
 
 	/**
 	 * Method for changing check-up after finding a room, date and time for the appointment/operation by clinic administrator

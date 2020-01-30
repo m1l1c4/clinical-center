@@ -664,7 +664,7 @@ public class ClinicService {
 
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
 		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
-
+		LocalDate realDate = LocalDate.parse(date);
 		if (mww != null) {
 			MedicalWorkerDTO mw = new MedicalWorkerDTO(mww);
 			boolean taken = false;

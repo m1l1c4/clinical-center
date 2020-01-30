@@ -26,7 +26,6 @@ import tim31.pswisa.repository.CheckUpRepository;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
-import tim31.pswisa.model.Report;
 import tim31.pswisa.model.Room;
 
 @Service
@@ -62,9 +61,6 @@ public class CheckUpService {
 
 	@Autowired
 	private EmailService emailService;
-	
-	@Autowired
-	private ReportService reportService;
 
 	/**
 	 * This method servers for getting all check-up from database

@@ -1,7 +1,6 @@
 package tim31.pswisa.repository;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
+import tim31.pswisa.dto.PatientDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
