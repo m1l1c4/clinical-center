@@ -31,6 +31,12 @@ public interface AbsenceRepository extends JpaRepository<Absence, Long> {
 	 */
 	List<Absence> findAllByClinicOfAbsenceId(Long id);
 
+	
+	/**
+	 * Method for finding all absences and holidays of one medical worker
+	 * @param id - id, key of the medical worker
+	 * @return - (List<Absence>) This method returns list of absences of one medical worker
+	 */
 	List<Absence> findAllByMedicalWorkerId(Long id);
 
 }

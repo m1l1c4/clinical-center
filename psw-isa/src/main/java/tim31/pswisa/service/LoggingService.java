@@ -41,6 +41,7 @@ public class LoggingService implements UserDetailsService {
 			p.getUser().setType("PACIJENT");
 			List<Authority> auth = authService.findByname("PACIJENT");
 			p.getUser().setAuthorities(auth);
+			p.setProcessed(false);
 			patientRepo.save(p);
 		}
 
@@ -77,5 +78,19 @@ public class LoggingService implements UserDetailsService {
 		 */
 		return user;
 
+	}
+	
+	/**
+	 * method for getting user role according to email of logged user
+	 * @param email
+	 * @return
+	 */
+	public String getRole(String email) {
+		User loggedUser =userRepo.findOneByEmail(email);
+		if (loggedUser != null) {
+			return loggedUser.getType();	// what if 
+		} else {
+			return "NONEXISTENT";			//in case of empthy string in user.getType()
+		}
 	}
 }

@@ -25,6 +25,12 @@ public class CodebookController {
 	@Autowired
 	private CodebookService codebookService;
 
+	/**
+	 * Method for adding new code in the codebook
+	 * @param c - code that will be added
+	 * @return - (String) This method returns message about success of adding new code
+	 * 
+	 */
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> saveCodebook(@RequestBody CodebookDTO c) {
 		Codebook codebook = codebookService.save(c);
@@ -33,6 +39,10 @@ public class CodebookController {
 		return new ResponseEntity<>("Uspjesno dodata nova stavka.", HttpStatus.CREATED);
 	}
 
+	/**
+	 * Method for getting the whole codebook 
+	 * @return - (List<CodebookDTO>) This method returns all codes from the codebook
+	 */
 	@GetMapping()
 	public ResponseEntity<List<CodebookDTO>> getCodebook() {
 		List<Codebook> codebook = codebookService.findAll();
@@ -43,6 +53,11 @@ public class CodebookController {
 		return new ResponseEntity<>(codebooksDTO, HttpStatus.OK);
 	}
 
+	/**
+	 * Method for deleting code from codebook
+	 * @param code - code of the code that will be deleted
+	 * @return - (String) This method returns message about success of deleting code
+	 */
 	@PostMapping(value = "/{code}")
 	public ResponseEntity<String> deleteCode(@PathVariable String code) {
 		codebookService.remove(code);

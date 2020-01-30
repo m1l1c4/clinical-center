@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.CheckUpTypeDTO;
@@ -227,6 +225,11 @@ public class ClinicService {
 		return retValue;
 	}
 
+	/**
+	 * Method for creating new clinic
+	 * @param c - new clinic that has to be created
+	 * @return - (ClinicDTO) This method returns created clinic
+	 */
 	public Clinic save(ClinicDTO c) {
 		Clinic clinic = new Clinic();
 		clinic.setName(c.getName());
@@ -653,7 +656,6 @@ public class ClinicService {
 	}
 	
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
-		LocalDate realDate = LocalDate.parse(date);
 		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
 		
 		if (mww != null) {
@@ -681,6 +683,13 @@ public class ClinicService {
 		return  null;
 	}
 
+	/**
+	 * Method for adding room in the clinic at the moment of creating
+	 * @param clinic - clinic in which room will be added
+	 * @param r - room that will be added
+	 * @return - (Room) This method returns added room in clinic
+	 * 
+	 */
 	public Room addRoom(Clinic clinic, RoomDTO r) {
 		Room room = new Room();
 		room.setClinic(clinic);

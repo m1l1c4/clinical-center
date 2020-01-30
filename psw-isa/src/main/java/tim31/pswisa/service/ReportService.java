@@ -44,10 +44,21 @@ public class ReportService {
 		return reportRepository.save(report);
 	}
 
+	/**
+	 * Method for getting one recipe by id
+	 * @param id - id of the recipe in the database
+	 * @return - (Recipe) This method returns found recipe
+	 */
 	public Report findOneById(Long id) {
 		return reportRepository.findOneById(id);
 	}
 
+	/**
+	 * Method for creating recipe after examination of the patient
+	 * @param report - report in which recipe should be added
+	 * @param code - code of the medication from the codebook
+	 * @return - This method returns created recipe
+	 */
 	public Recipe addRecipe(Report report, Codebook r) {
 		Recipe recipe = new Recipe();
 		recipe.setCode(r);

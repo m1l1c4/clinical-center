@@ -225,6 +225,11 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.save(mw);
 	}
 
+	/**
+	 * Method for adding new medical worker to the clinic
+	 * @param mw - informations of new medical worker
+	 * @return - (MedicalWorkerDTO) This method returns created medical worker
+	 */
 	public MedicalWorker save(MedicalWorkerDTO mw) {
 		User user = userRepository.findOneByEmail(mw.getUser().getEmail());
 		if (user != null) {
@@ -296,6 +301,14 @@ public class MedicalWorkerService {
 		return true;
 	}
 
+	/**
+	 * Method for getting all available doctors for the specified date and time
+	 * @param id   - id of the clinic in database
+	 * @param date - date when doctor needs to be available
+	 * @param t - time in the date when doctor needs to be available
+	 * @return - (List<MedicalWorker>) This method returns list of the medical
+	 *         workers that are available for the specified date and time
+	 */
 	public List<MedicalWorker> findAllAvailable(Long id, String date, String t) {
 		List<MedicalWorker> doctors = medicalWorkerRepository.findAllByClinicId(id);
 		int time = Integer.parseInt(t);

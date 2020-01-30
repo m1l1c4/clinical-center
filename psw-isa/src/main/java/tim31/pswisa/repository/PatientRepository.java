@@ -16,5 +16,10 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	List<Patient> findAll();
 
+	/**
+	 * Method for getting all requests for registration
+	 * @param processed - parameter that shows whether the request is processed or not
+	 * @return - (List<Patient>) This method returns all patients that have been sent request for the registration
+	 */
 	List<Patient> findAllByProcessed(boolean processed);
 }

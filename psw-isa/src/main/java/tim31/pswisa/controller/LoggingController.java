@@ -125,6 +125,11 @@ public class LoggingController {
 		}
 	}
 
+	/**
+	 * Method for adding new administrators of the clinic and clinical center
+	 * @param clinicAdministrator - informations of the administrator that will be added
+	 * @return - (User) Informations of the user that is created
+	 */
 	@PostMapping(value = "/addAdmin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> addMedicalWorker(@RequestBody ClinicAdministratorDTO clinicAdministrator) {
 		if (clinicAdministrator.getUser().getType().equals("ADMINISTRATOR")) {
@@ -142,6 +147,18 @@ public class LoggingController {
 
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
+	}
+	
+	@GetMapping(value = "/rollingInTheDeep", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getLoggedUserRole(HttpServletRequest request) throws Exception {
+		String jwt_token = tokenUtils.getToken(request);		
+		String email = tokenUtils.getUsernameFromToken(jwt_token);
+		String role = service.getRole(email);
+		if (role.equals("NONEXISTENT")) {
+			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<String>(role, HttpStatus.OK);
 	}
 
 }

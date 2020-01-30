@@ -2,10 +2,8 @@ package tim31.pswisa.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,13 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.model.CheckUpType;
-import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
-import tim31.pswisa.service.ClinicService;
 import tim31.pswisa.service.UserService;
 
 @RestController
@@ -44,9 +40,6 @@ public class CheckUpTypeController {
 
 	@Autowired
 	TokenUtils tokenUtils;
-
-	@Autowired
-	private ClinicService clinicService;
 
 	/**
 	 * This method servers for deleting check-up type in clinic by clinic

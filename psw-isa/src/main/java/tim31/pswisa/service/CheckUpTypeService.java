@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.CheckUpTypeDTO;
@@ -17,7 +15,6 @@ import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpTypeRepository;
-import tim31.pswisa.repository.MedicalWorkerRepository;
 
 @Service
 public class CheckUpTypeService {
@@ -203,15 +200,28 @@ public class CheckUpTypeService {
 	 * @param id
 	 * @return
 	 */
-	public List<CheckUpType> findAllByClinicId(Long id) {
+	public List<CheckUpTypeDTO> findAllByClinicId(Long id) {
 		Clinic cl = clinicService.findOneById(id);
-		List<CheckUpType> ret = new ArrayList<CheckUpType>();
+		List<CheckUpTypeDTO> ret = new ArrayList<CheckUpTypeDTO>();
 		for (CheckUpType type : cl.getCheckUpTypes()) {
-			ret.add(type);
-		}
-		
+			ret.add(new CheckUpTypeDTO(type));
+		}		
 		return ret;
 	}
-	
+
+	/**
+	 * creating list of checkup type dto list from all checkup types
+	 * @param dbTypes
+	 * @return
+	 */
+	public List<CheckUpTypeDTO> findAllOptimised() {
+		List<CheckUpType> dbTypes = findAll();
+		List<CheckUpTypeDTO> ret = new ArrayList<CheckUpTypeDTO>(dbTypes.size());
+		for (CheckUpType checkUpType : dbTypes) {
+			ret.add(new CheckUpTypeDTO(checkUpType));
+		}	
+		return ret;
+	}
+
 	
 }
