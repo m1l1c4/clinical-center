@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
+import tim31.pswisa.dto.PatientDTO;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
@@ -149,6 +151,40 @@ public class EmailService {
 		msg.setText("Your operation was resheduled for " + c.getDate().toString() + " " + c.getTime() + " in the room ."
 				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
 		System.out.println("Email sent.");
+	}
+	
+	@Async
+	public void sendEmailToDoctorAndPatient(CheckupDTO c) {
+		MedicalWorkerDTO mw = c.getMedicalWorker();
+		PatientDTO p = c.getPatient();
+		// patientEmail and doctorEmail, for real system
+		String patientEmail = p.getUser().getEmail();
+		String doctorEmail = mw.getUser().getEmail();
+		SimpleMailMessage msg = new SimpleMailMessage();
+		String path = "http://localhost:3000/ConfirmCheckup/" + c.getId();
+		System.out.println("Sending email...");
+		msg.setTo("pswisa.tim31.2019@gmail.com");
+		msg.setFrom(env.getProperty("spring.mail.username"));
+		msg.setSubject("Notification for doctor");
+		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + 
+		"\nDate: " + c.getDate() +"  "+ 
+		"\nTime: " + c.getTime() +"h "+
+		"\nRoom: " + c.getRoom().getName() + " " + c.getRoom().getNumber() + 
+		"\nPatient: " + c.getPatient().getUser().getName() + " " + c.getPatient().getUser().getSurname() + " " );
+		javaMailSender.send(msg);
+		System.out.println("Email sent.");
+
+		System.out.println("Sending email...");
+		msg.setSubject("Notification for patient");
+		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + 
+				"\nDate: " + c.getDate() +"  "+ 
+				"\nTime: " + c.getTime() +"h  "+
+				"\nDoctor: " + c.getMedicalWorker().getUser().getName() + " " + c.getMedicalWorker().getUser().getSurname() + " " +
+				"\nSpecialization: " + c.getMedicalWorker().getType() + " " + 
+				"\nConfirmation: " + path );
+		javaMailSender.send(msg);
+		System.out.println("Email sent.");
+
 	}
 	
 	@Async

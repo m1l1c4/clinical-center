@@ -44,9 +44,7 @@ public class CheckUpTypeController {
 
 	@Autowired
 	TokenUtils tokenUtils;
-	
-	@Autowired
-	private ClinicService clinicService;
+
 
 	/**
 	 * This method servers for deleting check-up type in clinic by clinic
