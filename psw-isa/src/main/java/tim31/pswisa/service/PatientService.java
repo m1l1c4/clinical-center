@@ -110,12 +110,20 @@ public class PatientService {
 	}
 	
 	public MedicalRecordDTO getMedicalRecord(Long id) {
+        Patient patient = findOneByUserId(id);
+        MedicalRecordDTO ret = new MedicalRecordDTO(patient.getMedicalRecord());
+        ret.setDiagnoses(patientDiagnoses(patient));
+       
+        return ret;
+    }
+
 		Patient patient = findOneByUserId(id);
 		MedicalRecordDTO ret = new MedicalRecordDTO(patient.getMedicalRecord());
 		ret.setDiagnoses(patientDiagnoses(patient));
 		
 		return ret;
 	}
+
 	
 	private List<DiagnoseDTO> patientDiagnoses(Patient loggedPatient) {
 		List<DiagnoseDTO> patientDiagnoses = new ArrayList<DiagnoseDTO>();
@@ -142,7 +150,12 @@ public class PatientService {
 		return patientDiagnoses;
 	}
 	
-	private MedicalWorker findDoctor(Checkup c) {
+	/**
+	 * used for finding first doc in checkup, assuming there is only one doctor per checkup
+	 * @param c
+	 * @return
+	 */
+	public MedicalWorker findDoctor(Checkup c) {
 		MedicalWorker ret = null;
 		for (MedicalWorker mw : c.getDoctors()) {
 			if (mw.getUser().getType().equals("DOKTOR")) {
@@ -152,5 +165,7 @@ public class PatientService {
 		}
 		return ret;
 	}
+	
+	
 
 }

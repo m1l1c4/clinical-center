@@ -302,5 +302,22 @@ public class MedicalWorkerController {
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
+	
+	/**
+	 * method for rating doctor who examined logged patient
+	 * @param request
+	 * @param param - param[0] is checkup id , param[1] is given rating
+	 * @return
+	 */
+	@PostMapping(value = "/rateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> rateMedicalWorker(HttpServletRequest request, @RequestBody String[] param) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		boolean ok = medicalWorkerService.rateDoctor(email, param);
+		if (ok) {
+			return new ResponseEntity<>("uspesno ocenjen", HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+	}
 
 }

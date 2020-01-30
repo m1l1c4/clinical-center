@@ -59,5 +59,9 @@ public class ReportService {
 		}
 		return recipeService.save(recipe);
 	}
+	
+	public Report save(Report r) {
+		return reportRepository.save(r);
+	}
 
 }

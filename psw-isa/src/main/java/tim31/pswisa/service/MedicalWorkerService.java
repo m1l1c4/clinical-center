@@ -358,7 +358,35 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllDoctors(type, id);
 	}
 	
+
+	public boolean rateDoctor(String email, String[] param) {	
+		Long checkupId ;
+		double rating;
+		boolean ok = false;
+		try {
+			checkupId = Long.parseLong(param[0]);		
+			rating = Double.parseDouble(param[1]);
+			Checkup checkupForRating = checkupService.findOneById(checkupId);
+			MedicalWorker doctor = patientService.findDoctor(checkupForRating);
+			if (!checkupForRating.isRatedDoctor() && doctor != null) {
+				doctor.setRating(doTheMath(doctor.getRating() , rating));
+				checkupForRating.setRatedDoctor(true);
+				update(doctor);		// this should save doctor with new rating				
+				checkupService.save(checkupForRating);
+				ok = true;
+			}			
+		}catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
+		
+		return ok;		
+	}
+	
+	public double doTheMath(double prevRating, double rating) {		
+		return (prevRating + rating) / 2;		
+
 	public MedicalWorker findOneByUserId(Long id) {
 		return medicalWorkerRepository.findOneByUserId(id);
+
 	}
 }

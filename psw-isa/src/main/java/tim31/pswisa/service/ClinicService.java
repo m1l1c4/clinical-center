@@ -679,8 +679,8 @@ public class ClinicService {
 			ArrayList<String> pom = new ArrayList<String>();
 			for (int i = mww.getStartHr(); i < mww.getEndHr(); i++) {
 				for (Checkup ch : mww.getCheckUps()) {
-					if (Integer.parseInt(ch.getTime()) == i) {
-						taken = true;
+					if (Integer.parseInt(ch.getTime()) == i && ch.getDate()==(realDate)) {
+						taken = true;	
 						break;
 					}
 				}
@@ -721,6 +721,35 @@ public class ClinicService {
 		}
 
 		return ret;
+	}
+	
+	public boolean rateClinic(String email, String[] param) {	
+		Long checkupId ;
+		double rating;
+		boolean ok = false;
+		try {
+			checkupId = Long.parseLong(param[0]);		
+			rating = Double.parseDouble(param[1]);
+			Checkup checkupForRating = checkupService.findOneById(checkupId);
+			Clinic clinicForRating = checkupForRating.getClinic();
+			if (clinicForRating != null && !checkupForRating.isRatedClinic()) {
+				double newRating = medicalWorkerService.doTheMath(clinicForRating.getRating(), rating);
+				clinicForRating.setRating(newRating);
+				checkupForRating.setRatedClinic(true);
+				update(clinicForRating);
+				checkupService.save(checkupForRating);
+				ok = true;
+			}
+		}catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
+		
+		return ok;		
+	}
+	
+	private void doTheMath(Clinic clinicForRating, double rating) {		
+		double prevRating = clinicForRating.getRating();		
+		clinicForRating.setRating((prevRating + rating) / 2);
 	}
 
 }
