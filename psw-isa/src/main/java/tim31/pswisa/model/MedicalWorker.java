@@ -63,7 +63,7 @@ public class MedicalWorker {
 	@Column(name = "tip", unique = false, nullable = true)
 	private String tip;
 
-	@JsonManagedReference(value = "doctor_checkup_mov")
+	@JsonBackReference(value = "doctor_checkup_mov")
 	@ManyToMany(mappedBy = "doctors")
 	private Set<Checkup> checkUps = new HashSet<Checkup>();
 

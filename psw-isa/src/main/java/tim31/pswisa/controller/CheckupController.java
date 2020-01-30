@@ -144,23 +144,41 @@ public class CheckupController {
 
 	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> updateCheckup(@RequestBody CheckupDTO c) {
-		Checkup checkup = checkupService.update(c);
-		if (checkup != null) {
-			return new ResponseEntity<CheckupDTO>(new CheckupDTO(checkup), HttpStatus.OK);
+		Checkup checkup;
+		try {
+			checkup = checkupService.update(c);
+			if (checkup != null) {
+				return new ResponseEntity<CheckupDTO>(new CheckupDTO(checkup), HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 		}
-		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+		
 	}
 
 	@PostMapping(value = "/addDoctors/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addDoctors(@RequestBody Long[] doctors, @PathVariable Long id) {
-		Checkup checkup = checkupService.addDoctors(id, doctors);
-		if (checkup != null) {
-			return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
+		Checkup checkup;
+		try {
+			checkup = checkupService.addDoctors(id, doctors);
+			if (checkup != null) {
+				return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
+			}
+			return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 		}
-		return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 	}
 
-	@PostMapping(value = "/getCheckups/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CheckupDTO>> getCheckups(@PathVariable Long id) {
 		Set<Checkup> checkups = medicalWorkerService.getAllCheckups(id);
 		List<CheckupDTO> ret = new ArrayList<>();

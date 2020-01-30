@@ -67,12 +67,13 @@ public class AbsenceService {
 	public Absence create(AbsenceDTO a, MedicalWorker mw) {
 		Absence absence = new Absence();
 		absence.setAccepted("SENT");
-		Clinic clinic = clinicRepository.getOne(a.getClinicOfAbsence().getId());
+		Clinic clinic = clinicRepository.getOne(mw.getClinic().getId());
 		absence.setClinicOfAbsence(clinic);
 		absence.setEndVacation(a.getEndVacation());
 		absence.setStartVacation(a.getStartVacation());
 		absence.setMw(mw);
 		absence.setTypeOfAbsence(a.getTypeOfAbsence());
+		absence = abesenceRepository.save(absence);
 		return absence;
 	}
 

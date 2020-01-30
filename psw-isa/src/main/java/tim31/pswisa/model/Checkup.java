@@ -60,12 +60,12 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
-	@JsonBackReference(value = "doctor_checkup_mov")
+	//@JsonBackReference(value = "doctor_checkup_mov")
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "DOCTOR_AND_CHECKUP", joinColumns = {
 			@JoinColumn(name = "checkup_id") }, inverseJoinColumns = { @JoinColumn(name = "medical_worker_id") })
 	private Set<MedicalWorker> doctors = new HashSet<MedicalWorker>();
-
+	
 	@JsonBackReference(value = "checkup")
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private CheckUpType checkUpType;
@@ -86,13 +86,16 @@ public class Checkup {
 	
 	@Column(name = "pending", nullable = true)
 	private boolean pending;	// T or F depending on whether a patient sent request or not
+	
+	@Column(name = "finished")
+	private boolean finished;
 
 	public Checkup() {
 
 	}
 
 	public Checkup(double discount, boolean scheduled, LocalDate date, String time, String type, int duration,
-			double price, Room room) {
+			double price, Room room, boolean finished) {
 		super();
 		this.discount = discount;
 		this.scheduled = scheduled;
@@ -104,6 +107,9 @@ public class Checkup {
 		this.time = time;
 		this.isRatedClinic = false;
 		this.isRatedDoctor = false;
+
+		this.finished = finished;
+
 	}
 
 //	public MedicalWorker getMedicalWorker() {
@@ -236,6 +242,7 @@ public class Checkup {
 		this.doctors = doctors;
 	}
 
+
 	public boolean isRatedDoctor() {
 		return isRatedDoctor;
 	}
@@ -251,6 +258,16 @@ public class Checkup {
 	public void setRatedClinic(boolean isRatedClinic) {
 		this.isRatedClinic = isRatedClinic;
 	}
+
+	public boolean isFinished() {
+		return finished;
+	}
+
+	public void setFinished(boolean finished) {
+		this.finished = finished;
+	}
+
+
 
 	
 

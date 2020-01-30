@@ -42,7 +42,7 @@ public class PatientController {
 
 	@GetMapping(value = "/patientsRequests", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientDTO>> getNewUserRequests() {
-		List<Patient> patients = patientService.findAllByActive(userService.findAllByActivated(false));
+		List<Patient> patients = patientService.findAllByProcessed(false);
 		List<PatientDTO> ret = new ArrayList<PatientDTO>();
 		for (Patient patient : patients) {
 			ret.add(new PatientDTO(patient));
@@ -84,14 +84,14 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/getPatientProfile", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Patient> getPatient(HttpServletRequest request) {
+	public ResponseEntity<PatientDTO> getPatient(HttpServletRequest request) {
 		String jwt_token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(jwt_token);
-		ResponseEntity<Patient> ret;
+		ResponseEntity<PatientDTO> ret;
 		User up = userService.findOneByEmail(email);
 		Patient p = patientService.findOneByUserId(up.getId());
 		if (p != null)
-			ret = new ResponseEntity<>(p, HttpStatus.OK);
+			ret = new ResponseEntity<>(new PatientDTO(p), HttpStatus.OK);
 		else
 			ret = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
@@ -127,14 +127,13 @@ public class PatientController {
 	 * @return
 	 */
 	@GetMapping(value = "/getMedicalRecord/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MedicalRecordDTO> getMedicalRecord(@PathVariable Long id) {
-        MedicalRecordDTO ret = patientService.getMedicalRecord(id);    
-        if (ret != null) {
-            return new ResponseEntity<MedicalRecordDTO>(ret,HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-	
-	
+	public ResponseEntity<MedicalRecordDTO> getMedicalRecord(@PathVariable Long id) {
+		MedicalRecordDTO ret = patientService.getMedicalRecord(id);		
+		if (ret != null) {
+			return new ResponseEntity<MedicalRecordDTO>(ret,HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+
 
 }

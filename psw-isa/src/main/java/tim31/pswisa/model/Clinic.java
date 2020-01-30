@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -23,6 +24,10 @@ public class Clinic {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	// Optimistic (transaction D)
+	@Version
+	private Long version;
 
 	@Column(name = "clinicName", unique = true, nullable = false)
 	private String name;
@@ -199,5 +204,21 @@ public class Clinic {
 		this.absences = absences;
 	}
 
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
 	
+	
+	/*
+	 * public HashMap<String, Double> getPricelist() { return pricelist; }
+	 * 
+	 * public void setPricelist(HashMap<String, Double> pricelist) { this.pricelist
+	 * = pricelist; }
+	 */
+
 }

@@ -82,14 +82,8 @@ public class PatientService {
 		}
 	}
 
-	public List<Patient> findAllByActive(List<User> users) {
-		List<Patient> patients = new ArrayList<>();
-		for (User u : users) {
-			if (!u.getActivated()) {
-				Patient p = patientRepository.findByUserId(u.getId());
-				patients.add(p);
-			}
-		}
+	public List<Patient> findAllByProcessed(boolean processed) {
+		List<Patient> patients = patientRepository.findAllByProcessed(processed);
 		return patients;
 	}
 
@@ -122,6 +116,14 @@ public class PatientService {
        
         return ret;
     }
+
+		Patient patient = findOneByUserId(id);
+		MedicalRecordDTO ret = new MedicalRecordDTO(patient.getMedicalRecord());
+		ret.setDiagnoses(patientDiagnoses(patient));
+		
+		return ret;
+	}
+
 	
 	private List<DiagnoseDTO> patientDiagnoses(Patient loggedPatient) {
 		List<DiagnoseDTO> patientDiagnoses = new ArrayList<DiagnoseDTO>();
