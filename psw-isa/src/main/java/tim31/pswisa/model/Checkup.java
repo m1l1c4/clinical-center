@@ -80,13 +80,16 @@ public class Checkup {
 	
 	@Column(name = "pending", nullable = true)
 	private boolean pending;	// T or F depending on whether a patient sent request or not
+	
+	@Column(name = "finished")
+	private boolean finished;
 
 	public Checkup() {
 
 	}
 
 	public Checkup(double discount, boolean scheduled, LocalDate date, String time, String type, int duration,
-			double price, Room room) {
+			double price, Room room, boolean finished) {
 		super();
 		this.discount = discount;
 		this.scheduled = scheduled;
@@ -96,6 +99,7 @@ public class Checkup {
 		this.price = price;
 		this.room = room;
 		this.time = time;
+		this.finished = finished;
 	}
 
 //	public MedicalWorker getMedicalWorker() {
@@ -226,6 +230,14 @@ public class Checkup {
 
 	public void setDoctors(Set<MedicalWorker> doctors) {
 		this.doctors = doctors;
+	}
+
+	public boolean isFinished() {
+		return finished;
+	}
+
+	public void setFinished(boolean finished) {
+		this.finished = finished;
 	}
 
 

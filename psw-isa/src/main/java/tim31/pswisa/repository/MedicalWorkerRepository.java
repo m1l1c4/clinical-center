@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 
 import tim31.pswisa.model.MedicalWorker;
 
@@ -27,8 +30,10 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 	 * @param id - id of medical worker
 	 * @return - (MedicalWorker) This method returns searched medical worker
 	 */
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	MedicalWorker findOneById(Long id);
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	@Query("select mw from MedicalWorker mw where mw.id = :id")
+	@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="0")})
+	MedicalWorker findOneById(@Param("id")Long id);
 
 	Set<MedicalWorker> findAllByTipAndClinicId(String type, Long id);
 	/**

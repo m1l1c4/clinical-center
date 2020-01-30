@@ -11,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
+import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Authority;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
@@ -142,6 +144,7 @@ public class MedicalWorkerService {
 	 * @param c    - check-up of patient
 	 * @return - (void) This method has no return value
 	 */
+	@Transactional(readOnly = false)
 	public void bookForPatient(User user, CheckupDTO c) throws MailException, InterruptedException {
 		if (user != null) {
 			MedicalWorker medWorker = findByUser(user.getId());
@@ -299,28 +302,35 @@ public class MedicalWorkerService {
 		List<MedicalWorker> ret = new ArrayList<>();
 		List<Checkup> checkups = checkupService.findAllByTimeAndDate(t, LocalDate.parse(date));
 		for (Checkup checkup : checkups) {
-			if (!checkup.isScheduled()) {
+			if (checkup.isScheduled()) {
 				for (MedicalWorker doctor : checkup.getDoctors()) {
 					doctors.remove(doctor);
 				}
 			}
 		}
+		
 		for (MedicalWorker doctor : doctors) {
+			boolean ok = true;
+			for (Absence a : doctor.getHollydays()) {
+				LocalDate d = LocalDate.parse(date);
+				if ((a.getStartVacation().isBefore(d) || a.getStartVacation().isEqual(d))
+						&& (a.getEndVacation().isAfter(d) || a.getEndVacation().isEqual(d)) && a.getAccepted().equals("ACCEPTED")) {
+					ok = false;
+				}
+			}
 			if (time < doctor.getEndHr() && time >= doctor.getStartHr()
-					&& doctor.getUser().getType().equals("DOKTOR")) {
+					&& doctor.getUser().getType().equals("DOKTOR") && ok) {
 				ret.add(doctor);
 			}
 		}
-		// dodati jos za godisnje odmore
 		return ret;
-	}
-
-	public Set<Checkup> getAllCheckups(Long id) {
-		MedicalWorker worker = medicalWorkerRepository.findOneById(id);
-		return worker.getCheckUps();
 	}
 
 	public List<MedicalWorker> findAllDoctors(String type, Long id) {
 		return medicalWorkerRepository.findAllDoctors(type, id);
+	}
+	
+	public MedicalWorker findOneByUserId(Long id) {
+		return medicalWorkerRepository.findOneByUserId(id);
 	}
 }

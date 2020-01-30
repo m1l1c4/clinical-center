@@ -24,16 +24,10 @@ public class Recipe {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToMany
-	@JoinTable(name = "workers", joinColumns = @JoinColumn(name = "recipe_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "medical_worker_id", referencedColumnName = "id"))
-	private Set<MedicalWorker> medicalWorkers;
+	@JsonBackReference(value = "doctor_recipe_mov")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private MedicalWorker doctor;
 
-	/*
-	 * @JsonBackReference(value = "recipe_doc_mov")
-	 * 
-	 * @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) private
-	 * MedicalWorker doctor;
-	 */
 	@JsonBackReference(value = "recipe_code_mov")
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Codebook code;
@@ -48,7 +42,7 @@ public class Recipe {
 
 	@Column(name = "verified", unique = false, nullable = false)
 	private Boolean verified;
-	
+
 	@Version
 	private Long version;
 
@@ -70,14 +64,6 @@ public class Recipe {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Set<MedicalWorker> getMedicalWorkers() {
-		return medicalWorkers;
-	}
-
-	public void setMedicalWorkers(Set<MedicalWorker> medicalWorkers) {
-		this.medicalWorkers = medicalWorkers;
 	}
 
 	public Boolean getVerified() {
@@ -102,6 +88,22 @@ public class Recipe {
 
 	public void setNurse(MedicalWorker nurse) {
 		this.nurse = nurse;
+	}
+
+	public MedicalWorker getDoctor() {
+		return doctor;
+	}
+
+	public void setDoctor(MedicalWorker doctor) {
+		this.doctor = doctor;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

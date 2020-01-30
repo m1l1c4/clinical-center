@@ -47,6 +47,8 @@ public class Patient {
 	@OneToOne(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalRecord medicalRecord;
 
+	@Column(name = "processed", nullable = false)
+	private boolean processed;
 	/*
 	 * @OneToMany(mappedBy = "patient" ,fetch = FetchType.LAZY, cascade =
 	 * CascadeType.ALL) private ArrayList<Operation> operations;
@@ -163,6 +165,14 @@ public class Patient {
 
 	public void setMedicalRecord(MedicalRecord medicalRecord) {
 		this.medicalRecord = medicalRecord;
+	}
+
+	public boolean isProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(boolean processed) {
+		this.processed = processed;
 	}
 
 }

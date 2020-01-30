@@ -16,4 +16,5 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	List<Patient> findAll();
 
+	List<Patient> findAllByProcessed(boolean processed);
 }

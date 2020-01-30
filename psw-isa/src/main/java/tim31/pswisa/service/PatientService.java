@@ -82,14 +82,8 @@ public class PatientService {
 		}
 	}
 
-	public List<Patient> findAllByActive(List<User> users) {
-		List<Patient> patients = new ArrayList<>();
-		for (User u : users) {
-			if (!u.getActivated()) {
-				Patient p = patientRepository.findByUserId(u.getId());
-				patients.add(p);
-			}
-		}
+	public List<Patient> findAllByProcessed(boolean processed) {
+		List<Patient> patients = patientRepository.findAllByProcessed(processed);
 		return patients;
 	}
 
@@ -115,25 +109,10 @@ public class PatientService {
 		return patient;
 	}
 	
-	public MedicalRecordDTO getMedicalRecord(String email) {
-		MedicalRecordDTO ret = new MedicalRecordDTO();
-		User loggedUser = userService.findOneByEmail(email);		
-		
-		if (loggedUser == null) {		// invalid email
-			return null;
-		} 
-		
-		Patient loggedPatient = findOneByUserId(loggedUser.getId());
-		
-		if (loggedPatient == null) {		
-			return null;
-		}	
-		
-		ret.setHeight(loggedPatient.getMedicalRecord().getHeight());
-		ret.setWeight(loggedPatient.getMedicalRecord().getWeight());
-		ret.setDiopter(loggedPatient.getMedicalRecord().getDiopter());
-		ret.setBloodType(loggedPatient.getMedicalRecord().getBloodType());
-		ret.setDiagnoses(patientDiagnoses(loggedPatient));
+	public MedicalRecordDTO getMedicalRecord(Long id) {
+		Patient patient = findOneByUserId(id);
+		MedicalRecordDTO ret = new MedicalRecordDTO(patient.getMedicalRecord());
+		ret.setDiagnoses(patientDiagnoses(patient));
 		
 		return ret;
 	}
@@ -143,7 +122,7 @@ public class PatientService {
 		LocalDate currentDate = LocalDate.now();
 		for (Checkup ch : loggedPatient.getAppointments()) {
 			if (ch.isScheduled() && ch.getDate().isBefore(currentDate) 
-					&& ch.getTip().equals("appointment")) {
+					&& ch.getTip().equals("PREGLED")) {
 				MedicalWorker doctor = findDoctor(ch) ; // getDcotors should work bc I assume there is one doctor per checkup
 				if (doctor != null) {
 				/* ovaj if zbog predefinisanih pregleda pa je report prazan a pregled se kao desio,
