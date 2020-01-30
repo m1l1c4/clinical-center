@@ -116,14 +116,6 @@ public class PatientService {
        
         return ret;
     }
-
-		Patient patient = findOneByUserId(id);
-		MedicalRecordDTO ret = new MedicalRecordDTO(patient.getMedicalRecord());
-		ret.setDiagnoses(patientDiagnoses(patient));
-		
-		return ret;
-	}
-
 	
 	private List<DiagnoseDTO> patientDiagnoses(Patient loggedPatient) {
 		List<DiagnoseDTO> patientDiagnoses = new ArrayList<DiagnoseDTO>();

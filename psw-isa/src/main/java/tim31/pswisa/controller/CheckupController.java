@@ -178,7 +178,7 @@ public class CheckupController {
 		}
 	}
 
-	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CheckupDTO>> getCheckups(@PathVariable Long id) {
 		Set<Checkup> checkups = medicalWorkerService.getAllCheckups(id);
 		List<CheckupDTO> ret = new ArrayList<>();
@@ -186,7 +186,7 @@ public class CheckupController {
 			ret.add(new CheckupDTO(c));
 		}
 		return new ResponseEntity<List<CheckupDTO>>(ret, HttpStatus.OK);
-	}
+	}*/
 
 	@PostMapping(value = "/getVacations/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AbsenceDTO>> getVacations(@PathVariable Long id) {

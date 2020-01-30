@@ -384,9 +384,7 @@ public class MedicalWorkerService {
 	
 	public double doTheMath(double prevRating, double rating) {		
 		return (prevRating + rating) / 2;		
-
-	public MedicalWorker findOneByUserId(Long id) {
-		return medicalWorkerRepository.findOneByUserId(id);
-
 	}
+	
+	
 }

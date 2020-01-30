@@ -206,7 +206,7 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
-	@GetMapping(value = "/getRecipes", produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@GetMapping(value = "/getRecipes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RecipeDTO>> getRecipes() {
 		List<Recipe> recipes = recipeService.findAllByVerified(false);
 		List<RecipeDTO> ret = new ArrayList<RecipeDTO>();
@@ -214,7 +214,7 @@ public class MedicalWorkerController {
 			ret.add(new RecipeDTO(recipe));
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
-	}
+	}*/
 
 	/*
 	 * method for searching doctors by given parameters input - String array, sent

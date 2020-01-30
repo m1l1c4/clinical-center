@@ -747,9 +747,10 @@ public class ClinicService {
 		return ok;		
 	}
 	
-	private void doTheMath(Clinic clinicForRating, double rating) {		
-		double prevRating = clinicForRating.getRating();		
-		clinicForRating.setRating((prevRating + rating) / 2);
+	public Clinic update(Clinic clinic) {
+		for (Room r : clinic.getRooms())
+			r.setClinic(clinic);
+		return clinicRepository.save(clinic);
 	}
-
+	
 }
