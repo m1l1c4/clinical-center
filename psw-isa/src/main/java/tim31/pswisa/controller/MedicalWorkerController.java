@@ -58,7 +58,7 @@ public class MedicalWorkerController {
 	/**
 	 * This method servers for getting medical worker for update
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (MedicalWorkerDTO) This method returns updated medical worker
 	 */
 	@GetMapping(value = "/getMedicalWorker", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +79,7 @@ public class MedicalWorkerController {
 	 * This method servers for getting answer can doctor access to medical record of
 	 * patient
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @param pom     - email of patient
 	 * @return - (String) This method returns string 'da' or 'ne' depending of
 	 *         conditions
@@ -101,7 +101,7 @@ public class MedicalWorkerController {
 	 * This method servers for implement booking for patient by doctor patient
 	 * 
 	 * @param c       - check-up of patient
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (String) This method returns string ok when booking is finished
 	 */
 	@PostMapping(value = "/bookForPatient", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -123,7 +123,7 @@ public class MedicalWorkerController {
 	 * This method servers for deleting doctor in clinic by administrator
 	 * 
 	 * @param user    - doctor that have to be deleted
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (String) This method returns string after deleting, Obrisano or
 	 *         Greska
 	 */
@@ -150,7 +150,7 @@ public class MedicalWorkerController {
 	 * This method servers for finding doctor by criteria
 	 * 
 	 * @param params  - criteria for finding doctors in clinic
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<MedicalWorkerDTO>) This method returns list of found doctors
 	 *         in clinic
 	 */
@@ -181,7 +181,7 @@ public class MedicalWorkerController {
 	 * This method servers for updating medical worker
 	 * 
 	 * @param mw      - new information about medical worker
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (MedicalWorkerDTO) This method returns updated medical worker
 	 */
 	@PostMapping(value = "/updateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -32,7 +32,7 @@ public class EmailService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
 
@@ -50,7 +50,7 @@ public class EmailService {
 		System.out.println("Sending email...");
 		User u = userService.findOneByEmail(email);
 		String path = "http://localhost:3000/activateAccount/" + u.getId();
-		
+
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
@@ -152,7 +152,14 @@ public class EmailService {
 				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
 		System.out.println("Email sent.");
 	}
-	
+
+	/**
+	 * This method servers for sending email to medical workers and patients at the
+	 * end of day to notify when they have appointment or operation
+	 * 
+	 * @param c   - check-up that has all required information
+	 * @return - (void) This method has no return value
+	 */
 	@Async
 	public void sendEmailToDoctorAndPatient(CheckupDTO c) {
 		MedicalWorkerDTO mw = c.getMedicalWorker();
@@ -166,27 +173,24 @@ public class EmailService {
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
 		msg.setSubject("Notification for doctor");
-		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + 
-		"\nDate: " + c.getDate() +"  "+ 
-		"\nTime: " + c.getTime() +"h "+
-		"\nRoom: " + c.getRoom().getName() + " " + c.getRoom().getNumber() + 
-		"\nPatient: " + c.getPatient().getUser().getName() + " " + c.getPatient().getUser().getSurname() + " " );
+		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + "\nDate: " + c.getDate() + "  " + "\nTime: "
+				+ c.getTime() + "h " + "\nRoom: " + c.getRoom().getName() + " " + c.getRoom().getNumber()
+				+ "\nPatient: " + c.getPatient().getUser().getName() + " " + c.getPatient().getUser().getSurname()
+				+ " ");
 		javaMailSender.send(msg);
 		System.out.println("Email sent.");
 
 		System.out.println("Sending email...");
 		msg.setSubject("Notification for patient");
-		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + 
-				"\nDate: " + c.getDate() +"  "+ 
-				"\nTime: " + c.getTime() +"h  "+
-				"\nDoctor: " + c.getMedicalWorker().getUser().getName() + " " + c.getMedicalWorker().getUser().getSurname() + " " +
-				"\nSpecialization: " + c.getMedicalWorker().getType() + " " + 
-				"\nConfirmation: " + path );
+		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + "\nDate: " + c.getDate() + "  " + "\nTime: "
+				+ c.getTime() + "h  " + "\nDoctor: " + c.getMedicalWorker().getUser().getName() + " "
+				+ c.getMedicalWorker().getUser().getSurname() + " " + "\nSpecialization: "
+				+ c.getMedicalWorker().getType() + " " + "\nConfirmation: " + path);
 		javaMailSender.send(msg);
 		System.out.println("Email sent.");
 
 	}
-	
+
 	@Async
 	public void notifyDoctor(Long id, Checkup c) {
 		MedicalWorker medicalWorker = medicalWorkerService.findOneById(id);
@@ -198,8 +202,11 @@ public class EmailService {
 				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
 		System.out.println("Email sent.");
 	}
+
 	/**
-	 * method for sending email to patient after successfully booked predefined appointment
+	 * method for sending email to patient after successfully booked predefined
+	 * appointment
+	 * 
 	 * @param email
 	 * @param text
 	 * @throws MailException
@@ -207,20 +214,18 @@ public class EmailService {
 	 */
 	@Async
 	public void quickAppConfirmationEmail(String email, Checkup checkup) throws MailException, InterruptedException {
-		User u = userService.findOneByEmail(email);	
+		User u = userService.findOneByEmail(email);
 		String text = "";
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
 		msg.setSubject("Booking checkup confirmation");
-		MedicalWorker doc = (MedicalWorker) checkup.getDoctors().toArray()[0] ;
+		MedicalWorker doc = (MedicalWorker) checkup.getDoctors().toArray()[0];
 		text = "We announce you that you successfully booked medical appointment for " + checkup.getDate();
-		text += "\nCheckup details: \n"
-				+ "Date and time: " + checkup.getDate() + " " + checkup.getTime() + "h\n"
+		text += "\nCheckup details: \n" + "Date and time: " + checkup.getDate() + " " + checkup.getTime() + "h\n"
 				+ "Clinic: " + checkup.getClinic().getName() + ", " + checkup.getClinic().getAddress() + "\n"
-				+ "Doctor: " + doc.getUser().getName() + "\n" 
-				+ "Room: " + checkup.getRoom().getName() + "\n" 
-				+ "Price: " + checkup.getPrice() ;
+				+ "Doctor: " + doc.getUser().getName() + "\n" + "Room: " + checkup.getRoom().getName() + "\n"
+				+ "Price: " + checkup.getPrice();
 		msg.setText(text);
 		javaMailSender.send(msg);
 

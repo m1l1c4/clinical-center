@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,8 +82,8 @@ public class CheckupController {
 	 * This method servers for adding new appointment for booking with one click
 	 * 
 	 * @param c       - check-up that have to be added
-	 * @param request -
-	 * @return - This method returns added appointment if doctor are not busy
+	 * @param request - information of logged user
+	 * @return - (CheckupDTO) This method returns added appointment if doctor are not busy
 	 */
 	@PostMapping(value = "/addAppointment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> addAppointmentController(@RequestBody CheckupDTO c, HttpServletRequest request) {
@@ -139,6 +138,19 @@ public class CheckupController {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 	}
+	
+	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<CheckupDTO>> getCheckups(HttpServletRequest request, @PathVariable Long id) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		Set<Checkup> checkups = checkupService.getAllCheckups(user, id);
+		List<CheckupDTO> ret = new ArrayList<>();
+		for (Checkup c : checkups) {
+			ret.add(new CheckupDTO(c));
+		}
+		return new ResponseEntity<List<CheckupDTO>>(ret, HttpStatus.OK);
+	}
 
 	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> updateCheckup(@RequestBody CheckupDTO c) {
@@ -169,15 +181,6 @@ public class CheckupController {
 		return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 	}
 
-	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CheckupDTO>> getCheckups(@PathVariable Long id) {
-		Set<Checkup> checkups = medicalWorkerService.getAllCheckups(id);
-		List<CheckupDTO> ret = new ArrayList<>();
-		for (Checkup c : checkups) {
-			ret.add(new CheckupDTO(c));
-		}
-		return new ResponseEntity<List<CheckupDTO>>(ret, HttpStatus.OK);
-	}
 
 	@PostMapping(value = "/getVacations/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AbsenceDTO>> getVacations(@PathVariable Long id) {

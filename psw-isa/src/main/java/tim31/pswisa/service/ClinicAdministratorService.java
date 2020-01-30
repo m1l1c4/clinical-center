@@ -58,7 +58,7 @@ public class ClinicAdministratorService {
 	private CheckUpRepository checkupRepository;
 
 	/**
-	 * This method servers for scheduling room for patient in the end of day
+	 * This method servers for scheduling room for patient at the end of the day
 	 * 
 	 * @return - (void>) non return value
 	 */
@@ -94,7 +94,15 @@ public class ClinicAdministratorService {
 			}
 		}
 	}
-
+	/**
+	 * This method servers finding room for check-up
+	 * 
+	 * @param cek - check-up that has to be scheduled
+	 * @param tempArray - array of free terms of doctor
+	 * @param mw - medical worker/doctor with free terms in tempArray
+	 * @param date - date of check-up
+	 * @return - (Check-up) non return value
+	 */
 	public Checkup newFunction(Checkup cek, ArrayList<String> tempArray, MedicalWorker mw, LocalDate date) {
 		for (String termin : tempArray) {
 			List<Room> allRooms = roomRepository.findAllByClinicIdAndTipRoom(mw.getClinic().getId(), cek.getTip());

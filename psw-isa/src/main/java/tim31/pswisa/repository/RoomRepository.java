@@ -15,7 +15,6 @@ import tim31.pswisa.model.Room;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-	
 	/**
 	 * This method servers for getting all rooms in clinic
 	 * 
@@ -32,14 +31,15 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	List<Room> findAllByClinicId(Long id);
 
 	/**
-	 * This method servers for getting one room by room id, transaction (pesimistic D)
+	 * This method servers for getting one room by room id, transaction (pesimistic
+	 * D)
 	 * 
 	 * @param id - room id
 	 * @return - (Room) This method returns one room
 	 */
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	@Query("select r from Room r where r.id = :id")
-	@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="0")})
+	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "0") })
 	Room findOneById(Long id);
 
 	/**
@@ -50,7 +50,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	 */
 	Room findOneByClinicIdAndNumber(Long clinicId, int number);
 
-
 	/**
 	 * This method servers for getting one room by number
 	 * 
@@ -59,15 +58,13 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	 */
 
 	List<Room> findAllByClinicIdAndTipRoom(Long clinicId, String type);
-	
+
 	/**
 	 * This method servers for getting one room by type of room
 	 * 
 	 * @param type - type of room that has to be returned
 	 * @return - (List<Room>) This method returns searched rooms
 	 */
-
-	
 
 	Room findOneByNumber(int number);
 }

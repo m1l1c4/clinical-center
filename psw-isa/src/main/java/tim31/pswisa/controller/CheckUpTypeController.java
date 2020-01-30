@@ -2,10 +2,8 @@ package tim31.pswisa.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,13 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.model.CheckUpType;
-import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
-import tim31.pswisa.service.ClinicService;
 import tim31.pswisa.service.UserService;
 
 @RestController
@@ -51,7 +47,7 @@ public class CheckUpTypeController {
 	 * administrator
 	 * 
 	 * @param name    - the name of check-up type that have to be deleted
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (String) This method returns string "Obrisano" if type is deleted
 	 *         or "Greska" can't delete that type
 	 */
@@ -74,7 +70,7 @@ public class CheckUpTypeController {
 	/**
 	 * This method servers getting all types of check-ups in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ArrayList<CheckUpTypeDTO>) This method returns list of all
 	 *         check-ups type in clinic if user is not null
 	 */
@@ -95,7 +91,7 @@ public class CheckUpTypeController {
 	 * This method servers for adding new appointment for booking with one click
 	 * 
 	 * @param type    - check-up type that have to be added
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (CheckUpTypeDTO) This method returns added check-up type in clinic
 	 * 
 	 */
