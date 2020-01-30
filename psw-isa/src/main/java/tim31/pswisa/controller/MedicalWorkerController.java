@@ -51,7 +51,7 @@ public class MedicalWorkerController {
 
 	@Autowired
 	private RecipeService recipeService;
-	
+
 	@Autowired
 	private AbsenceService absenceService;
 
@@ -238,11 +238,17 @@ public class MedicalWorkerController {
 		User user = userService.findOneByEmail(email);
 		MedicalWorker nurse = medicalWorkerService.findByUser(user.getId());
 		Recipe recipe = recipeService.findOneById(id);
-		recipe = recipeService.verify(recipe, nurse);
-		if (recipe != null) {
-			return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.OK);
+		try {
+			recipe = recipeService.verify(recipe, nurse);
+			if (recipe != null) {
+				return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.OK);
+			}
+			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 		}
-		return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 	}
 
 	/**

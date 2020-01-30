@@ -1,5 +1,6 @@
 package tim31.pswisa.dto;
 
+import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Recipe;
 
 public class RecipeDTO {
@@ -8,9 +9,19 @@ public class RecipeDTO {
 	private CodebookDTO code;
 	private ReportDTO report;
 	private Boolean verified;
+	private MedicalWorkerDTO doctor;
+	private MedicalWorkerDTO nurse;
 
 	public RecipeDTO(Recipe r) {
-		this(r.getId(), new CodebookDTO(r.getCode()), new ReportDTO(r.getReport()), r.getVerified());
+		this.id = r.getId();
+		this.code = new CodebookDTO(r.getCode());
+		this.report = new ReportDTO(r.getReport());
+		this.verified = r.getVerified();
+		this.doctor = new MedicalWorkerDTO(r.getDoctor());
+		MedicalWorker n = r.getNurse();
+		if(n!=null) {
+			this.nurse = new MedicalWorkerDTO(n);
+		}
 	}
 
 	public RecipeDTO() {
@@ -18,12 +29,15 @@ public class RecipeDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public RecipeDTO(Long id, CodebookDTO code, ReportDTO report, Boolean verified) {
+	public RecipeDTO(Long id, CodebookDTO code, ReportDTO report, Boolean verified, MedicalWorkerDTO doctor,
+			MedicalWorkerDTO nurse) {
 		super();
 		this.id = id;
 		this.code = code;
 		this.report = report;
 		this.verified = verified;
+		this.doctor = doctor;
+		this.nurse = nurse;
 	}
 
 	public Long getId() {
@@ -56,6 +70,22 @@ public class RecipeDTO {
 
 	public void setVerified(Boolean verified) {
 		this.verified = verified;
+	}
+
+	public MedicalWorkerDTO getDoctor() {
+		return doctor;
+	}
+
+	public void setDoctor(MedicalWorkerDTO doctor) {
+		this.doctor = doctor;
+	}
+
+	public MedicalWorkerDTO getNurse() {
+		return nurse;
+	}
+
+	public void setNurse(MedicalWorkerDTO nurse) {
+		this.nurse = nurse;
 	}
 
 }

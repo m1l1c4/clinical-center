@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
@@ -80,10 +81,10 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllByClinicId(id);
 	}
 
-	public Set<MedicalWorker> findAllByTipAndClinicId(String type, Long id){
-		return medicalWorkerRepository.findAllByTipAndClinicId(type,id);
+	public Set<MedicalWorker> findAllByTipAndClinicId(String type, Long id) {
+		return medicalWorkerRepository.findAllByTipAndClinicId(type, id);
 	}
-	
+
 	/**
 	 * This method servers for updating medical worker
 	 * 
@@ -151,6 +152,7 @@ public class MedicalWorkerService {
 	 * @param c    - check-up of patient
 	 * @return - (void) This method has no return value
 	 */
+	@Transactional(readOnly = false)
 	public boolean bookForPatient(User user, CheckupDTO c) throws MailException, InterruptedException {
 		int ok = 0;
 		if (user != null) {
@@ -226,11 +228,11 @@ public class MedicalWorkerService {
 		List<MedicalWorkerDTO> returnVal = new ArrayList<MedicalWorkerDTO>();
 
 		if (name.equals("")) {
-				for (MedicalWorker med : temp) {
-						returnVal.add(new MedicalWorkerDTO(med));
-				}
+			for (MedicalWorker med : temp) {
+				returnVal.add(new MedicalWorkerDTO(med));
+			}
 		}
-	
+
 		else {
 			for (MedicalWorker med : temp) {
 				if (med.getUser().getName().equals(name)) {
@@ -238,9 +240,9 @@ public class MedicalWorkerService {
 				}
 			}
 		}
-		
+
 		return returnVal;
-		
+
 	}
 
 	public MedicalWorker findOne(Long id) {
@@ -289,7 +291,7 @@ public class MedicalWorkerService {
 	}
 
 	public List<MedicalWorkerDTO> searchDoctors(String[] params) {
-		//if (params[0].typ)
+		// if (params[0].typ)
 		List<MedicalWorkerDTO> forSearch = clinicService.doctorsInClinic(params[0], params[1], params[2]);
 		String name = params[3].equals("") ? "" : params[3];
 		String surname = params[4].equals("") ? "" : params[4];
@@ -326,28 +328,37 @@ public class MedicalWorkerService {
 		List<MedicalWorker> doctors = medicalWorkerRepository.findAllByClinicId(id);
 		int time = Integer.parseInt(t);
 		List<MedicalWorker> ret = new ArrayList<>();
-		List<Checkup> checkups = checkupService.findOneByTimeAndDate(t, LocalDate.parse(date));
+		List<Checkup> checkups = checkupService.findAllByTimeAndDate(t, LocalDate.parse(date));
 		for (Checkup checkup : checkups) {
-			for (MedicalWorker doctor : checkup.getDoctors()) {
-				doctors.remove(doctor);
+			if (checkup.isScheduled()) {
+				for (MedicalWorker doctor : checkup.getDoctors()) {
+					doctors.remove(doctor);
+				}
 			}
 		}
+		
 		for (MedicalWorker doctor : doctors) {
+			boolean ok = true;
+			for (Absence a : doctor.getHollydays()) {
+				LocalDate d = LocalDate.parse(date);
+				if ((a.getStartVacation().isBefore(d) || a.getStartVacation().isEqual(d))
+						&& (a.getEndVacation().isAfter(d) || a.getEndVacation().isEqual(d)) && a.getAccepted().equals("ACCEPTED")) {
+					ok = false;
+				}
+			}
 			if (time < doctor.getEndHr() && time >= doctor.getStartHr()
-					&& doctor.getUser().getType().equals("DOKTOR")) {
+					&& doctor.getUser().getType().equals("DOKTOR") && ok) {
 				ret.add(doctor);
 			}
 		}
-		// dodati jos za godisnje odmore
 		return ret;
 	}
 
-	public Set<Checkup> getAllCheckups(Long id) {
-		MedicalWorker worker = medicalWorkerRepository.findOneById(id);
-		return worker.getCheckUps();
-	}
-	
 	public List<MedicalWorker> findAllDoctors(String type, Long id) {
 		return medicalWorkerRepository.findAllDoctors(type, id);
+	}
+	
+	public MedicalWorker findOneByUserId(Long id) {
+		return medicalWorkerRepository.findOneByUserId(id);
 	}
 }

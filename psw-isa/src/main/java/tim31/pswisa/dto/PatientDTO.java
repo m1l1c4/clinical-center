@@ -11,10 +11,11 @@ public class PatientDTO {
 	private String city;
 	private String state;
 	private String address;
+	private boolean processed;
 
 	public PatientDTO(Patient p) {
 		this(p.getId(), new UserDTO(p.getUser()), p.getPhoneNumber(), p.getJbo(), p.getCity(), p.getState(),
-				p.getAddress());
+				p.getAddress(), p.isProcessed());
 	}
 
 	public PatientDTO() {
@@ -22,8 +23,8 @@ public class PatientDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PatientDTO(Long id, UserDTO user, String phoneNumber, String jbo, String city, String state,
-			String address) {
+	public PatientDTO(Long id, UserDTO user, String phoneNumber, String jbo, String city, String state, String address,
+			boolean processed) {
 		super();
 		this.id = id;
 		this.user = user;
@@ -32,6 +33,7 @@ public class PatientDTO {
 		this.city = city;
 		this.state = state;
 		this.address = address;
+		this.processed = processed;
 	}
 
 	public Long getId() {
@@ -88,6 +90,14 @@ public class PatientDTO {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public boolean isProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(boolean processed) {
+		this.processed = processed;
 	}
 
 }
