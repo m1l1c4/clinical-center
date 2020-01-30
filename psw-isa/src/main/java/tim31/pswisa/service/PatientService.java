@@ -16,7 +16,6 @@ import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Recipe;
 import tim31.pswisa.model.Report;
-import tim31.pswisa.model.User;
 import tim31.pswisa.repository.PatientRepository;
 
 @Service
@@ -24,9 +23,6 @@ public class PatientService {
 
 	@Autowired
 	private PatientRepository patientRepository;
-	
-	@Autowired
-	private UserService userService;
 
 	public List<PatientDTO> getAllPatients() {
 		List<Patient> temp = patientRepository.findAll();
@@ -36,18 +32,19 @@ public class PatientService {
 		}
 		return retVal;
 	}
-	
-	public List<PatientDTO> filterPatients(String jbo){
+
+	public List<PatientDTO> filterPatients(String jbo) {
 		List<Patient> temp = patientRepository.findAll();
 		List<PatientDTO> retVal = new ArrayList<PatientDTO>();
-		for(Patient p : temp) {
-			if(p.getJbo().contains(jbo)) {
+		for (Patient p : temp) {
+			if (p.getJbo().contains(jbo)) {
 				retVal.add(new PatientDTO(p));
 			}
 		}
-		if(retVal.size() == 0)
-		return null;
-		else return retVal;
+		if (retVal.size() == 0)
+			return null;
+		else
+			return retVal;
 	}
 
 	public List<PatientDTO> findPatients(String name, String surname, String jbo) {
@@ -82,6 +79,14 @@ public class PatientService {
 		}
 	}
 
+	/**
+	 * Method for getting all requests for registration
+	 * 
+	 * @param processed - parameter that shows whether the request is processed or
+	 *                  not
+	 * @return - (List<Patient>) This method returns all patients that have been
+	 *         sent request for the registration
+	 */
 	public List<Patient> findAllByProcessed(boolean processed) {
 		List<Patient> patients = patientRepository.findAllByProcessed(processed);
 		return patients;
@@ -108,36 +113,38 @@ public class PatientService {
 		patient.setState(editp.getState());
 		return patient;
 	}
-	
+
 	public MedicalRecordDTO getMedicalRecord(Long id) {
-        Patient patient = findOneByUserId(id);
-        MedicalRecordDTO ret = new MedicalRecordDTO(patient.getMedicalRecord());
-        ret.setDiagnoses(patientDiagnoses(patient));
-       
-        return ret;
-    }
-	
+		Patient patient = findOneByUserId(id);
+		MedicalRecordDTO ret = new MedicalRecordDTO(patient.getMedicalRecord());
+		ret.setDiagnoses(patientDiagnoses(patient));
+
+		return ret;
+	}
+
 	private List<DiagnoseDTO> patientDiagnoses(Patient loggedPatient) {
 		List<DiagnoseDTO> patientDiagnoses = new ArrayList<DiagnoseDTO>();
 		LocalDate currentDate = LocalDate.now();
 		for (Checkup ch : loggedPatient.getAppointments()) {
-			if (ch.isScheduled() && ch.getDate().isBefore(currentDate) 
-					&& ch.getTip().equals("PREGLED")) {
-				MedicalWorker doctor = findDoctor(ch) ; // getDcotors should work bc I assume there is one doctor per checkup
+			if (ch.isScheduled() && ch.getDate().isBefore(currentDate) && ch.getTip().equals("PREGLED")) {
+				MedicalWorker doctor = findDoctor(ch); // getDcotors should work bc I assume there is one doctor per
+														// checkup
 				if (doctor != null) {
-				/* ovaj if zbog predefinisanih pregleda pa je report prazan a pregled se kao desio,
-				 * realno pregledi ce se zakazivati kroz aplikaciju a ne povlaciti iz skripte
-				 */
-				Report temp = new Report();
-				if (ch.getReport() == null) {
-					temp = new Report(new HashSet<Recipe>(), loggedPatient.getMedicalRecord() , ch, "neke info", "dijagnoza");
+					/*
+					 * ovaj if zbog predefinisanih pregleda pa je report prazan a pregled se kao
+					 * desio, realno pregledi ce se zakazivati kroz aplikaciju a ne povlaciti iz
+					 * skripte
+					 */
+					Report temp = new Report();
+					if (ch.getReport() == null) {
+						temp = new Report(new HashSet<Recipe>(), loggedPatient.getMedicalRecord(), ch, "neke info",
+								"dijagnoza");
+					}
+
+					patientDiagnoses.add(new DiagnoseDTO(temp.getDiagnose(), ch.getDate(), doctor.getUser().getName(),
+							doctor.getUser().getSurname(), doctor.getClinic().getName()));
 				}
-				
-				patientDiagnoses.add(new DiagnoseDTO(temp.getDiagnose() ,				
-									ch.getDate() , doctor.getUser().getName() , 
-									doctor.getUser().getSurname(), doctor.getClinic().getName())) ;
-				}
-			}			
+			}
 		}
 		return patientDiagnoses;
 	}
@@ -153,7 +160,7 @@ public class PatientService {
 			if (mw.getUser().getType().equals("DOKTOR")) {
 				ret = new MedicalWorker(mw);
 				break;
-			}				
+			}
 		}
 		return ret;
 	}

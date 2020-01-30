@@ -67,7 +67,6 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 * @param id - check-up id that has to be returned
 	 * @return - (Checkup) This method returns one check-up
 	 */
-
 	Checkup findOneById(Long id);
 
 	/**
@@ -90,7 +89,34 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 */
 	List<Checkup> findAllByScheduled(boolean ok);
 
+	/**
+	 * Method for finding all check-ups by room id, scheduled and date
+	 * 
+	 * @param id        - key of the room
+	 * @param scheduled - is scheduled
+	 * @param date      - date of the check-ups
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
 	List<Checkup> findAllByRoomIdAndScheduledAndDate(Long id, boolean scheduled, LocalDate date);
 
+	/**
+	 * Method for finding all check-ups by room id, scheduled and date
+	 * 
+	 * @param time - time of the defined check-up
+	 * @param date - date of the check-ups
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
 	List<Checkup> findAllByTimeAndDate(String time, LocalDate date);
+
+	/**
+	 * Method for finding all check-ups by room id, scheduled and date
+	 * 
+	 * @param scheduled - is scheduled
+	 * @param date      - date of the check-ups
+	 * @param id        - key of the patient
+	 * @param type      - type of the check-up (operation/appointment)
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
+	List<Checkup> findAllByScheduledAndDateAndPatientIdAndTip(boolean scheduled, LocalDate date, Long id, String type);
+
 }

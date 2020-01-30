@@ -25,14 +25,12 @@ import tim31.pswisa.dto.RoomDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
-import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.ClinicService;
-import tim31.pswisa.service.MedicalWorkerService;
 import tim31.pswisa.service.RoomService;
 import tim31.pswisa.service.UserService;
 
@@ -263,6 +261,11 @@ public class ClinicController {
 		}
 	}
 
+	/**
+	 * Method for creating new clinic
+	 * @param c - new clinic that has to be created
+	 * @return - (ClinicDTO) This method returns created clinic
+	 */
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicDTO> saveClinic(@RequestBody ClinicDTO c) {
 		Clinic clinic = clinicService.save(c);
@@ -555,7 +558,14 @@ public class ClinicController {
 			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 		}
 	}
-
+	
+	/**
+	 * Method for adding rooms in the clinic at the moment of creating
+	 * @param rooms - rooms that will be added in clinic
+	 * @param id - id/key of the clinic in the database
+	 * @return - (List<RoomDTO>) This method returns added rooms in clinic
+	 * 
+	 */
 	@PostMapping(value = "/addRooms/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RoomDTO>> addRooms(@RequestBody List<RoomDTO> rooms, @PathVariable Long id) {
 		Clinic clinic = clinicService.findOneById(id);
@@ -590,6 +600,11 @@ public class ClinicController {
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 
+	/**
+	 * Method returns all available rooms for date of the check-up from one clinic with the chosen type of check-up (operation/appointment)
+	 * @param id - id of the check-up in database
+	 * @return - (List<RoomDTO>) This method returns rooms in clinic by type of the check-up
+	 */
 	@GetMapping(value = "/getRooms/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RoomDTO>> getRoomsByClinicIdAndType(@PathVariable Long id) {
 		List<Room> rooms = roomService.findAllByClinicIdAndTypeRoom(id);
@@ -600,6 +615,11 @@ public class ClinicController {
 		return new ResponseEntity<List<RoomDTO>>(ret, HttpStatus.OK);
 	}
 
+	/**
+	 * Method returns all available terms of the room for selected date and time
+	 * @param id - id of the room in database
+	 * @return - (ArrayList<Integer>) This method returns list of the available terms
+	 */
 	@GetMapping(value = "/roomAvailability/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Integer>> getRoomVailability(@PathVariable Long id, @PathVariable String date) {
 		ArrayList<Integer> roomAvailability = roomService.findRoomAvailability(id, date);

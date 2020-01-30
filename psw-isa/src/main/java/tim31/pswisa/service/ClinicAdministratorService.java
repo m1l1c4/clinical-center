@@ -209,6 +209,11 @@ public class ClinicAdministratorService {
 		return clinicAdministratorRepository.findOneById(id);
 	}
 
+	/**
+	 * Method for creating new clinical center administrator
+	 * @param ca - information about new clinic administrator
+	 * @return - (ClinicalAdministrator) This method returns created new clinic administrator
+	 */
 	public ClinicAdministrator save(ClinicAdministratorDTO ca) {
 		User user = userRepository.findOneByEmail(ca.getUser().getEmail());
 		if (user != null) {

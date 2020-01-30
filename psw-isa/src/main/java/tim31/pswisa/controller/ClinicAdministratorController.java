@@ -77,7 +77,7 @@ public class ClinicAdministratorController {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		if (user != null) {
+		if (user != null && user.getType().equals("ADMIN")) {
 			List<AbsenceDTO> returnValue = clinicAdministratorService.getRequestForVacation(user);
 			if (returnValue == null) {
 				return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
@@ -130,8 +130,11 @@ public class ClinicAdministratorController {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		List<CheckupDTO> returnValue = checkupService.findAllByScheduled(false, user);
-		return new ResponseEntity<>(returnValue, HttpStatus.OK);
+		if(user.getType().equals("ADMINISTRATOR")) {
+			List<CheckupDTO> returnValue = checkupService.findAllByScheduled(false, user);
+			return new ResponseEntity<>(returnValue, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	/**

@@ -36,19 +36,17 @@ public class MedicalWorker {
 	@Column(name = "phone", unique = false, nullable = true)
 	private String phone;
 
-	/*
-	// @JsonManagedReference(value="mw_movement")
-	@OneToMany(mappedBy = "mw", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Patient> patients;
-	*/
 	@JsonManagedReference(value = "vacation")
 	@OneToMany(mappedBy = "medicalWorker", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Absence> hollydays;
-	
+	private Set<Absence> hollydays = new HashSet<Absence>();
+
 	@JsonManagedReference(value = "nurse_recipe_mov")
 	@OneToMany(mappedBy = "nurse", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Recipe> recipes;
 
+	@JsonManagedReference(value = "doctor_recipe_mov")
+	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Recipe> recipesDoctor;
 	// just for doctors
 
 	@Column(name = "rating", unique = false, nullable = true)
@@ -76,19 +74,19 @@ public class MedicalWorker {
 	}
 
 	public MedicalWorker(MedicalWorker m) {
-		this.id = m.id ;
+		this.id = m.id;
 		this.checkUps = m.getCheckUps();
-		this.clinic = m.clinic ;
-		this.endHr  = m.endHr;
+		this.clinic = m.clinic;
+		this.endHr = m.endHr;
 		this.hollydays = m.hollydays;
 		this.phone = m.phone;
 		this.rating = m.rating;
-		this.recipes  = m.recipes;
-		this.startHr = m.startHr ;
-		this.tip = m.tip ;
-		this.user = m.user ;
+		this.recipes = m.recipes;
+		this.startHr = m.startHr;
+		this.tip = m.tip;
+		this.user = m.user;
 	}
-	
+
 	public String getPhone() {
 		return phone;
 	}
@@ -175,6 +173,28 @@ public class MedicalWorker {
 		this.endHr = endHr;
 	}
 
-	
+	public Set<Recipe> getRecipes() {
+		return recipes;
+	}
+
+	public void setRecipes(Set<Recipe> recipes) {
+		this.recipes = recipes;
+	}
+
+	public Set<Recipe> getRecipesDoctor() {
+		return recipesDoctor;
+	}
+
+	public void setRecipesDoctor(Set<Recipe> recipesDoctor) {
+		this.recipesDoctor = recipesDoctor;
+	}
+
+	public String getTip() {
+		return tip;
+	}
+
+	public void setTip(String tip) {
+		this.tip = tip;
+	}
 
 }
