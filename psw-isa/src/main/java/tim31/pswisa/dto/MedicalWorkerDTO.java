@@ -10,7 +10,7 @@ public class MedicalWorkerDTO {
 	private Long id;
 	private UserDTO user;
 	private String phone;
-	private int rating;
+	private double rating;
 	private int startHr;
 	private int endHr;
 	private String type;
@@ -27,7 +27,7 @@ public class MedicalWorkerDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MedicalWorkerDTO(Long id, UserDTO user, String phone, int rating, int startHr, int endHr, String type,
+	public MedicalWorkerDTO(Long id, UserDTO user, String phone, double rating, int startHr, int endHr, String type,
 			ClinicDTO clinic) {
 		super();
 		this.id = id;
@@ -64,11 +64,11 @@ public class MedicalWorkerDTO {
 		this.phone = phone;
 	}
 
-	public int getRating() {
+	public double getRating() {
 		return rating;
 	}
 
-	public void setRating(int rating) {
+	public void setRating(double rating) {
 		this.rating = rating;
 	}
 

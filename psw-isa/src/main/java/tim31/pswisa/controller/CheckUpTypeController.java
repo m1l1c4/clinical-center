@@ -41,7 +41,6 @@ public class CheckUpTypeController {
 	@Autowired
 	TokenUtils tokenUtils;
 
-
 	/**
 	 * This method servers for deleting check-up type in clinic by clinic
 	 * administrator
@@ -120,23 +119,23 @@ public class CheckUpTypeController {
 	}
 
 	@GetMapping(value = "/allTypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CheckUpType>> allTypes() {
-		List<CheckUpType> chTypes = checkUpTypeService.findAll();
+	public ResponseEntity<List<CheckUpTypeDTO>> allTypes() {
+		List<CheckUpTypeDTO> chTypes = checkUpTypeService.findAllOptimised();
 		if (chTypes != null) {
 			return new ResponseEntity<>(chTypes, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
-	
+
 	/**
 	 * Method used for getting all checkup types available in one clinic
 	 * 
-	 * @param Long id    - clinic id
+	 * @param Long id - clinic id
 	 * @return List<CheckUpTypeDTO> - list of all available checkup types
 	 */
 	@GetMapping(value = "/allTypesOneClinic/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CheckUpType>> allTypesInClinic(@PathVariable Long id) {		
-		List<CheckUpType> chTypes = checkUpTypeService.findAllByClinicId(id);
+	public ResponseEntity<List<CheckUpTypeDTO>> allTypesInClinic(@PathVariable Long id) {
+		List<CheckUpTypeDTO> chTypes = checkUpTypeService.findAllByClinicId(id);
 		if (chTypes.size() > 0) {
 			return new ResponseEntity<>(chTypes, HttpStatus.OK);
 		}

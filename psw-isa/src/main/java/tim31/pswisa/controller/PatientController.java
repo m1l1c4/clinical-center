@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +42,7 @@ public class PatientController {
 
 	@GetMapping(value = "/patientsRequests", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientDTO>> getNewUserRequests() {
-		List<Patient> patients = patientService.findAllByActive(userService.findAllByActivated(false));
+		List<Patient> patients = patientService.findAllByProcessed(false);
 		List<PatientDTO> ret = new ArrayList<PatientDTO>();
 		for (Patient patient : patients) {
 			ret.add(new PatientDTO(patient));
@@ -125,15 +126,14 @@ public class PatientController {
 	 * @param request
 	 * @return
 	 */
-	@GetMapping(value = "/getMedicalRecord", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalRecordDTO> getMedicalRecord(HttpServletRequest request) {
-		String jwt_token = tokenUtils.getToken(request);
-		String email = tokenUtils.getUsernameFromToken(jwt_token);
-		MedicalRecordDTO ret = patientService.getMedicalRecord(email);		
+	@GetMapping(value = "/getMedicalRecord/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MedicalRecordDTO> getMedicalRecord(@PathVariable Long id) {
+		MedicalRecordDTO ret = patientService.getMedicalRecord(id);		
 		if (ret != null) {
 			return new ResponseEntity<MedicalRecordDTO>(ret,HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+
 
 }

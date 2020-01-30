@@ -1,6 +1,8 @@
 package tim31.pswisa.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
@@ -174,11 +177,18 @@ public class CheckupController {
 
 	@PostMapping(value = "/addDoctors/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addDoctors(@RequestBody Long[] doctors, @PathVariable Long id) {
-		Checkup checkup = checkupService.addDoctors(id, doctors);
-		if (checkup != null) {
-			return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
+		Checkup checkup;
+		try {
+			checkup = checkupService.addDoctors(id, doctors);
+			if (checkup != null) {
+				return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
+			}
+			return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 		}
-		return new ResponseEntity<String>("Doslo je do greske", HttpStatus.EXPECTATION_FAILED);
 	}
 
 
@@ -214,6 +224,40 @@ public class CheckupController {
 		boolean success = checkupService.bookQuickApp(id, email);
 		if (success) {
 			return new ResponseEntity<>("Uspešno zakazivanje pregleda", HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	/**
+	 * find 2 lists for patient checkups, one for history and one for incoming checkups
+	 * @param request - HttpServerRequest request - used for finding logged user
+	 * @return
+	 */
+	@PostMapping(value = "/patientHistory", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email);
+		if (patientCheckups != null) {
+			return new ResponseEntity<>(patientCheckups, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	@PostMapping(value = "/scheduleCheckup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> scheduleCheckup(@PathVariable Long id) {
+		boolean success = checkupService.scheduleCheckup(id);
+		if (success) {
+			return new ResponseEntity<>("confirmed", HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	@PostMapping(value = "/cancelCheckup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> cancelCheckup(@PathVariable Long id) {
+		boolean success = checkupService.cancelCheckup(id);
+		if (success) {
+			return new ResponseEntity<>("confirmed", HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}

@@ -51,7 +51,7 @@ public class MedicalWorkerController {
 
 	@Autowired
 	private RecipeService recipeService;
-	
+
 	@Autowired
 	private AbsenceService absenceService;
 
@@ -206,7 +206,7 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
-	@GetMapping(value = "/getRecipes", produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@GetMapping(value = "/getRecipes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RecipeDTO>> getRecipes() {
 		List<Recipe> recipes = recipeService.findAllByVerified(false);
 		List<RecipeDTO> ret = new ArrayList<RecipeDTO>();
@@ -214,7 +214,7 @@ public class MedicalWorkerController {
 			ret.add(new RecipeDTO(recipe));
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
-	}
+	}*/
 
 	/*
 	 * method for searching doctors by given parameters input - String array, sent
@@ -238,11 +238,17 @@ public class MedicalWorkerController {
 		User user = userService.findOneByEmail(email);
 		MedicalWorker nurse = medicalWorkerService.findByUser(user.getId());
 		Recipe recipe = recipeService.findOneById(id);
-		recipe = recipeService.verify(recipe, nurse);
-		if (recipe != null) {
-			return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.OK);
+		try {
+			recipe = recipeService.verify(recipe, nurse);
+			if (recipe != null) {
+				return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.OK);
+			}
+			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 		}
-		return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 	}
 
 	/**
@@ -293,6 +299,23 @@ public class MedicalWorkerController {
 		Absence a = absenceService.create(absence, mw);
 		if (a != null) {
 			return new ResponseEntity<>(new AbsenceDTO(a), HttpStatus.CREATED);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+	}
+	
+	/**
+	 * method for rating doctor who examined logged patient
+	 * @param request
+	 * @param param - param[0] is checkup id , param[1] is given rating
+	 * @return
+	 */
+	@PostMapping(value = "/rateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> rateMedicalWorker(HttpServletRequest request, @RequestBody String[] param) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		boolean ok = medicalWorkerService.rateDoctor(email, param);
+		if (ok) {
+			return new ResponseEntity<>("uspesno ocenjen", HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}

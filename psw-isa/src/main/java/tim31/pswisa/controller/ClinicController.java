@@ -624,5 +624,22 @@ public class ClinicController {
 		}
 
 	}
+	
+	/**
+	 * method for rating clinic that logged patient visited
+	 * @param request
+	 * @param param - param[0] is checkup id , param[1] is given rating
+	 * @return
+	 */
+	@PostMapping(value = "/rateClinic", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> rateVisitedClinic(HttpServletRequest request, @RequestBody String[] param) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		boolean ok = clinicService.rateClinic(email, param);
+		if (ok) {
+			return new ResponseEntity<>("uspesno ocenjen", HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+	}
 
 }

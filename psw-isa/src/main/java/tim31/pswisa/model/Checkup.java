@@ -74,6 +74,12 @@ public class Checkup {
 	@OneToOne(mappedBy = "checkUp", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Report report;
 	
+	@Column(name = "isRatedDoctor", nullable = true)
+	private boolean isRatedDoctor;
+	
+	@Column(name = "isRatedClinic", nullable = true)
+	private boolean isRatedClinic;
+	
 	/*@JsonBackReference(value = "ca_mov")
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private ClinicAdministrator clinicAdministrator;*/
@@ -81,7 +87,8 @@ public class Checkup {
 	@Column(name = "pending", nullable = true)
 	private boolean pending;	// T or F depending on whether a patient sent request or not
 	
-	@Column
+
+	@Column(name = "finished")
 	private boolean finished;
 
 	public Checkup() {
@@ -99,6 +106,8 @@ public class Checkup {
 		this.price = price;
 		this.room = room;
 		this.time = time;
+		this.isRatedClinic = false;
+		this.isRatedDoctor = false;
 		this.finished = finished;
 	}
 
@@ -241,5 +250,29 @@ public class Checkup {
 	}
 
 	
+
+	public boolean isRatedDoctor() {
+		return isRatedDoctor;
+	}
+
+	public void setRatedDoctor(boolean isRatedDoctor) {
+		this.isRatedDoctor = isRatedDoctor;
+	}
+
+	public boolean isRatedClinic() {
+		return isRatedClinic;
+	}
+
+	public void setRatedClinic(boolean isRatedClinic) {
+		this.isRatedClinic = isRatedClinic;
+	}
+
+	public boolean isFinished() {
+		return finished;
+	}
+
+	public void setFinished(boolean finished) {
+		this.finished = finished;
+	}
 
 }

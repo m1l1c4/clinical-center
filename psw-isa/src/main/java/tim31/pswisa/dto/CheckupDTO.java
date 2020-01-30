@@ -20,12 +20,18 @@ public class CheckupDTO {
 	private ClinicDTO clinic;
 	private MedicalWorkerDTO medicalWorker;
 	private CheckUpTypeDTO checkUpType;
+	private boolean finished;
 
-	public CheckupDTO(Checkup c) {
-		
+
+	public CheckupDTO(Checkup c) {		
 		this(c.getId(), c.getDiscount(), c.isScheduled(), c.getDate(), c.getTime(), c.getTip(), c.getDuration(),
 				c.getDiscount(), new RoomDTO(c.getRoom()), new PatientDTO(c.getPatient()), new ClinicDTO(c.getClinic()),
-				new MedicalWorkerDTO((MedicalWorker) c.getDoctors().toArray()[0]), new CheckUpTypeDTO(c.getCheckUpType()));
+				new MedicalWorkerDTO((MedicalWorker) c.getDoctors().toArray()[0]), new CheckUpTypeDTO(c.getCheckUpType()), c.isFinished());
+	
+		if (c.getPatient() == null) {
+			this.patient = null;
+		}
+
 	}
 	
 	public CheckupDTO() {
@@ -35,7 +41,7 @@ public class CheckupDTO {
 
 	public CheckupDTO(Long id, double discount, boolean scheduled, LocalDate date, String time, String type, int duration,
 			double price, RoomDTO room, PatientDTO patient, ClinicDTO clinic, MedicalWorkerDTO medicalWorker,
-			CheckUpTypeDTO checkUpType) {
+			CheckUpTypeDTO checkUpType, boolean finished) {
 		super();
 		this.id = id;
 		this.discount = discount;
@@ -50,6 +56,7 @@ public class CheckupDTO {
 		this.clinic = clinic;
 		this.medicalWorker = medicalWorker;
 		this.checkUpType = checkUpType;
+		this.finished = finished;
 	}
 
 	public Long getId() {
@@ -154,6 +161,14 @@ public class CheckupDTO {
 
 	public void setCheckUpType(CheckUpTypeDTO checkUpType) {
 		this.checkUpType = checkUpType;
+	}
+
+	public boolean isFinished() {
+		return finished;
+	}
+
+	public void setFinished(boolean finished) {
+		this.finished = finished;
 	}
 
 }

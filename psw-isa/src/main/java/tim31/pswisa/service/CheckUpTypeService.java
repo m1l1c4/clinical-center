@@ -43,6 +43,20 @@ public class CheckUpTypeService {
 	public List<CheckUpType> findAll() {
 		return checkUpTypeRepository.findAll();
 	}
+	
+	/**
+	 * creating list of checkup type dto list from all checkup types
+	 * @param dbTypes
+	 * @return
+	 */
+	public List<CheckUpTypeDTO> findAllOptimised() {
+		List<CheckUpType> dbTypes = findAll();
+		List<CheckUpTypeDTO> ret = new ArrayList<CheckUpTypeDTO>(dbTypes.size());
+		for (CheckUpType checkUpType : dbTypes) {
+			ret.add(new CheckUpTypeDTO(checkUpType));
+		}	
+		return ret;
+	}
 
 	/**
 	 * This method servers for getting all types of check-ups from database
@@ -207,13 +221,12 @@ public class CheckUpTypeService {
 	 * @param id
 	 * @return
 	 */
-	public List<CheckUpType> findAllByClinicId(Long id) {
+	public List<CheckUpTypeDTO> findAllByClinicId(Long id) {
 		Clinic cl = clinicService.findOneById(id);
-		List<CheckUpType> ret = new ArrayList<CheckUpType>();
+		List<CheckUpTypeDTO> ret = new ArrayList<CheckUpTypeDTO>();
 		for (CheckUpType type : cl.getCheckUpTypes()) {
-			ret.add(type);
-		}
-		
+			ret.add(new CheckUpTypeDTO(type));
+		}		
 		return ret;
 	}
 	
