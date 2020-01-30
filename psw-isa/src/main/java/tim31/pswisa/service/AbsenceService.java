@@ -73,6 +73,7 @@ public class AbsenceService {
 		absence.setStartVacation(a.getStartVacation());
 		absence.setMw(mw);
 		absence.setTypeOfAbsence(a.getTypeOfAbsence());
+		absence = abesenceRepository.save(absence);
 		return absence;
 	}
 

@@ -88,7 +88,6 @@ public class CheckUpTypeService {
 						return null;
 					}
 					clinic.getCheckUpTypes().remove(t);
-					clinic = clinicService.update(clinic); // delete type from clinic
 					CheckUpType temp = findOneByName(name);
 					temp.getClinics().remove(clinic);
 					temp = saveTwo(temp);
@@ -186,7 +185,12 @@ public class CheckUpTypeService {
 			temp.getClinics().add(klinika);
 			temp = save(temp);
 			klinika.getCheckUpTypes().add(temp);
-			klinika = clinicService.updateClinic(clinicAdministrator, new ClinicDTO(klinika));
+			try {
+				klinika = clinicService.updateClinic(clinicAdministrator, new ClinicDTO(klinika));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return temp;
 		} else
 			return null;

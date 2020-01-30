@@ -9,8 +9,8 @@ INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'pacijent2@gmail.com', 'Nikola', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Nikolic', 'PACIJENT', true, true);
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'pacijent3@gmail.com', 'Sinica', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Sinisic', 'PACIJENT', true, true);
 
-INSERT INTO clinic( address, city, clinic_name, rating, description) VALUES ('Stepe Stepanovica', 'Foca', 'Univerzitetska bolnica', 10, 'Klinika je organizovana kao Specijalna bolnica za oftalmolgiju i Centar za refraktivnu hirurgiju.');
-INSERT INTO clinic( address, city, clinic_name, rating, description) VALUES ('Nikole Tesle', 'Novi Sad', 'Kosevo', 5, 'Zahvaljujući iskustvu, stručnom kadru, timskom radu, ali prije svega potpunoj predanosti i posvećenosti, obezbjeđujemo visok nivo liječenja i zdravstvene njege svim pacijentima.');
+INSERT INTO clinic( address, city, clinic_name, rating, description,country, version) VALUES ('Stepe Stepanovica', 'Foca', 'Univerzitetska bolnica', 10, 'Klinika je organizovana kao Specijalna bolnica za oftalmolgiju i Centar za refraktivnu hirurgiju.', 'Bosnia and Herzegovine' 1);
+INSERT INTO clinic( address, city, clinic_name, rating, description, country, version) VALUES ('Nikole Tesle', 'Novi Sad', 'Kosevo', 5, 'Zahvaljujući iskustvu, stručnom kadru, timskom radu, ali prije svega potpunoj predanosti i posvećenosti, obezbjeđujemo visok nivo liječenja i zdravstvene njege svim pacijentima.', 'Serbia', 1);
 
 INSERT INTO clinic_administrator(clinic_id, user_id) VALUES (1, 1);
 INSERT INTO medical_worker(end_hr, phone, rating, start_hr, tip, clinic_id, user_id) VALUES (15, 062547896, 10, 7, 'KARDIOLOSKI', 1, 2);
@@ -59,7 +59,6 @@ INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-23', 0, 1, 56, true, '22', 'PREGLED', 1, 1, 1, 1, false, false);
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-23', 0, 1, 100, true, '23', 'OPERACIJA', 1, 1, 1, 1, false, false);
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-23', 0, 1, 100, true, '11', 'PREGLED', 1, 1, 1, 1, false, false);
-
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-23', 20, 1, 100, true, '10', 'OPERACIJA', 1, 1, 1, 1, false, false);
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-23', 20, 1, 100, true, '19', 'PREGLED', 1, 1, 1, 1, false, false);
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-23', 20, 1, 100, true, '12', 'OPERACIJA', 1, 1, 1, 1, false, false);
@@ -68,6 +67,7 @@ INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-18', 20, 1, 100, true, '12', 'PREGLED', 1, 1, 1, 1, false, false);
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-18', 20, 1, 100, true, '12', 'PREGLED', 1, 1, 1, 1, false, false);
 INSERT INTO checkup(date_of_checkup, discount, duration, price, scheduled, time_of_checkup, tip, check_up_type_id, clinic_id, patient_id, room_id, pending, finished) VALUES ('2020-01-17', 20, 1, 100, true, '12', 'PREGLED', 1, 1, 1, 1, false, false);
+
 
 INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (1, 1);
 INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (2, 3);
@@ -88,7 +88,7 @@ INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (16, 3);
 INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (17, 3);
 INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (18, 4);
 INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (19, 1);
-INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (20, 3);
-INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (21, 4);
+INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (20, 1);
+INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (21, 1);
 
 

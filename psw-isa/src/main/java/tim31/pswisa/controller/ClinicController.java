@@ -79,16 +79,26 @@ public class ClinicController {
 		if (user != null) {
 			ClinicAdministrator clinicAdministrator = clinicAdministratorService.findByUser(user.getId());
 			if (clinicAdministrator != null) {
-				Clinic temp = clinicService.updateClinic(clinicAdministrator, clinic);
-				if (temp != null) {
-					return new ResponseEntity<>(new ClinicDTO(temp), HttpStatus.OK);
-				} else {
-					return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+				Clinic temp;
+				try {
+					temp = clinicService.updateClinic(clinicAdministrator, clinic);
+					if (temp != null) {
+						return new ResponseEntity<>(new ClinicDTO(temp), HttpStatus.OK);
+					} else {
+						return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
+
 			} else
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} else
+
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
 	}
 
 	@GetMapping(value = "/getClinics", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -167,7 +177,6 @@ public class ClinicController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
-
 
 	/**
 	 * This method servers for searching rooms in clinic
@@ -570,19 +579,19 @@ public class ClinicController {
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/getSelectedDoctor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorkerDTO> getSelectedDoctor(@RequestBody String[] docId, HttpServletRequest request) {
 		MedicalWorkerDTO ret = clinicService.getSelectedDoctor(Long.parseLong(docId[0]), docId[1]);
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/allDocsOneClinic/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MedicalWorkerDTO>> getAllDoctorsInOneClinic(@PathVariable String id, HttpServletRequest request) {
+	public ResponseEntity<List<MedicalWorkerDTO>> getAllDoctorsInOneClinic(@PathVariable String id,
+			HttpServletRequest request) {
 		List<MedicalWorkerDTO> ret = clinicService.getAllDoctorsInOneClinic(Long.parseLong(id));
 		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
-
 
 	@GetMapping(value = "/getRooms/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RoomDTO>> getRoomsByClinicIdAndType(@PathVariable Long id) {
@@ -596,14 +605,14 @@ public class ClinicController {
 
 	@GetMapping(value = "/roomAvailability/{id}/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Integer>> getRoomVailability(@PathVariable Long id, @PathVariable String date) {
-		ArrayList<Integer> roomAvailability  = roomService.findRoomAvailability(id, date);
+		ArrayList<Integer> roomAvailability = roomService.findRoomAvailability(id, date);
 		return new ResponseEntity<List<Integer>>(roomAvailability, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * method for getting clinic object when given clinic id
 	 * 
-	 * @param id - clinic id in database
+	 * @param id      - clinic id in database
 	 * @param request - HttpServletRequest, to find logged in user
 	 * @return ClinicDTO clinic - clinic object found in database
 	 */
@@ -616,7 +625,7 @@ public class ClinicController {
 			ClinicDTO newRet = new ClinicDTO(ret);
 			return new ResponseEntity<>(newRet, HttpStatus.OK);
 		}
-		
+
 	}
 
 }

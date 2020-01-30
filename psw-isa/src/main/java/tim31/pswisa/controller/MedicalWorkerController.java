@@ -110,8 +110,13 @@ public class MedicalWorkerController {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		medicalWorkerService.bookForPatient(user, c);
-		return new ResponseEntity<>("ok", HttpStatus.OK);
+		boolean ok = medicalWorkerService.bookForPatient(user, c);
+		if(ok) {
+			return new ResponseEntity<>("ok", HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>("greska", HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	/**

@@ -1,7 +1,9 @@
 package tim31.pswisa.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
@@ -9,14 +11,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.AbsenceDTO;
+import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.ClinicAdministratorDTO;
 import tim31.pswisa.dto.UserDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Authority;
+import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
+import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
+import tim31.pswisa.repository.CheckUpRepository;
 import tim31.pswisa.repository.ClinicAdministratorRepository;
+import tim31.pswisa.repository.RoomRepository;
 import tim31.pswisa.repository.UserRepository;
 
 @Service
@@ -42,6 +50,74 @@ public class ClinicAdministratorService {
 
 	@Autowired
 	private AbsenceService absenceService;
+
+	@Autowired
+	private RoomRepository roomRepository;
+
+	@Autowired
+	private CheckUpRepository checkupRepository;
+
+	/**
+	 * This method servers for scheduling room for patient in the end of day
+	 * 
+	 * @return - (void>) non return value
+	 */
+	public void scheuldeRoomsEndDay() {
+		List<Checkup> checkups = checkupRepository.findAllByScheduled(false);
+		MedicalWorker mw = new MedicalWorker();
+		for (Checkup cek : checkups) {
+			mw = (MedicalWorker) cek.getDoctors().toArray()[0];
+			LocalDate date = cek.getDate();
+			boolean ok = false;
+			System.out.println("UDJE 1");
+			while (ok == false) {
+				// svi pregledi doktora, za taj dan, koji su zakazani ali od tog doktora
+				Set<CheckupDTO> allCek = checkupRepository.findAllByScheduledAndMedicalWorkerIdAndDate(true, mw.getId(), date);
+				if (allCek.size() < (mw.getEndHr() - mw.getStartHr())) {
+					ArrayList<String> tempArray = new ArrayList<String>();
+					for (int i = mw.getStartHr(); i < mw.getEndHr(); i++) {
+						tempArray.add(Integer.toString(i));
+					}
+					for (CheckupDTO temp : allCek) {
+						if (tempArray.contains(temp.getTime())) {
+							tempArray.remove(temp.getTime());
+						}
+					}
+					Checkup newCek = newFunction(cek, tempArray, mw, date);
+					
+					if(newCek!=null) {
+						ok = true;
+					}
+				}
+				date = date.plusDays(1);
+
+			}
+		}
+	}
+
+	public Checkup newFunction(Checkup cek, ArrayList<String> tempArray, MedicalWorker mw, LocalDate date) {
+		for (String termin : tempArray) {
+			List<Room> allRooms = roomRepository.findAllByClinicIdAndTipRoom(mw.getClinic().getId(), cek.getTip());
+			for (Room r : allRooms) {
+				if(allRooms.size() != 0) {
+					System.out.println("UDJE 2");
+				}
+				Checkup newCek = checkupRepository.findOneByRoomIdAndTimeAndDate(r.getId(), termin, date);
+				if (newCek == null) {
+					cek.setTime(termin);
+					cek.setDate(date);
+					cek.setRoom(r);
+					cek.setScheduled(true);
+					cek = checkupRepository.save(cek);
+					CheckupDTO pom  = new CheckupDTO(cek);
+					emailService.sendEmailToDoctorAndPatient(pom);
+					
+					return cek;
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * This method servers for finding administrator by user id
@@ -149,7 +225,7 @@ public class ClinicAdministratorService {
 
 		return clinicAdministratorRepository.save(admin);
 	}
-	
+
 	public List<ClinicAdministrator> findAll() {
 		return clinicAdministratorRepository.findAll();
 	}
