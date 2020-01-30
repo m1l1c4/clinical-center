@@ -44,9 +44,6 @@ public class ClinicController {
 	private ClinicService clinicService;
 
 	@Autowired
-	private MedicalWorkerService medicalWorkerService;
-
-	@Autowired
 	private ClinicAdministratorService clinicAdministratorService;
 
 	@Autowired
@@ -65,7 +62,7 @@ public class ClinicController {
 	 * This method servers for updating clinic by administrator
 	 * 
 	 * @param clinic  - new information about clinic that have to be updated
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ClinicDTO) This method returns updated clinic
 	 * 
 	 */
@@ -123,7 +120,7 @@ public class ClinicController {
 	 * This method servers for updating type of check-up
 	 * 
 	 * @param params  - new information about type that have to be changed
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (CheckUpTypeDTO) This method returns updated check-up type
 	 * 
 	 */
@@ -156,7 +153,7 @@ public class ClinicController {
 	 * This method servers for updating type of check-up
 	 * 
 	 * @param name    - the name of type that have to be returned
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ArrayList<CheckUpTypeDTO>) This method returns one type with
 	 *         entered name
 	 * 
@@ -183,7 +180,7 @@ public class ClinicController {
 	 * 
 	 * @param params  - the criteria for searching room: name, number or type
 	 *                (appointment or operation)
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<RoomDTO>) This methods return all room with entered criteria
 	 * 
 	 */
@@ -213,7 +210,7 @@ public class ClinicController {
 	 * This method servers for filter room by criteria
 	 * 
 	 * @param number  - number of filtering room
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<RoomDTO>) This method returns room with entered criteria
 	 *         (entered number)
 	 * 
@@ -277,7 +274,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting all rooms in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<RoomDTO>) This method returns rooms in clinic
 	 * 
 	 */
@@ -322,7 +319,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting all doctors in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ArrayList<MedicalWorkerDTO>) This method returns all medical
 	 *         workers in clinic
 	 */
@@ -344,7 +341,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting all types in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ArrayList<CheckUpTypesDTO>) This method returns all type of
 	 *         check-ups in clinic
 	 */
@@ -366,8 +363,8 @@ public class ClinicController {
 	/**
 	 * This method servers for getting clinic of logged administrator
 	 * 
-	 * @param request -
-	 * @return - (ClinicDTO) This method returns clinic of user who is administratos
+	 * @param request - information of logged user
+	 * @return - (ClinicDTO) This method returns clinic of user who is administrators
 	 *         of clinic and who is logged
 	 */
 	@GetMapping(value = "/getClinic", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -417,7 +414,7 @@ public class ClinicController {
 	 * This method servers for adding room in clinic
 	 * 
 	 * @param room    - room that have to be added in clinic
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (RoomDTO) This method returns added room in clinic
 	 */
 	@PostMapping(value = "/addRoom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -448,7 +445,7 @@ public class ClinicController {
 	 * This method servers for updating room in clinic by administrator
 	 * 
 	 * @param room    - room that have to be updated
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (RoomDTO) This method returns updated room
 	 */
 
@@ -479,7 +476,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting clinic raiting
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (Double) This method returns raiting of clinic
 	 */
 	@GetMapping(value = "/getClinicRaiting", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -497,7 +494,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting report for month in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (Integer[]) This method returns the numbers of appointment or
 	 *         operations in clinic at one month
 	 */
@@ -517,7 +514,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting revenue in clinic for entered period
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @param params  - start date an end date
 	 * @return - (Double) This method returns how much clinic is earned in entered
 	 *         period
@@ -542,7 +539,7 @@ public class ClinicController {
 	/**
 	 * This method servers for getting report for week in clinic
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (Integer[]) This method returns the numbers of appointment or
 	 *         operations in clinic at one week
 	 */

@@ -13,9 +13,27 @@ import tim31.pswisa.model.Checkup;
 
 public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 
+	/**
+	 * This method servers for finding all check-ups by scheduled, medical worker id and date
+	 * 
+	 * @param scheduled - is appointment or operation scheduled
+	 * @param id       - id of medical worker
+	 * @param date  - date of check-ups
+	 * @return - (Set<CheckupDTO>) This method returns set of check-up by sent parameters
+	 * 
+	 */
 	@Query("select c from Checkup c inner join c.doctors d where d.id = :id and c.scheduled = :scheduled and c.date = :date")
 	Set<CheckupDTO> findAllByScheduledAndMedicalWorkerIdAndDate(@Param("scheduled") boolean scheduled, @Param("id") Long id, @Param("date") LocalDate date);
 	
+	/**
+	 * This method servers for finding all check-ups by scheduled, medical worker id and finished parametar
+	 * 
+	 * @param scheduled - is appointment or operation scheduled
+	 * @param id       - id of medical worker
+	 * @param finished  - is appointment or operation finished or not
+	 * @return - (Set<CheckupDTO>) This method returns set of check-up by sent parameters
+	 * 
+	 */
 	@Query("select c from Checkup c inner join c.doctors d where d.id = :id and c.scheduled = :scheduled and c.finished = :finished")
 	Set<CheckupDTO> findAllByScheduledAndMedicalWorkerIdAndFinished(@Param("scheduled") boolean scheduled, @Param("id") Long id, @Param("finished") boolean finished);
 

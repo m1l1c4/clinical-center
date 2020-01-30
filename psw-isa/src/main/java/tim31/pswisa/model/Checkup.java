@@ -87,6 +87,7 @@ public class Checkup {
 	@Column(name = "pending", nullable = true)
 	private boolean pending;	// T or F depending on whether a patient sent request or not
 	
+
 	@Column(name = "finished")
 	private boolean finished;
 
@@ -107,9 +108,7 @@ public class Checkup {
 		this.time = time;
 		this.isRatedClinic = false;
 		this.isRatedDoctor = false;
-
 		this.finished = finished;
-
 	}
 
 //	public MedicalWorker getMedicalWorker() {
@@ -242,6 +241,15 @@ public class Checkup {
 		this.doctors = doctors;
 	}
 
+	public boolean isFinished() {
+		return finished;
+	}
+
+	public void setFinished(boolean finished) {
+		this.finished = finished;
+	}
+
+	
 
 	public boolean isRatedDoctor() {
 		return isRatedDoctor;
@@ -267,9 +275,4 @@ public class Checkup {
 		this.finished = finished;
 	}
 
-
-
-	
-
-	
 }

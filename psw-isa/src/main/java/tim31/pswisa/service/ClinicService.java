@@ -57,16 +57,6 @@ public class ClinicService {
 	private RoomRepository roomRepository;
 
 	/**
-	 * This method servers for finding room in clinic by room id
-	 * 
-	 * @param id - id of room that has to be found
-	 * @return - (Room) This method returns found room
-	 */
-	public Room findRoomById(Long id) {
-		return clinicRepository.findRoomById(id);
-	}
-
-	/**
 	 * This method servers for finding all rooms from database
 	 * 
 	 * @return - (List<Room>) This method returns all room from database
@@ -501,20 +491,20 @@ public class ClinicService {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
 		for (Room r : sobe) {
-			if (r.getNumber() == number){
-				Set<Checkup>ceks = r.getBookedCheckups();
-				for(Checkup c:ceks) {
-					if(c.isFinished() == false) {
+			if (r.getNumber() == number) {
+				Set<Checkup> ceks = r.getBookedCheckups();
+				for (Checkup c : ceks) {
+					if (c.isFinished() == false) {
 						return "";
 					}
 				}
-			}	
-				clinic.getRooms().remove(r);
-				r.setClinic(null);
-				roomRepository.save(r);
-				return "Obrisano";
+			}
+			clinic.getRooms().remove(r);
+			r.setClinic(null);
+			roomRepository.save(r);
+			return "Obrisano";
 		}
-		
+
 		return "";
 	}
 

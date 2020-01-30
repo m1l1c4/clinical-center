@@ -24,7 +24,6 @@ import tim31.pswisa.model.User;
 import tim31.pswisa.security.TokenUtils;
 import tim31.pswisa.service.CheckUpService;
 import tim31.pswisa.service.ClinicAdministratorService;
-import tim31.pswisa.service.EmailService;
 import tim31.pswisa.service.UserService;
 
 @RestController
@@ -45,7 +44,7 @@ public class ClinicAdministratorController {
 	/**
 	 * This method servers for getting clinic administrator to access to his profile
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ClinicAdministratorDTO) This method returns clinic administrator
 	 * 
 	 */
@@ -67,7 +66,7 @@ public class ClinicAdministratorController {
 	/**
 	 * This method servers for getting all requests for vacation from medical worker
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<AbsenceDTO>) This method returns all requests for vacation
 	 *         from medical worker to clinic administrator who is logged
 	 * 
@@ -95,7 +94,7 @@ public class ClinicAdministratorController {
 	 * This method servers for implement acceptance or rejection for request for
 	 * vacation and sending email to medical worker about acceptance or rejection
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @param a       - absence that have to be accepted or rejected
 	 * @param reason  - reason for rejection or 'ok' if it is acceptance
 	 * @return - (String) This method returns 'ok' or 'Greska' like information
@@ -121,7 +120,7 @@ public class ClinicAdministratorController {
 	 * This method servers for getting all request for booking room for operation or
 	 * appointment sent by doctor to administrator
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<CheckupDTO>) This method returns list of request of check-up
 	 *         that have to be booked by administrator
 	 * 
@@ -139,7 +138,7 @@ public class ClinicAdministratorController {
 	 * This method servers for updating clinic administrator
 	 * 
 	 * @param ca      - new information about clinic administrator
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (ClinicAdministratorDTO) This method returns updated clinic
 	 *         administrator
 	 * 
@@ -161,7 +160,11 @@ public class ClinicAdministratorController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
-	
+	/**
+	 * This method servers reserving automatically room for appointment or operation
+	 * 
+	 * @return (void) - This method has no return value
+	 */
 	@Scheduled(cron = "${scheduleRoom.cron}")
 	public void scheuldeRoom () {
 		clinicAdministratorService.scheuldeRoomsEndDay();
