@@ -40,6 +40,10 @@ public class PatientController {
 	@Autowired
 	TokenUtils tokenUtils;
 
+	/**
+	 * Method for getting all request for registration
+	 * @return - (List<PatientDTO>) This method returns all patients that have been sent request for the registration
+	 */
 	@GetMapping(value = "/patientsRequests", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientDTO>> getNewUserRequests() {
 		List<Patient> patients = patientService.findAllByProcessed(false);
@@ -112,6 +116,11 @@ public class PatientController {
 
 	}
 
+	/**
+	 * Method for changing data in medical record
+	 * @param mr - medical record with the new data
+	 * @return - (MedicalRecor) Method returns updated medical record
+	 */
 	@PostMapping(value = "/editMedicalRecord", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalRecordDTO> editMedicalRecord(@RequestBody MedicalRecordDTO mr) {
 		MedicalRecord medicalRecord = medicalRecordService.update(mr);

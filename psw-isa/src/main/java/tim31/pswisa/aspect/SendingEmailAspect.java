@@ -10,8 +10,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import tim31.pswisa.dto.CheckupDTO;
-import tim31.pswisa.model.ClinicAdministrator;
-import tim31.pswisa.service.ClinicAdministratorService;
 
 @Component
 @Aspect

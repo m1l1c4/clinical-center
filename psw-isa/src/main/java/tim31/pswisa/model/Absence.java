@@ -31,7 +31,7 @@ public class Absence {
 	private Clinic clinicOfAbsence;
 
 	@JsonBackReference(value = "vacation")
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MedicalWorker medicalWorker;
 
 	@Column(name = "typeOfAbsence")

@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,16 +53,6 @@ public class ClinicService {
 
 	@Autowired
 	private RoomRepository roomRepository;
-
-	/**
-	 * This method servers for finding room in clinic by room id
-	 * 
-	 * @param id - id of room that has to be found
-	 * @return - (Room) This method returns found room
-	 */
-	public Room findRoomById(Long id) {
-		return clinicRepository.findRoomById(id);
-	}
 
 	/**
 	 * This method servers for finding all rooms from database
@@ -231,6 +219,11 @@ public class ClinicService {
 		return retValue;
 	}
 
+	/**
+	 * Method for creating new clinic
+	 * @param c - new clinic that has to be created
+	 * @return - (ClinicDTO) This method returns created clinic
+	 */
 	@Transactional(readOnly = false)
 	public Clinic save(ClinicDTO c) {
 		Clinic clinic = new Clinic();
@@ -501,20 +494,20 @@ public class ClinicService {
 		Clinic clinic = findOneById(clinicAdministrator.getClinic().getId());
 		Set<Room> sobe = clinic.getRooms();
 		for (Room r : sobe) {
-			if (r.getNumber() == number){
-				Set<Checkup>ceks = r.getBookedCheckups();
-				for(Checkup c:ceks) {
-					if(c.isFinished() == false) {
+			if (r.getNumber() == number) {
+				Set<Checkup> ceks = r.getBookedCheckups();
+				for (Checkup c : ceks) {
+					if (c.isFinished() == false) {
 						return "";
 					}
 				}
-			}	
-				clinic.getRooms().remove(r);
-				r.setClinic(null);
-				roomRepository.save(r);
-				return "Obrisano";
+			}
+			clinic.getRooms().remove(r);
+			r.setClinic(null);
+			roomRepository.save(r);
+			return "Obrisano";
 		}
-		
+
 		return "";
 	}
 
@@ -670,9 +663,8 @@ public class ClinicService {
 	}
 
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
-		LocalDate realDate = LocalDate.parse(date);
 		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
-
+		LocalDate realDate = LocalDate.parse(date);
 		if (mww != null) {
 			MedicalWorkerDTO mw = new MedicalWorkerDTO(mww);
 			boolean taken = false;
@@ -698,6 +690,13 @@ public class ClinicService {
 		return null;
 	}
 
+	/**
+	 * Method for adding room in the clinic at the moment of creating
+	 * @param clinic - clinic in which room will be added
+	 * @param r - room that will be added
+	 * @return - (Room) This method returns added room in clinic
+	 * 
+	 */
 	@Transactional(readOnly = false)
 	public Room addRoom(Clinic clinic, RoomDTO r) {
 		Room room = new Room();

@@ -67,6 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// /api/foo
 				.authorizeRequests().antMatchers("/register").permitAll().antMatchers("/login").permitAll()
 				.antMatchers("/api/foo").permitAll().antMatchers("/getUser").permitAll()
+				.antMatchers("/h2-console/**").permitAll()
 
 				// svaki zahtev mora biti autorizovan
 				.anyRequest().authenticated().and()
@@ -78,6 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						BasicAuthenticationFilter.class);
 
 		http.csrf().disable();
+	    http.headers().frameOptions().disable();
+
 	}
 
 	// Generalna bezbednost aplikacije

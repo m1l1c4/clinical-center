@@ -125,6 +125,11 @@ public class LoggingController {
 		}
 	}
 
+	/**
+	 * Method for adding new administrators of the clinic and clinical center
+	 * @param clinicAdministrator - informations of the administrator that will be added
+	 * @return - (User) Informations of the user that is created
+	 */
 	@PostMapping(value = "/addAdmin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> addMedicalWorker(@RequestBody ClinicAdministratorDTO clinicAdministrator) {
 		if (clinicAdministrator.getUser().getType().equals("ADMINISTRATOR")) {

@@ -19,10 +19,20 @@ public class CodebookService {
 		return codebookRepository.findAll();
 	}
 
+	/**
+	 * Method for getting one code from the codebook
+	 * @param code - code of the code that will be returned
+	 * @return - (Codebook) This method returns code that is found
+	 */
 	public Codebook findOneByCode(String code) {
 		return codebookRepository.findOneByCode(code);
 	}
 
+	/**
+	 * Method for adding new code in the codebook
+	 * @param c - code that will be added
+	 * @return - (Codebook) This method returns code that is created
+	 */
 	public Codebook save(CodebookDTO c) {
 		Codebook codebook = new Codebook();
 		codebook.setName(c.getName());
@@ -37,6 +47,11 @@ public class CodebookService {
 		return codebookRepository.save(codebook);
 	}
 
+	/**
+	 * Method for deleting code from codebook
+	 * @param code - code of the code that will be deleted
+	 * @return - (String) This method returns message about success of deleting code
+	 */
 	public void remove(String code) {
 		codebookRepository.delete(findOneByCode(code));
 	}

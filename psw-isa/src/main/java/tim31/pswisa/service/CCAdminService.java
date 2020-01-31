@@ -28,6 +28,11 @@ public class CCAdminService {
 	@Autowired
 	private AuthorityService authorityService;
 
+	/**
+	 * Method for creating new clinical center administrator
+	 * @param u - information about user, credentials, name, surname,...
+	 * @return - (ClinicalCenterAdministrator) This method returns created new clinical center administrator
+	 */
 	public ClinicalCenterAdministrator save(UserDTO u) {
 		User user = userRepository.findOneByEmail(u.getEmail());
 		if (user != null) {

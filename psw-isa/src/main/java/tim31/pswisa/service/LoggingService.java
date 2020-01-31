@@ -41,6 +41,7 @@ public class LoggingService implements UserDetailsService {
 			p.getUser().setType("PACIJENT");
 			List<Authority> auth = authService.findByname("PACIJENT");
 			p.getUser().setAuthorities(auth);
+			p.setProcessed(false);
 			patientRepo.save(p);
 		}
 
@@ -73,7 +74,8 @@ public class LoggingService implements UserDetailsService {
 		 */
 		return user;
 
-	}
+	}	
+
 	/**
 	 * method for getting user role according to email of logged user
 	 * @param email
