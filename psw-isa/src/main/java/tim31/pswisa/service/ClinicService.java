@@ -616,6 +616,7 @@ public class ClinicService {
 		return filtered;
 	}
 
+	@Transactional(readOnly = false)
 	public List<MedicalWorkerDTO> doctorsInClinic(String name, String type, String date) {
 		Clinic cl = clinicRepository.findOneByName(name);
 		List<MedicalWorkerDTO> doctors = new ArrayList<MedicalWorkerDTO>();
@@ -661,7 +662,8 @@ public class ClinicService {
 		return null;
 
 	}
-
+	
+	@Transactional(readOnly = false)
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
 		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
 		LocalDate realDate = LocalDate.parse(date);
@@ -671,7 +673,7 @@ public class ClinicService {
 			ArrayList<String> pom = new ArrayList<String>();
 			for (int i = mww.getStartHr(); i < mww.getEndHr(); i++) {
 				for (Checkup ch : mww.getCheckUps()) {
-					if (Integer.parseInt(ch.getTime()) == i && ch.getDate()==(realDate)) {
+					if (Integer.parseInt(ch.getTime()) == i && ch.getDate().toString().equals(date)) {
 						taken = true;	
 						break;
 					}

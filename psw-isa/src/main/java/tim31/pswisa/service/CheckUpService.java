@@ -7,10 +7,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +21,18 @@ import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
-import tim31.pswisa.model.User;
-import tim31.pswisa.repository.CheckUpRepository;
-
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Room;
+import tim31.pswisa.model.User;
+import tim31.pswisa.repository.CheckUpRepository;
 
 @Service
 @Transactional(readOnly = true)
 public class CheckUpService {
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
@@ -211,33 +213,55 @@ public class CheckUpService {
 	 * calls aspect for sending email to all clinical administrators
 	 * 
 	 * @input CheckupDTO ch - checkup that needs to be booked
-	 * @output boolean flag - defining wheather and request is successfully added or
+	 * @output boolean flag - defining whether request is successfully added or
 	 *         not
 	 */
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public boolean checkupToAdmin(CheckupDTO ch, String email) {
+		logger.info("slanje requesta adminu pocelo");
 		Checkup newCh = new Checkup(0, false, ch.getDate(), ch.getTime(), ch.getType(), 1, 0, null, false);
 		User u = userService.findOneByEmail(email);
 		Patient p = patientService.findOneByUserId(u.getId());
-		MedicalWorker mw = medicalWorkerService.findOneById(ch.getMedicalWorker().getId());
+		boolean ok = checkIfAvailable(ch.getMedicalWorker(), ch.getDate(), ch.getTime());
 		Clinic c = clinicService.findOneByName(ch.getClinic().getName());
 		CheckUpType chType = checkUpTypeService.findOneByName(ch.getCheckUpType().getName());
 		ArrayList<ClinicAdministrator> clAdmins = (ArrayList<ClinicAdministrator>) cladminService.findAll();
 
-		if (u == null || p == null || mw == null || c == null || clAdmins == null || chType == null) {
+		if (u == null || p == null || !ok || c == null || clAdmins == null || chType == null) {
+			logger.info("slanje requesta adminu zavrseno sa false");
 			return false;
 		} else {
 			newCh.setPatient(p);
-			newCh.getDoctors().add(mw);
+			newCh.getDoctors().add(medicalWorkerService.findOneById(ch.getMedicalWorker().getId()));
 			newCh.setClinic(c);
 			newCh.setCheckUpType(chType);
 			newCh.setPending(true);
 			newCh.setScheduled(false);
-			checkupRepository.save(newCh);
-
+			newCh.setRatedClinic(false);
+			newCh.setRatedDoctor(false);
+			save(newCh);
+			logger.info("slanje requesta adminu zavrseno sa true");
 			return true;
 		}
 
+	}
+	
+	/**
+	 * checks if given doctor is available at given time, after the request is started
+	 * @param mw
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	private boolean checkIfAvailable(MedicalWorkerDTO mw, LocalDate date, String time) {		
+		String d = date.toString();
+		MedicalWorkerDTO doc = clinicService.getSelectedDoctor((Long)mw.getId(), d);
+		HashMap<String, List<String>> timesInOneDay = doc.getAvailableCheckups();		
+		for (String t : timesInOneDay.get(d)) {
+			if (t.equals(time)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
