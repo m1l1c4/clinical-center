@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,7 @@ public class CheckUpTypeController {
 	 * @return - (String) This method returns string "Obrisano" if type is deleted
 	 *         or "Greska" can't delete that type
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/deleteType/{name}")
 	public ResponseEntity<String> deleteTypeController(@PathVariable String name, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -94,6 +96,7 @@ public class CheckUpTypeController {
 	 * @return - (CheckUpTypeDTO) This method returns added check-up type in clinic
 	 * 
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/addType", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckUpTypeDTO> addTypeController(@RequestBody CheckUpTypeDTO type,
 			HttpServletRequest request) {
