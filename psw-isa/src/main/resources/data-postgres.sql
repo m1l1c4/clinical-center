@@ -9,7 +9,7 @@ INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'pacijent2@gmail.com', 'Nikola', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Nikolic', 'PACIJENT', true, true);
 INSERT INTO korisnik(enabled, email, ime, password, prezime, type, active, first_login) VALUES (true,'pacijent3@gmail.com', 'Sinica', '$2a$10$lQF1FjXTI68iTJDo86eusO59W04bhd9LAKF8oFy.i2MjBPvVnLHV6','Sinisic', 'PACIJENT', true, true);
 
-INSERT INTO clinic( address, city, clinic_name, rating, description,country, version) VALUES ('Stepe Stepanovica', 'Foca', 'Univerzitetska bolnica', 10, 'Klinika je organizovana kao Specijalna bolnica za oftalmolgiju i Centar za refraktivnu hirurgiju.', 'Bosnia and Herzegovine' 1);
+INSERT INTO clinic( address, city, clinic_name, rating, description,country, version) VALUES ('Stepe Stepanovica', 'Foca', 'Univerzitetska bolnica', 10, 'Klinika je organizovana kao Specijalna bolnica za oftalmolgiju i Centar za refraktivnu hirurgiju.', 'Bosnia and Herzegovine', 1);
 INSERT INTO clinic( address, city, clinic_name, rating, description, country, version) VALUES ('Nikole Tesle', 'Novi Sad', 'Kosevo', 5, 'Zahvaljujući iskustvu, stručnom kadru, timskom radu, ali prije svega potpunoj predanosti i posvećenosti, obezbjeđujemo visok nivo liječenja i zdravstvene njege svim pacijentima.', 'Serbia', 1);
 
 INSERT INTO clinic_administrator(clinic_id, user_id) VALUES (1, 1);
@@ -91,4 +91,18 @@ INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (19, 1);
 INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (20, 1);
 INSERT INTO doctor_and_checkup(checkup_id, medical_worker_id) values (21, 1);
 
-
+INSERT INTO authority (name) VALUES ('ROLE_PACIJENT');
+INSERT INTO authority (name) VALUES ('ROLE_CCADMIN');
+INSERT INTO authority (name) VALUES ('ROLE_ADMIN');    
+INSERT INTO authority (name) VALUES ('ROLE_DOCTOR');
+INSERT INTO authority (name) VALUES ('ROLE_STAFF');
+ 
+INSERT INTO user_authority (user_id, authority_id) VALUES (1, 3);
+INSERT INTO user_authority (user_id, authority_id) VALUES (2, 4);
+INSERT INTO user_authority (user_id, authority_id) VALUES (3, 5);
+INSERT INTO user_authority (user_id, authority_id) VALUES (4, 4);
+INSERT INTO user_authority (user_id, authority_id) VALUES (5, 1);
+INSERT INTO user_authority (user_id, authority_id) VALUES (6, 2);
+INSERT INTO user_authority (user_id, authority_id) VALUES (7, 4);
+INSERT INTO user_authority (user_id, authority_id) VALUES (8, 1);
+INSERT INTO user_authority (user_id, authority_id) VALUES (9, 1);
