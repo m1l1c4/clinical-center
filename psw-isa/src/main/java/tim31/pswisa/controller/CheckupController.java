@@ -91,6 +91,7 @@ public class CheckupController {
 	 * @param request - information of logged user
 	 * @return - (CheckupDTO) This method returns added appointment if doctor are not busy
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/addAppointment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> addAppointmentController(@RequestBody CheckupDTO c, HttpServletRequest request) {
 		User doctorOne = userService.findOneByEmail(c.getMedicalWorker().getUser().getEmail());

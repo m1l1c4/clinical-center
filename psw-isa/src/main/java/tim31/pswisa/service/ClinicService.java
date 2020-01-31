@@ -546,7 +546,7 @@ public class ClinicService {
 	 * @param clinicAdministrator - logged clinic administrator
 	 * @return - (Room) This method returns changed room
 	 */
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	@Transactional(readOnly = false)
 	public Room changeRoom(RoomDTO room, ClinicAdministrator clinicAdministrator) {
 		Clinic klinika = findOneById(clinicAdministrator.getClinic().getId());
 		Room room1 = roomRepository.findOneByClinicIdAndNumber(klinika.getId(), room.getNumber());

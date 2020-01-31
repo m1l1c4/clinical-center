@@ -29,6 +29,7 @@ import tim31.pswisa.repository.MedicalWorkerRepository;
 import tim31.pswisa.repository.UserRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class MedicalWorkerService {
 
 	@Autowired

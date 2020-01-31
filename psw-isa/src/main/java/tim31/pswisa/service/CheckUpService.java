@@ -165,6 +165,8 @@ public class CheckUpService {
 			checkup.setDuration(1);
 			checkup.setDiscount(0);
 			checkup.setScheduled(true);
+			checkup.setRatedClinic(false);
+			checkup.setRatedDoctor(false);
 			Room room = new Room();
 			Set<Room> rooms = new HashSet<Room>();
 			Clinic clinic = new Clinic();
@@ -268,8 +270,8 @@ public class CheckUpService {
 	 * @param c - check-up with the id of the check-up that has to be updated and new informations about appointment
 	 * @return - This method returns updated check-up
 	 */
-	@Transactional(readOnly = false)
-	public Checkup update(CheckupDTO c) {
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public Checkup update(CheckupDTO c) throws Exception {
 		Checkup checkup = checkupRepository.findOneById(c.getId());
 		Room room = roomService.findOneById(c.getRoom().getId());
 		List<Checkup>temp = checkupRepository.findAllByRoomIdAndTimeAndDate(room.getId(), c.getTime(),c.getDate());
