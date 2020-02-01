@@ -1,7 +1,6 @@
 package tim31.pswisa.dto;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * made for transfering diagnose info when trying to get medical record of a patient

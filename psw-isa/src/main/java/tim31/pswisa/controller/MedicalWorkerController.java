@@ -58,7 +58,7 @@ public class MedicalWorkerController {
 	/**
 	 * This method servers for getting medical worker for update
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (MedicalWorkerDTO) This method returns updated medical worker
 	 */
 	@GetMapping(value = "/getMedicalWorker", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +79,7 @@ public class MedicalWorkerController {
 	 * This method servers for getting answer can doctor access to medical record of
 	 * patient
 	 * 
-	 * @param request -
+	 * @param request - information of logged user
 	 * @param pom     - email of patient
 	 * @return - (String) This method returns string 'da' or 'ne' depending of
 	 *         conditions
@@ -101,7 +101,7 @@ public class MedicalWorkerController {
 	 * This method servers for implement booking for patient by doctor patient
 	 * 
 	 * @param c       - check-up of patient
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (String) This method returns string ok when booking is finished
 	 */
 	@PostMapping(value = "/bookForPatient", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -123,7 +123,7 @@ public class MedicalWorkerController {
 	 * This method servers for deleting doctor in clinic by administrator
 	 * 
 	 * @param user    - doctor that have to be deleted
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (String) This method returns string after deleting, Obrisano or
 	 *         Greska
 	 */
@@ -150,7 +150,7 @@ public class MedicalWorkerController {
 	 * This method servers for finding doctor by criteria
 	 * 
 	 * @param params  - criteria for finding doctors in clinic
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (List<MedicalWorkerDTO>) This method returns list of found doctors
 	 *         in clinic
 	 */
@@ -181,7 +181,7 @@ public class MedicalWorkerController {
 	 * This method servers for updating medical worker
 	 * 
 	 * @param mw      - new information about medical worker
-	 * @param request -
+	 * @param request - information of logged user
 	 * @return - (MedicalWorkerDTO) This method returns updated medical worker
 	 */
 	@PostMapping(value = "/updateMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -197,6 +197,12 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
+	/**
+	 * Method for adding new medical worker to the clinic
+	 * 
+	 * @param mw - informations of new medical worker
+	 * @return - (MedicalWorkerDTO) This method returns created medical worker
+	 */
 	@PostMapping(value = "/addMedicalWorker", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalWorkerDTO> addMedicalWorker(@RequestBody MedicalWorkerDTO mw) {
 		MedicalWorker medicalWorker = medicalWorkerService.save(mw);
@@ -206,15 +212,26 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
-	/*@GetMapping(value = "/getRecipes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<RecipeDTO>> getRecipes() {
-		List<Recipe> recipes = recipeService.findAllByVerified(false);
+	/**
+	 * Method for getting recipes from one clinic that are not verified
+	 * 
+	 * @param request - informations of the logged user
+	 * @return - (List<RecipeDTO>) This method returns list of the not verified
+	 *         recipes
+	 */
+	@GetMapping(value = "/getRecipes", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<RecipeDTO>> getRecipes(HttpServletRequest request) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		MedicalWorker nurse = medicalWorkerService.findByUser(user.getId());
+		List<Recipe> recipes = recipeService.findAllByVerified(false, nurse);
 		List<RecipeDTO> ret = new ArrayList<RecipeDTO>();
 		for (Recipe recipe : recipes) {
 			ret.add(new RecipeDTO(recipe));
 		}
 		return new ResponseEntity<>(ret, HttpStatus.OK);
-	}*/
+	}
 
 	/*
 	 * method for searching doctors by given parameters input - String array, sent
@@ -231,6 +248,13 @@ public class MedicalWorkerController {
 		}
 	}
 
+	/**
+	 * Method for verifying recipe
+	 * 
+	 * @param request - informations of the logged user
+	 * @param id      - id of the non verified recipe
+	 * @return - (RecipeDTO) This method returns recipe after verifying
+	 */
 	@PostMapping(value = "/verifyRecipe/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RecipeDTO> verifyRecipe(@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -279,6 +303,15 @@ public class MedicalWorkerController {
 		return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 	}
 
+	/**
+	 * Method for getting all available doctors for the specified date and time
+	 * 
+	 * @param id   - id of the clinic in database
+	 * @param date - date when doctor needs to be available
+	 * @param time - time in the date when doctor needs to be available
+	 * @return - (List<MedicalWorkerDTO>) This method returns list of the medical
+	 *         workers that are available for the specified date and time
+	 */
 	@GetMapping(value = "/getAllAvailable/{id}/{date}/{time}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalWorkerDTO>> getAllAvailableDoctors(@PathVariable Long id,
 			@PathVariable String date, @PathVariable String time) {
@@ -290,6 +323,12 @@ public class MedicalWorkerController {
 		return new ResponseEntity<List<MedicalWorkerDTO>>(ret, HttpStatus.OK);
 	}
 
+	/**
+	 * Method for creating request for absence/holiday
+	 * @param absence - information of the absence that will be created
+	 * @param request - information of the logged in user that wants to send request for absence
+	 * @return - (AbsenceDTO) This method returns created absence if successful, or null if fails
+	 */
 	@PostMapping(value = "/vacationRequest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AbsenceDTO> vacationRequest(@RequestBody AbsenceDTO absence, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);

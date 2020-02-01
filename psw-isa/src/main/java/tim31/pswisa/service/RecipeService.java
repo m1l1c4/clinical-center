@@ -24,10 +24,21 @@ public class RecipeService {
 		return recipeRepository.save(r);
 	}
 
+	/**
+	 * Method for getting one recipe by code
+	 * @param code - code of the recipe in the codebook
+	 * @return - (Recipe) This method returns found recipe
+	 */
 	public Recipe findOneByCode(String code) {
 		return recipeRepository.findOneByCode(code);
 	}
 
+	/**
+	 * Method for getting recipes from one clinic
+	 * @param verified - informations if the recipe is verified or not
+	 * @param nurse - nurse from the clinic which needs to verify recipes
+	 * @return - (List<Recipe>) This method returns list of the not verified recipes
+	 */
 	public List<Recipe> findAllByVerified(Boolean verified, MedicalWorker nurse) {
 		List<Recipe> ret = new ArrayList<>();
 		List<Recipe> recipes = recipeRepository.findAllByVerified(verified);
@@ -39,10 +50,21 @@ public class RecipeService {
 		return ret;
 	}
 
+	/**
+	 * Method for getting one recipe by id
+	 * @param id - id of the recipe in the database
+	 * @return - (Recipe) This method returns found recipe
+	 */
 	public Recipe findOneById(Long id) {
 		return recipeRepository.findOneById(id);
 	}
 
+	/**
+	 * Method for verifying recipe
+	 * @param recipe - recipe that will be verified
+	 * @param nurse - nurse that wants to verify recipe
+	 * @return - (Recipe) This method returns recipe after verifying
+	 */
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public Recipe verify(Recipe recipe, MedicalWorker nurse) throws Exception{
 		recipe.setVerified(true);

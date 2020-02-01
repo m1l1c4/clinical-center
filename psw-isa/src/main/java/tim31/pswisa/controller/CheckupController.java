@@ -2,7 +2,6 @@ package tim31.pswisa.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
-import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
@@ -72,6 +71,11 @@ public class CheckupController {
 	@Autowired
 	private AbsenceService absenceService;
 
+	/**
+	 * Method for adding report after examination of patient
+	 * @param r - report that has to be added
+	 * @return - This method returns created report
+	 */
 	@PostMapping(value = "/addReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReportDTO> saveReport(@RequestBody ReportDTO r) {
 		Report report = reportService.add(r);
@@ -83,11 +87,11 @@ public class CheckupController {
 
 	/**
 	 * This method servers for adding new appointment for booking with one click
-	 * 
-	 * @param c       - check-up that have to be added
-	 * @param request -
-	 * @return - This method returns added appointment if doctor are not busy
+	 * @param c       - check-up that has to be added
+	 * @param request - information of logged user
+	 * @return - (CheckupDTO) This method returns added appointment if doctor are not busy
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/addAppointment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> addAppointmentController(@RequestBody CheckupDTO c, HttpServletRequest request) {
 		User doctorOne = userService.findOneByEmail(c.getMedicalWorker().getUser().getEmail());
@@ -110,6 +114,11 @@ public class CheckupController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
+	/**
+	 * Method for getting one check-up
+	 * @param id - if of the check-up in database
+	 * @return - This method returns found check-in
+	 */
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<CheckupDTO> getCheckup(@PathVariable Long id) {
 		Checkup checkup = checkupService.findOneById(id);
@@ -119,6 +128,11 @@ public class CheckupController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
+	/**
+	 * Method for creating recipes after examination of the patient
+	 * @param recipes - codes of the selected codes from the codebook
+	 * @return - This method returns message if all recipes are created successfully
+	 */
 	@PostMapping(value = "/addRecipes/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addRecipes(@RequestBody String[] recipes, @PathVariable Long id) {
 		Report report = reportService.findOneById(id);
@@ -130,7 +144,7 @@ public class CheckupController {
 		}
 		return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
 	}
-
+	
 	@PostMapping(value = "/checkupRequest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReportDTO> checkupRequest(@RequestBody CheckupDTO ch, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -142,6 +156,12 @@ public class CheckupController {
 		}
 	}
 
+
+	/**
+	 * Method for changing check-up after finding a room, date and time for the appointment/operation by clinic administrator
+	 * @param c - check-up with the id of the check-up that has to be updated and new informations about appointment
+	 * @return - This method returns updated check-up
+	 */
 	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> updateCheckup(@RequestBody CheckupDTO c) {
 		Checkup checkup;
@@ -162,6 +182,12 @@ public class CheckupController {
 		
 	}
 
+	/**
+	 * Method for adding doctors which clinic administrator has selected to must attend the operation 
+	 * @param doctors - id's of the doctors which will be assigned to operation
+	 * @param id - id of the check-up in the database
+	 * @return - This method returns message about success of adding doctors to check-up
+	 */
 	@PostMapping(value = "/addDoctors/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addDoctors(@RequestBody Long[] doctors, @PathVariable Long id) {
 		Checkup checkup;
@@ -178,16 +204,30 @@ public class CheckupController {
 		}
 	}
 
-	/*@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CheckupDTO>> getCheckups(@PathVariable Long id) {
-		Set<Checkup> checkups = medicalWorkerService.getAllCheckups(id);
+	/**
+	 * Method for getting all check-ups of the logged in user
+	 * @param request - request for getting logged in user
+	 * @param id - id of the room if logged in user is administrator of clinic
+	 * @return - This method returns all check-ups of the logged in user
+	 */
+	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<CheckupDTO>> getCheckups(HttpServletRequest request, @PathVariable Long id) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		User user = userService.findOneByEmail(email);
+		Set<Checkup> checkups = checkupService.getAllCheckups(user, id);
 		List<CheckupDTO> ret = new ArrayList<>();
 		for (Checkup c : checkups) {
 			ret.add(new CheckupDTO(c));
 		}
 		return new ResponseEntity<List<CheckupDTO>>(ret, HttpStatus.OK);
-	}*/
+	}
 
+	/**
+	 * Method for getting all absences of one medical worker
+	 * @param id - id of the medical worker in the database
+	 * @return - This method returns all absences and holidays of the one medical worker
+	 */
 	@PostMapping(value = "/getVacations/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AbsenceDTO>> getVacations(@PathVariable Long id) {
 		List<Absence> absences = absenceService.findAllByMedicalWorkerId(id);
@@ -197,7 +237,7 @@ public class CheckupController {
 		}
 		return new ResponseEntity<List<AbsenceDTO>>(ret, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/getAllQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CheckupDTO>> getAllQuickApp(@PathVariable Long id) {
 		List<CheckupDTO> checkups = checkupService.getAllQuicks(id);
@@ -206,14 +246,15 @@ public class CheckupController {
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}
-	
+
 	/**
-	 * method for booking predefined checkup 
+	 * method for booking predefined checkup
+	 * 
 	 * @param id - key for finding available checkup
 	 * @return string - message for successful / unsuccessful booking
 	 */
-	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	//@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('ROLE_PACIJENT')")
+	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)	
 	public ResponseEntity<String> bookQuickApp(@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
@@ -256,6 +297,24 @@ public class CheckupController {
 			return new ResponseEntity<>("confirmed", HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+	}
+
+	/**
+	 * method for getting scheduled check-up for today for logged doctor and
+	 * selected patient
+	 * 
+	 * @param id - key of the user of patient
+	 * @return CheckupDTO - found check-up if exist, else null
+	 */
+	@GetMapping(value = "/getCheckup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<CheckupDTO> getCheckup(HttpServletRequest request, @PathVariable Long id) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		CheckupDTO checkup = checkupService.findCheckup(email, id);
+		if (checkup == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<CheckupDTO>(checkup, HttpStatus.OK);
 	}
 
 }

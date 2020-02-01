@@ -1,5 +1,7 @@
 package tim31.pswisa.service;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
@@ -9,10 +11,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.AbsenceDTO;
-import tim31.pswisa.model.Absence;
 import tim31.pswisa.dto.CheckupDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.PatientDTO;
+import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
@@ -32,7 +34,7 @@ public class EmailService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
 
@@ -45,25 +47,42 @@ public class EmailService {
 	@Autowired
 	private AbsenceRepository absenceRepository;
 
+	@Autowired
+	private CheckUpService checkupService;
+
+	@Autowired
+	private PatientService patientService;
+
+	/**
+	 * Method for sending confirmation email to the patient which sent request for
+	 * registration
+	 * 
+	 * @param email - the email of the patient
+	 * @param text - the reason of the rejection (if the request has been rejected)
+	 * @return - (String) Confirmation that email has been sent successfully
+	 */
 	@Async
 	public void sendAccountConfirmationEmail(String email, String text) throws MailException, InterruptedException {
 		System.out.println("Sending email...");
 		User u = userService.findOneByEmail(email);
+		Patient p = patientService.findOneByUserId(u.getId());
 		String path = "http://localhost:3000/activateAccount/" + u.getId();
-		
+
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
 		msg.setSubject("Account confirmation");
-		if (text.equals("approved"))
+		if (text.equals("approved")) {
 			msg.setText("Please confirm your Clinical center account by clicking on link below. \n\n" + path
 					+ "\n\nAdministration team");
-		else
+		} else {
 			msg.setText(
 					"Your request for registration to Clinical center can't be approved. The reason for rejection is:\n\n"
 							+ text + "\n\nAdministration team");
+		}
 		javaMailSender.send(msg);
-
+		p.setProcessed(true);
+		patientService.save(p);
 		System.out.println("Email sent.");
 	}
 
@@ -142,17 +161,57 @@ public class EmailService {
 
 	}
 
+	/**
+	 * Method for sending email to the patient after changing the date of the operation
+	 * @param id - id of the check-up in the database with the new time and date informations
+	 * @return - (String) Confirmation that email has been sent successfully
+	 */
 	@Async
-	public void sendChangeDate(Patient patient, CheckupDTO c) {
+	public void sendChangeDate(Long id) {
+		Checkup c = checkupService.findOneById(id);
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
 		msg.setSubject("Account confirmation");
-		msg.setText("Your operation was resheduled for " + c.getDate().toString() + " " + c.getTime() + " in the room ."
+		msg.setText("Your operation has been resheduled for " + c.getDate().toString() + " " + c.getTime() + " in the room ."
 				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
+		javaMailSender.send(msg);
 		System.out.println("Email sent.");
 	}
-	
+
+	/**
+	 * Method for sending email to the doctors after reserving a room for the appointment/operation
+	 * @param id - id of the check-up in the database with the all necessary informations
+	 * @return - (String) Confirmation that email has been sent successfully
+	 */
+	@Async
+	public void notifyDoctor(Long id) {
+		Checkup c = checkupService.findOneById(id);
+		Set<MedicalWorker> doctors = c.getDoctors();
+		SimpleMailMessage msg = new SimpleMailMessage();
+
+		if (c.getTip().equals("PREGLED")) {
+			sendEmailToDoctorAndPatient(new CheckupDTO(c));
+		} else {
+			for (MedicalWorker doctor : doctors) {
+				msg.setTo("pswisa.tim31.2019@gmail.com");
+				msg.setFrom(env.getProperty("spring.mail.username"));
+				msg.setSubject("Operation");
+				msg.setText("To " + doctor.getUser().getName() + " " + doctor.getUser().getSurname()+ "\nYou must attend an operation on " + c.getDate().toString() + " " + c.getTime()
+						+ " in the room ." + c.getRoom().getName() + " number: " + c.getRoom().getNumber());
+				javaMailSender.send(msg);
+			}
+		}
+		System.out.println("Email sent.");
+	}
+
+	/**
+	 * This method servers for sending email to medical workers and patients at the
+	 * end of day to notify when they have appointment or operation
+	 * 
+	 * @param c   - check-up that has all required information
+	 * @return - (void) This method has no return value
+	 */
 	@Async
 	public void sendEmailToDoctorAndPatient(CheckupDTO c) {
 		MedicalWorkerDTO mw = c.getMedicalWorker();
@@ -166,40 +225,48 @@ public class EmailService {
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
 		msg.setSubject("Notification for doctor");
-		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + 
-		"\nDate: " + c.getDate() +"  "+ 
-		"\nTime: " + c.getTime() +"h "+
-		"\nRoom: " + c.getRoom().getName() + " " + c.getRoom().getNumber() + 
-		"\nPatient: " + c.getPatient().getUser().getName() + " " + c.getPatient().getUser().getSurname() + " " );
+		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + "\nDate: " + c.getDate() + "  " + "\nTime: "
+				+ c.getTime() + "h " + "\nRoom: " + c.getRoom().getName() + " " + c.getRoom().getNumber()
+				+ "\nPatient: " + c.getPatient().getUser().getName() + " " + c.getPatient().getUser().getSurname()
+				+ " ");
 		javaMailSender.send(msg);
 		System.out.println("Email sent.");
 
 		System.out.println("Sending email...");
 		msg.setSubject("Notification for patient");
-		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + 
-				"\nDate: " + c.getDate() +"  "+ 
-				"\nTime: " + c.getTime() +"h  "+
-				"\nDoctor: " + c.getMedicalWorker().getUser().getName() + " " + c.getMedicalWorker().getUser().getSurname() + " " +
-				"\nSpecialization: " + c.getMedicalWorker().getType() + " " + 
-				"\nConfirmation: " + path );
+		msg.setText("\nYou have scheduled " + c.getType() + " " + "for: " + "\nDate: " + c.getDate() + "  " + "\nTime: "
+				+ c.getTime() + "h  " + "\nDoctor: " + c.getMedicalWorker().getUser().getName() + " "
+				+ c.getMedicalWorker().getUser().getSurname() + " " + "\nSpecialization: "
+				+ c.getMedicalWorker().getType() + " " + "\nConfirmation: " + path);
 		javaMailSender.send(msg);
 		System.out.println("Email sent.");
 
 	}
-	
+
+  /**
+   * Method for sending email to the patient after reserving a room for the operation
+	 * @param id - id of the check-up in the database with the all necessary informations
+	 * @return - (String) Confirmation that email has been sent successfully
+	 */
 	@Async
-	public void notifyDoctor(Long id, Checkup c) {
-		MedicalWorker medicalWorker = medicalWorkerService.findOneById(id);
+	public void notifyPatient(Long id) {
+		Checkup c = checkupService.findOneById(id);
 		SimpleMailMessage msg = new SimpleMailMessage();
+
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
-		msg.setSubject("Account confirmation");
-		msg.setText("You must attend operatin on " + c.getDate().toString() + " " + c.getTime() + " in the room ."
-				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
+		msg.setSubject("Appointment");
+		msg.setText("Your operation has been scheduled for " + c.getDate().toString() + " " + c.getTime()
+				+ "h in the room ." + c.getRoom().getName() + " number: " + c.getRoom().getNumber());
+
+		javaMailSender.send(msg);
 		System.out.println("Email sent.");
 	}
+
 	/**
-	 * method for sending email to patient after successfully booked predefined appointment
+	 * method for sending email to patient after successfully booked predefined
+	 * appointment
+	 * 
 	 * @param email
 	 * @param text
 	 * @throws MailException
@@ -207,20 +274,18 @@ public class EmailService {
 	 */
 	@Async
 	public void quickAppConfirmationEmail(String email, Checkup checkup) throws MailException, InterruptedException {
-		User u = userService.findOneByEmail(email);	
+		User u = userService.findOneByEmail(email);
 		String text = "";
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
 		msg.setSubject("Booking checkup confirmation");
-		MedicalWorker doc = (MedicalWorker) checkup.getDoctors().toArray()[0] ;
+		MedicalWorker doc = (MedicalWorker) checkup.getDoctors().toArray()[0];
 		text = "We announce you that you successfully booked medical appointment for " + checkup.getDate();
-		text += "\nCheckup details: \n"
-				+ "Date and time: " + checkup.getDate() + " " + checkup.getTime() + "h\n"
+		text += "\nCheckup details: \n" + "Date and time: " + checkup.getDate() + " " + checkup.getTime() + "h\n"
 				+ "Clinic: " + checkup.getClinic().getName() + ", " + checkup.getClinic().getAddress() + "\n"
-				+ "Doctor: " + doc.getUser().getName() + "\n" 
-				+ "Room: " + checkup.getRoom().getName() + "\n" 
-				+ "Price: " + checkup.getPrice() ;
+				+ "Doctor: " + doc.getUser().getName() + "\n" + "Room: " + checkup.getRoom().getName() + "\n"
+				+ "Price: " + checkup.getPrice();
 		msg.setText(text);
 		javaMailSender.send(msg);
 
