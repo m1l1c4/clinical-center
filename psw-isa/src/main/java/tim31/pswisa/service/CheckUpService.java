@@ -333,27 +333,28 @@ public class CheckUpService {
 		return ret;
 	}
 
-	@Transactional(readOnly = false)
+	/** books choosen quick checkup for patient
+	 * 
+	 * @param id - checkup id
+	 * @param email - user email, used for finding patient
+	 * @return (boolean) flag - defines whether a checkup is successfully booked or not
+	 */
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public boolean bookQuickApp(Long id, String email) {
 		boolean ret = true;
 		Checkup foundCheckup = checkupRepository.findOneById(id);
-		if (foundCheckup == null) {
+		if (foundCheckup == null || foundCheckup.getPatient() != null) {	//if checkup has patient than it's already booked
 			ret = false;
 		} else {
 			User u = userService.findOneByEmail(email);
 			Patient p = patientService.findOneByUserId(u.getId());
-			foundCheckup.setPatient(p);
-			double price = foundCheckup.getPrice() - foundCheckup.getPrice() * (foundCheckup.getDiscount() / 100);
-			foundCheckup.setPrice(price); // when checkup is finished, set price to previous without discount
+			foundCheckup.setPatient(p);			
 			checkupRepository.save(foundCheckup); // because of adding patient to checkup
-
 			try {
 				emailService.quickAppConfirmationEmail(email, foundCheckup);
-			} catch (MailException e) {
-				// TODO Auto-generated catch block
+			} catch (MailException e) {				
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+			} catch (InterruptedException e) {				
 				e.printStackTrace();
 			}
 			ret = true;
