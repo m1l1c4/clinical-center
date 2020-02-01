@@ -81,6 +81,11 @@ public class RoomService {
 		return roomRepository.findOneByClinicIdAndNumber(clinicId, number);
 	}
 
+	/**
+	 * Method returns all available rooms for date of the check-up from one clinic with the chosen type of check-up (operation/appointment)
+	 * @param id - id of the check-up in database
+	 * @return - (List<RoomDTO>) This method returns rooms in clinic by type of the check-up
+	 */
 	public List<Room> findAllByClinicIdAndTypeRoom(Long id) {
 		Checkup checkup = checkUpService.findOneById(id);
 		List<Room> rooms = roomRepository.findAllByClinicIdAndTipRoom(checkup.getClinic().getId(), checkup.getTip());
@@ -101,6 +106,11 @@ public class RoomService {
 		return ret;
 	}
 
+	/**
+	 * Method returns all available terms of the room for selected date and time
+	 * @param id - id of the room in database
+	 * @return - (ArrayList<Integer>) This method returns list of the available terms
+	 */
 	public ArrayList<Integer> findRoomAvailability(Long id, String date) {
 		List<Checkup> checkups = checkUpService.findAllByRoomIdAndScheduledAndDate(id, true, LocalDate.parse(date));
 		ArrayList<Integer> ret = new ArrayList<>();

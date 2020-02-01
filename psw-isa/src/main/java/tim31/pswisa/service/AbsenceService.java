@@ -1,12 +1,14 @@
 package tim31.pswisa.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.model.Absence;
+import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.repository.AbsenceRepository;
@@ -60,14 +62,32 @@ public class AbsenceService {
 		return abesenceRepository.findAllByClinicOfAbsenceId(id);
 	}
 
+	/**
+	 * Method for finding all absences and holidays of one medical worker
+	 * @param id - id, key of the medical worker
+	 * @return - (List<Absence>) This method returns list of absences of one medical worker
+	 */
 	public List<Absence> findAllByMedicalWorkerId(Long id) {
 		return abesenceRepository.findAllByMedicalWorkerId(id);
 	}
 
+	/**
+	 * Method for creating request for absence/holiday
+	 * @param a - information of the absence that will be created
+	 * @param mw - medical worker which want to send request for absence
+	 * @return - (Absence) This method returns created absence if successful, or null if fails
+	 */
 	public Absence create(AbsenceDTO a, MedicalWorker mw) {
 		Absence absence = new Absence();
 		absence.setAccepted("SENT");
 		Clinic clinic = clinicRepository.getOne(mw.getClinic().getId());
+		Set<Checkup> checkups = mw.getCheckUps();
+		for (Checkup c : checkups) {
+			if ((a.getStartVacation().isBefore(c.getDate()) || a.getStartVacation().isEqual(c.getDate()))
+					&& (a.getEndVacation().isAfter(c.getDate()) || a.getEndVacation().isEqual(c.getDate()))) {
+				return null;
+			}
+		}
 		absence.setClinicOfAbsence(clinic);
 		absence.setEndVacation(a.getEndVacation());
 		absence.setStartVacation(a.getStartVacation());

@@ -13,9 +13,27 @@ import tim31.pswisa.model.Checkup;
 
 public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 
+	/**
+	 * This method servers for finding all check-ups by scheduled, medical worker id and date
+	 * 
+	 * @param scheduled - is appointment or operation scheduled
+	 * @param id       - id of medical worker
+	 * @param date  - date of check-ups
+	 * @return - (Set<CheckupDTO>) This method returns set of check-up by sent parameters
+	 * 
+	 */
 	@Query("select c from Checkup c inner join c.doctors d where d.id = :id and c.scheduled = :scheduled and c.date = :date")
 	Set<CheckupDTO> findAllByScheduledAndMedicalWorkerIdAndDate(@Param("scheduled") boolean scheduled, @Param("id") Long id, @Param("date") LocalDate date);
 	
+	/**
+	 * This method servers for finding all check-ups by scheduled, medical worker id and finished parametar
+	 * 
+	 * @param scheduled - is appointment or operation scheduled
+	 * @param id       - id of medical worker
+	 * @param finished  - is appointment or operation finished or not
+	 * @return - (Set<CheckupDTO>) This method returns set of check-up by sent parameters
+	 * 
+	 */
 	@Query("select c from Checkup c inner join c.doctors d where d.id = :id and c.scheduled = :scheduled and c.finished = :finished")
 	Set<CheckupDTO> findAllByScheduledAndMedicalWorkerIdAndFinished(@Param("scheduled") boolean scheduled, @Param("id") Long id, @Param("finished") boolean finished);
 
@@ -49,7 +67,6 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 * @param id - check-up id that has to be returned
 	 * @return - (Checkup) This method returns one check-up
 	 */
-
 	Checkup findOneById(Long id);
 
 	/**
@@ -72,7 +89,34 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 */
 	List<Checkup> findAllByScheduled(boolean ok);
 
+	/**
+	 * Method for finding all check-ups by room id, scheduled and date
+	 * 
+	 * @param id        - key of the room
+	 * @param scheduled - is scheduled
+	 * @param date      - date of the check-ups
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
 	List<Checkup> findAllByRoomIdAndScheduledAndDate(Long id, boolean scheduled, LocalDate date);
 
+	/**
+	 * Method for finding all check-ups by room id, scheduled and date
+	 * 
+	 * @param time - time of the defined check-up
+	 * @param date - date of the check-ups
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
 	List<Checkup> findAllByTimeAndDate(String time, LocalDate date);
+
+	/**
+	 * Method for finding all check-ups by room id, scheduled and date
+	 * 
+	 * @param scheduled - is scheduled
+	 * @param date      - date of the check-ups
+	 * @param id        - key of the patient
+	 * @param type      - type of the check-up (operation/appointment)
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
+	List<Checkup> findAllByScheduledAndDateAndPatientIdAndTip(boolean scheduled, LocalDate date, Long id, String type);
+
 }

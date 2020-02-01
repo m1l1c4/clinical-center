@@ -67,6 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// /api/foo
 				.authorizeRequests().antMatchers("/register").permitAll().antMatchers("/login").permitAll()
 				.antMatchers("/api/foo").permitAll().antMatchers("/getUser").permitAll()
+				.antMatchers("/h2-console/**").permitAll()
 
 				// svaki zahtev mora biti autorizovan
 				.anyRequest().authenticated().and()
@@ -78,6 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						BasicAuthenticationFilter.class);
 
 		http.csrf().disable();
+	    http.headers().frameOptions().disable();
+
 	}
 
 	// Generalna bezbednost aplikacije
@@ -89,7 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/updateAdministrator", "/clinic/updateClinic", "/sendConfirm", "/addMedicalWorker", "/activateEmail/*",
 
 				"/checkup/addReport", "/clinic/addRoom", "/clinic/deleteRoom", "/checkUpType/deleteType/*", "/checkup/getAllQuickApp/**" ,
-				"/checkup/bookQuickApp/*",
+				
 				"/checkup/addAppointment", "/checkUpType/addType", "/clinic/searchClinic", "/searchDoctors", "/clinic/getSelectedDoctor" ,
 				"/clinic/clinicDoctors", "/clinic/filterClinic/**", "/clinic/addRooms/*", "/editPatient", "/checkup/checkupRequest" ,
 				"/changePassword", "/checkup/addRecipes/*", "/verifyRecipe/*", "/clinic/filterRooms", "/clinic/allDocsOneClinic/**" ,
