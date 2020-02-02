@@ -75,6 +75,7 @@ public class CheckUpTypeController {
 	 * @return - (ArrayList<CheckUpTypeDTO>) This method returns list of all
 	 *         check-ups type in clinic if user is not null
 	 */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_DOCTOR', 'ROLE_PACIJENT', 'ROLE_CCADMIN', 'ROLE_STAFF')")
 	@GetMapping(value = "/getTypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<CheckUpTypeDTO>> getTypes(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);

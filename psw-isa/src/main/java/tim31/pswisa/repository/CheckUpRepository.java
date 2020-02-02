@@ -37,6 +37,15 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	@Query("select c from Checkup c inner join c.doctors d where d.id = :id and c.scheduled = :scheduled and c.finished = :finished")
 	Set<CheckupDTO> findAllByScheduledAndMedicalWorkerIdAndFinished(@Param("scheduled") boolean scheduled, @Param("id") Long id, @Param("finished") boolean finished);
 
+	/**
+	 * This method servers for finding all check-ups by scheduled, medical worker id and finished parametar
+	 * 
+	 * @param roomId - id of room
+	 * @param time       - time of check-up
+	 * @param date  - date of check-up
+	 * @return - (Check-up) This method one check-up by sent parameters
+	 * 
+	 */
 	Checkup findOneByRoomIdAndTimeAndDate(Long roomId, String time, LocalDate date);
 	/**
 	 * This method servers for getting all check-ups from database by room id
