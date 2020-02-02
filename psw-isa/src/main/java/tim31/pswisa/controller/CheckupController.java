@@ -253,14 +253,14 @@ public class CheckupController {
 	 * @param id - key for finding available checkup
 	 * @return string - message for successful / unsuccessful booking
 	 */
-	@PreAuthorize("hasRole('ROLE_PACIJENT')")
+	//@PreAuthorize("hasRole('ROLE_PACIJENT')")
 	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)	
 	public ResponseEntity<String> bookQuickApp(@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		boolean success = checkupService.bookQuickApp(id, email);
 		if (success) {
-			return new ResponseEntity<>("Uspešno zakazivanje pregleda", HttpStatus.OK);
+			return new ResponseEntity<>("Uspesno zakazivanje pregleda", HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}

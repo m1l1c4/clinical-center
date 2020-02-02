@@ -345,7 +345,7 @@ public class CheckUpService {
 		if (foundCheckup == null) {
 			ret = false;
 		} else {
-			User u = userService.findOneByEmail(email);
+			User u = userService.findOneByEmail(email); 
 			Patient p = patientService.findOneByUserId(u.getId());
 			foundCheckup.setPatient(p);
 			double price = foundCheckup.getPrice() - foundCheckup.getPrice() * (foundCheckup.getDiscount() / 100);
