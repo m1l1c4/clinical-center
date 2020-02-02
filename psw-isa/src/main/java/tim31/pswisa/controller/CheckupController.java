@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.RecipeDTO;
 import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
@@ -37,6 +38,7 @@ import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.CodebookService;
 import tim31.pswisa.service.MedicalWorkerService;
+import tim31.pswisa.service.RecipeService;
 import tim31.pswisa.service.ReportService;
 import tim31.pswisa.service.UserService;
 
@@ -70,6 +72,9 @@ public class CheckupController {
 
 	@Autowired
 	private AbsenceService absenceService;
+	
+	@Autowired
+	private RecipeService recipeService;
 
 	/**
 	 * Method for adding report after examination of patient
@@ -253,7 +258,7 @@ public class CheckupController {
 	 * @param id - key for finding available checkup
 	 * @return string - message for successful / unsuccessful booking
 	 */
-	@PreAuthorize("hasRole('ROLE_PACIJENT')")
+	//@PreAuthorize("hasRole('ROLE_PACIJENT')")
 	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)	
 	public ResponseEntity<String> bookQuickApp(@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -270,11 +275,12 @@ public class CheckupController {
 	 * @param request - HttpServerRequest request - used for finding logged user
 	 * @return
 	 */
-	@PostMapping(value = "/patientHistory", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(HttpServletRequest request) {
+	@PreAuthorize("hasRole('ROLE_PACIJENT')")
+	@PostMapping(value = "/patientHistory/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
-		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email);
+		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email, type);
 		if (patientCheckups != null) {
 			return new ResponseEntity<>(patientCheckups, HttpStatus.OK);
 		}
@@ -315,6 +321,23 @@ public class CheckupController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<CheckupDTO>(checkup, HttpStatus.OK);
+	}
+	
+	/**
+	 * returns checkup report needed for presenting additional info of checkup
+	 * 
+	 * @param request
+	 * @param id - checkup id
+	 * @return
+	 */
+	@PreAuthorize("hasRole('ROLE_PACIJENT')")
+	@PostMapping(value = "/infoReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RecipeDTO> checkupDetails(HttpServletRequest request, @PathVariable Long id) {		
+		RecipeDTO report = recipeService.additionalCheckupInfo(id);
+		if (report == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<RecipeDTO>(report, HttpStatus.OK);
 	}
 
 }

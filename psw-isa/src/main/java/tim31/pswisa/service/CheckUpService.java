@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,6 +102,7 @@ public class CheckUpService {
 	 * @param id - id of check-up
 	 * @return - (Checkup) This method returns all absence from database
 	 */
+	@Transactional(readOnly = false)
 	public Checkup findOneById(Long id) {
 		return checkupRepository.findOneById(id);
 	}
@@ -218,9 +220,9 @@ public class CheckUpService {
 	 * @output boolean flag - defining whether request is successfully added or
 	 *         not
 	 */
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ)
 	public boolean checkupToAdmin(CheckupDTO ch, String email) {
-		logger.info("slanje requesta adminu pocelo");
+		logger.info("slanje requesta adminu pocelo " + email);
 		Checkup newCh = new Checkup(0, false, ch.getDate(), ch.getTime(), ch.getType(), 1, 0, null, false);
 		User u = userService.findOneByEmail(email);
 		Patient p = patientService.findOneByUserId(u.getId());
@@ -230,7 +232,7 @@ public class CheckUpService {
 		ArrayList<ClinicAdministrator> clAdmins = (ArrayList<ClinicAdministrator>) cladminService.findAll();
 
 		if (u == null || p == null || !ok || c == null || clAdmins == null || chType == null) {
-			logger.info("slanje requesta adminu zavrseno sa false");
+			logger.info("slanje requesta adminu zavrseno sa false" + email);
 			return false;
 		} else {
 			newCh.setPatient(p);
@@ -242,7 +244,7 @@ public class CheckUpService {
 			newCh.setRatedClinic(false);
 			newCh.setRatedDoctor(false);
 			save(newCh);
-			logger.info("slanje requesta adminu zavrseno sa true");
+			logger.info("slanje requesta adminu zavrseno sa true" + email);
 			return true;
 		}
 
@@ -347,8 +349,10 @@ public class CheckUpService {
 			return checkupRepository.save(checkup);
 		}
 	}
-
+	
+	
 	public List<CheckupDTO> getAllQuicks(Long id) {
+		logger.info("POCELO DOBAVLJANJE SVIH BRZIH");
 		List<MedicalWorker> doctors = medicalWorkerService.findAllDoctors("DOKTOR", id);
 		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
 		for (MedicalWorker mw : doctors) {
@@ -358,7 +362,7 @@ public class CheckUpService {
 				}
 			}
 		}
-
+		logger.info("ZAVRSENO DOBAVLJANJE SVIH BRZIH");
 		return ret;
 	}
 
@@ -370,13 +374,15 @@ public class CheckUpService {
 	 */
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public boolean bookQuickApp(Long id, String email) {
+		logger.info("POCEO SA ZAKAZIVANJEM BRZOG" + email);
 		boolean ret = true;
+		User u = userService.findOneByEmail(email);
+		Patient p = patientService.findOneByUserId(u.getId());
 		Checkup foundCheckup = checkupRepository.findOneById(id);
-		if (foundCheckup == null || foundCheckup.getPatient() != null) {	//if checkup has patient than it's already booked
+		if (foundCheckup == null || foundCheckup.getPatient() != null || p == null) {	//if checkup has patient than it's already booked
+			logger.info("NEUSPESNO ZAKAZIVANJE" + email);
 			ret = false;
-		} else {
-			User u = userService.findOneByEmail(email);
-			Patient p = patientService.findOneByUserId(u.getId());
+		} else {			
 			foundCheckup.setPatient(p);			
 			checkupRepository.save(foundCheckup); // because of adding patient to checkup
 			try {
@@ -386,6 +392,7 @@ public class CheckUpService {
 			} catch (InterruptedException e) {				
 				e.printStackTrace();
 			}
+			logger.info("USPESNO ZAKAZIVANJE" + email);
 			ret = true;
 		}
 
@@ -448,29 +455,44 @@ public class CheckUpService {
 		return null;
 	}
 
-	
-	public HashMap<Integer, List<CheckupDTO>> getPatientCheckups(String email) {
+	/**
+	 * returns patient's checkups depending on type (PREGLED / OPERACIJA)
+	 * 
+	 * @param email - patient's email
+	 * @param type - type of checkup
+	 * @return
+	 */
+	public HashMap<Integer, List<CheckupDTO>> getPatientCheckups(String email, String type) {
 		User loggedUser = userService.findOneByEmail(email);
 		HashMap<Integer, List<CheckupDTO>> ret = new HashMap<Integer, List<CheckupDTO>>(2);
+		List<CheckupDTO> incomingCheckups = new ArrayList<CheckupDTO>();
+		List<CheckupDTO> historyCheckups = new ArrayList<CheckupDTO>();
 		if (loggedUser == null) {
 			return null;
 		}
 		Patient loggedPatient = patientService.findOneByUserId(loggedUser.getId());
 		if (loggedPatient == null) {
 			return null;
-		}
-		List<CheckupDTO> incomingCheckups = getIncomingChps(loggedPatient);
-		List<CheckupDTO> historyCheckups = getChpsFromPast(loggedPatient);
+		}		
+		incomingCheckups = getIncomingChps(loggedPatient, type);
+		historyCheckups = getChpsFromPast(loggedPatient, type);			
 		ret.put(1, incomingCheckups);
 		ret.put(2, historyCheckups);
 		
 		return ret;
 	}
 	
-	private List<CheckupDTO> getIncomingChps(Patient p) {
+	/**
+	 * returns all future checkups depending on type
+	 * @param p
+	 * @param type
+	 * @return
+	 */
+	private List<CheckupDTO> getIncomingChps(Patient p, String type) {
 		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
 		for (Checkup checkup : p.getAppointments()) {
-			if (checkup.getDate().isAfter(LocalDate.now()) && checkup.isScheduled() ) {
+			if (checkup.getDate().isAfter(LocalDate.now()) && checkup.isScheduled() 
+					&& checkup.getTip().equals(type) ) {
 				CheckupDTO temp = new CheckupDTO(checkup);
 				MedicalWorker doctor = patientService.findDoctor(checkup);
 				if (doctor != null) {
@@ -482,10 +504,16 @@ public class CheckUpService {
 		return ret;
 	}
 	
-	private List<CheckupDTO> getChpsFromPast(Patient p) {
+	/**
+	 * returns all previous checkups depending on type
+	 * @param p
+	 * @param type
+	 * @return
+	 */
+	private List<CheckupDTO> getChpsFromPast(Patient p, String type) {
 		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
 		for (Checkup checkup : p.getAppointments()) {
-			if (checkup.getDate().isBefore(LocalDate.now())) {
+			if (checkup.getDate().isBefore(LocalDate.now()) && checkup.getTip().equals(type)) {
 				CheckupDTO temp = new CheckupDTO(checkup);
 				MedicalWorker doctor = patientService.findDoctor(checkup);
 				if (doctor != null) {

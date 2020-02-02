@@ -75,7 +75,7 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 
 	@Lock(LockModeType.PESSIMISTIC_READ)	// dodato za pesimisticko zaklj zakazivanja brzog pregleda
 	@Query("select ch from Checkup ch where ch.id = :id")
-	@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="0")})
+	//@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="0")})
 	Checkup findOneById(@Param("id")Long id);
 
 

@@ -8,8 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import tim31.pswisa.dto.RecipeDTO;
+import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Recipe;
+import tim31.pswisa.model.Report;
+import tim31.pswisa.model.User;
 import tim31.pswisa.repository.RecipeRepository;
 
 @Service
@@ -18,6 +23,15 @@ public class RecipeService {
 
 	@Autowired
 	private RecipeRepository recipeRepository;
+	
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private PatientService patientService;
+	
+	@Autowired
+	private CheckUpService checkupService;
 
 	@Transactional(readOnly = false)
 	public Recipe save(Recipe r) {
@@ -71,4 +85,20 @@ public class RecipeService {
 		recipe.setNurse(nurse);
 		return recipeRepository.save(recipe);
 	}
+	
+	@Transactional(readOnly = false)
+	public RecipeDTO additionalCheckupInfo(Long id) {		
+		Checkup ch = checkupService.findOneById(id);
+		if (ch.getReport() == null) {
+			return null;
+		}
+		Recipe found = findOneByReportId(ch.getReport().getId());
+		return new RecipeDTO(found);		
+	}
+	
+	public Recipe findOneByReportId(Long id) {
+		return recipeRepository.findOneByReportId(id);
+	}
+	
+	
 }
