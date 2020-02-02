@@ -632,8 +632,7 @@ public class ClinicService {
 					}
 					if (counter < 7) {
 						MedicalWorkerDTO mw = new MedicalWorkerDTO(medicalWorker);
-						doctors.add(mw);
-						// break;
+						doctors.add(mw);						
 					}
 				}
 				counter = 0;
