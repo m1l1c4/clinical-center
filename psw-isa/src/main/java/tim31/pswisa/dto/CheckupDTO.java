@@ -12,7 +12,7 @@ public class CheckupDTO {
 	private boolean scheduled;
 	private LocalDate date;
 	private String time;
-	private String type;			// appointment or operation
+	private String type; // appointment or operation
 	private int duration;
 	private double price;
 	private RoomDTO room;
@@ -22,26 +22,30 @@ public class CheckupDTO {
 	private CheckUpTypeDTO checkUpType;
 	private boolean finished;
 
-
-	public CheckupDTO(Checkup c) {		
+	public CheckupDTO(Checkup c) {
 		this(c.getId(), c.getDiscount(), c.isScheduled(), c.getDate(), c.getTime(), c.getTip(), c.getDuration(),
-				c.getDiscount(), new RoomDTO(c.getRoom()), null, new ClinicDTO(c.getClinic()),
-				new MedicalWorkerDTO((MedicalWorker) c.getDoctors().toArray()[0]), new CheckUpTypeDTO(c.getCheckUpType()), c.isFinished());
-	
+				c.getDiscount(), null, null, new ClinicDTO(c.getClinic()),
+				new MedicalWorkerDTO((MedicalWorker) c.getDoctors().toArray()[0]),
+				new CheckUpTypeDTO(c.getCheckUpType()), c.isFinished());
+
 		if (c.getPatient() != null) {
 			this.patient = new PatientDTO(c.getPatient());
 		}
 
+		if (c.getRoom() != null) {
+			this.room = new RoomDTO(c.getRoom());
+		}
+
 	}
-	
+
 	public CheckupDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public CheckupDTO(Long id, double discount, boolean scheduled, LocalDate date, String time, String type, int duration,
-			double price, RoomDTO room, PatientDTO patient, ClinicDTO clinic, MedicalWorkerDTO medicalWorker,
-			CheckUpTypeDTO checkUpType, boolean finished) {
+	public CheckupDTO(Long id, double discount, boolean scheduled, LocalDate date, String time, String type,
+			int duration, double price, RoomDTO room, PatientDTO patient, ClinicDTO clinic,
+			MedicalWorkerDTO medicalWorker, CheckUpTypeDTO checkUpType, boolean finished) {
 		super();
 		this.id = id;
 		this.discount = discount;

@@ -33,7 +33,7 @@ public class UserServiceTest {
 		testUser.setName(UserConstants.USER1_NAME);
 		testUser.setSurname(UserConstants.USER1_SURNAME);
 		testUser.setPassword(UserConstants.USER1_PASS);
-		testUser.setId(3L);
+		testUser.setId(100L);
 		
         Mockito.when(userRepositoryMocked.findOneByEmail(email)).thenReturn(testUser);
         

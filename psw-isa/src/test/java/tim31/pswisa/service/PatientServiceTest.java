@@ -34,7 +34,7 @@ public class PatientServiceTest {
 		testUser.setName(UserConstants.USER1_NAME);
 		testUser.setSurname(UserConstants.USER1_SURNAME);
 		testUser.setPassword(UserConstants.USER1_PASS);
-		testUser.setId(3L);
+		testUser.setId(100L);
 		
 		Patient testPatient = new Patient();
 		testPatient.setUser(testUser);
@@ -44,7 +44,7 @@ public class PatientServiceTest {
 		testPatient.setState(PatientConstants.PATIENT1_STATE);
 		testPatient.setAddress(PatientConstants.PATIENT1_ADDRESS);
 		testPatient.setProcessed(PatientConstants.PATIENT1_PROCESSED);
-		testPatient.setId(1L);
+		testPatient.setId(100L);
 		
 		Mockito.when(patientRepositoryMocked.findByUserId(testPatient.getUser().getId())).thenReturn(testPatient);
 

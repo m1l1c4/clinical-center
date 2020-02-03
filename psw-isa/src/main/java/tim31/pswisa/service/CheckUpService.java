@@ -280,6 +280,9 @@ public class CheckUpService {
 			checkup.setTime(c.getTime());
 			checkup.setRoom(room);
 			checkup.setScheduled(true);
+			checkup.setDoctors(new HashSet<MedicalWorker>());
+			MedicalWorker doctor = medicalWorkerService.findOneById(c.getMedicalWorker().getId());
+			checkup.getDoctors().add(doctor);
 			return checkupRepository.save(checkup);
 		}else {
 			return null;
@@ -373,6 +376,7 @@ public class CheckUpService {
 	 * @param id - id of the room if logged in user is administrator of clinic
 	 * @return - This method returns all check-ups of the logged in user
 	 */
+	@Transactional(readOnly = true)
 	public Set<Checkup> getAllCheckups(User user, Long id) {
 		if (user.getType().equals("DOKTOR")) {
 			MedicalWorker worker = medicalWorkerService.findOneByUserId(user.getId());
