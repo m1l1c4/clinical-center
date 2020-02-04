@@ -1,7 +1,6 @@
 package tim31.pswisa.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
@@ -24,12 +23,17 @@ import org.springframework.web.context.WebApplicationContext;
 
 import tim31.pswisa.TestUtil;
 import tim31.pswisa.constants.CheckupConstants;
+import tim31.pswisa.constants.DoctorConstants;
 import tim31.pswisa.constants.RoomConstants;
+import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.MedicalWorkerDTO;
+import tim31.pswisa.dto.RoomDTO;
 import tim31.pswisa.model.Checkup;
-import tim31.pswisa.model.Clinic;
-import tim31.pswisa.model.Room;
 import tim31.pswisa.model.UserTokenState;
 import tim31.pswisa.security.auth.JwtAuthenticationRequest;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -54,9 +58,8 @@ public class AdminControllerTest {
 	public void login() {
 		ResponseEntity<UserTokenState> responseEntity = restTemplate.postForEntity("/login",
 				new JwtAuthenticationRequest("admin@gmail.com", "sifra1"), UserTokenState.class);
-		accessToken = "Bearer " + responseEntity.getBody().getAccessToken();
+		accessToken = "Bearer " + responseEntity.getBody().getAccessToken();		
 		
-		// TREBA I PROMENA LOZINKE
 	}
 
 	@PostConstruct
@@ -65,28 +68,36 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void testupdate() throws Exception {
-		Clinic clinic = new Clinic();
-		Room room = new Room(RoomConstants.ROOM_ID, RoomConstants.ROOM_NAME, 
-						RoomConstants.ROOM_TYPE, RoomConstants.ROOM_IS_FREE, 
-						RoomConstants.ROOM_NUMBER, clinic, RoomConstants.ROOM_FRDATE);
-		Checkup checkup = new Checkup(CheckupConstants.CHECKUP_DISCOUNT, 
-							CheckupConstants.CHECKUP_SCHEDULED, CheckupConstants.CHECKUP_DATE,
-							CheckupConstants.CHECKUP_TIME, CheckupConstants.CHECKUP_CHTYPE, CheckupConstants.CHECKUP_DURATION,
-							CheckupConstants.CHECKUP_PRICE, room, CheckupConstants.CHECKUP_FINISHED );
-		
-		String json = TestUtil.json(checkup); 
+	public void testupdate() throws Exception {		
+		MedicalWorkerDTO doctorTest = new MedicalWorkerDTO();		
+		doctorTest.setId(DoctorConstants.DOCTOR_ID);
+		RoomDTO room = new RoomDTO();
+		room.setId(RoomConstants.ROOM_ID);
+		Checkup checkup = new Checkup();
+		checkup.setId(CheckupConstants.CHECKUP_ID);			
+		CheckupDTO inputCheckup = new CheckupDTO();
+		inputCheckup.setId(checkup.getId());
+		inputCheckup.setRoom(room);
+		inputCheckup.setTime(CheckupConstants.CHECKUP_TIME);
+		inputCheckup.setDate(CheckupConstants.CHECKUP_DATE);
+		inputCheckup.setMedicalWorker(doctorTest);
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		String body = mapper.valueToTree(inputCheckup).toString();		
 		mockMvc.perform(post(URL_PREFIX + "update" ).header("Authorization", accessToken)
 				.contentType(contentType)
-				.content(json))
-				.andExpect(status().isOk())				
-				.andExpect(jsonPath("$.id").value(22));
+				.content(body))
+				.andExpect(status().isOk())	;		
 				
 	}
 	
 	@Test
 	public void testupdateFalse() throws Exception {
-		mockMvc.perform(post(URL_PREFIX + "update" ).header("Authorization", accessToken))
+		CheckupDTO checkup = new CheckupDTO() ;		
+		String json = TestUtil.json(checkup); 
+		mockMvc.perform(post(URL_PREFIX + "update" ).header("Authorization", accessToken)	
+				.contentType(contentType)
+				.content(json))
 				.andExpect(status().isExpectationFailed());
 	}
 }
