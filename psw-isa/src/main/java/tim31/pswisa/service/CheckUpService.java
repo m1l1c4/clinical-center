@@ -306,6 +306,9 @@ public class CheckUpService {
 			checkup.setTime(c.getTime());
 			checkup.setRoom(room);
 			checkup.setScheduled(true);
+			checkup.setDoctors(new HashSet<MedicalWorker>());
+			MedicalWorker doctor = medicalWorkerService.findOneById(c.getMedicalWorker().getId());
+			checkup.getDoctors().add(doctor);
 			return checkupRepository.save(checkup);
 		}else {
 			return null;
@@ -375,14 +378,14 @@ public class CheckUpService {
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public boolean bookQuickApp(Long id, String email) {
 		logger.info("POCEO SA ZAKAZIVANJEM BRZOG" + email);
-		boolean ret = true;
-		User u = userService.findOneByEmail(email);
-		Patient p = patientService.findOneByUserId(u.getId());
+		boolean ret = true;		
 		Checkup foundCheckup = checkupRepository.findOneById(id);
-		if (foundCheckup == null || foundCheckup.getPatient() != null || p == null) {	//if checkup has patient than it's already booked
+		if (foundCheckup == null || foundCheckup.getPatient() != null) {	//if checkup has patient than it's already booked
 			logger.info("NEUSPESNO ZAKAZIVANJE" + email);
 			ret = false;
-		} else {			
+		} else {	
+			User u = userService.findOneByEmail(email);
+			Patient p = patientService.findOneByUserId(u.getId());
 			foundCheckup.setPatient(p);			
 			checkupRepository.save(foundCheckup); // because of adding patient to checkup
 			try {
