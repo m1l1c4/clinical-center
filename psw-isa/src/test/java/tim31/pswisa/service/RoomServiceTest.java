@@ -2,7 +2,7 @@ package tim31.pswisa.service;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,6 @@ public class RoomServiceTest {
 		roomTest.setId(RoomConstants.ROOM_ID);				
 		Mockito.when(roomRepositoryMocked.findOneById(roomTest.getId())).thenReturn(roomTest);
 		Room room = roomService.findOneById(RoomConstants.ROOM_ID);
-		assertEquals(room.getId(), RoomConstants.ROOM_ID);
-		assertEquals(room.getName(), RoomConstants.ROOM_NAME);
-		assertEquals(room.getNumber(), RoomConstants.ROOM_NUMBER);
-		assertEquals(room.getTypeRoom(), RoomConstants.ROOM_TYPE);
-		assertEquals(room.getFirstFreeDate(), RoomConstants.ROOM_FRDATE);
-		
+		assertEquals(RoomConstants.ROOM_ID, room.getId());		
 	}
 }

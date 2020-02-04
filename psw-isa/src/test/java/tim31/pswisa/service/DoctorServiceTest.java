@@ -2,7 +2,7 @@ package tim31.pswisa.service;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +33,6 @@ public class DoctorServiceTest {
 		doctorTest.setId(DoctorConstants.DOCTOR_ID);				
 		Mockito.when(doctorRepositoryMocked.findOneById(doctorTest.getId())).thenReturn(doctorTest);
 		MedicalWorker doctor = doctorService.findOneById(DoctorConstants.DOCTOR_ID);
-		assertEquals(doctor.getId(), DoctorConstants.DOCTOR_ID);
-		assertEquals(doctor.getUser().getName(), UserConstants.DOKTOR_NAME);
-		assertEquals(doctor.getUser().getSurname(), UserConstants.DOKTOR_SURNAME);
-		assertEquals(doctor.getUser().getEmail(), UserConstants.DOCTOR_EMAIL);
-		assertEquals(doctor.getPhone(), DoctorConstants.DOCTOR_PHONE);
-		
+		assertEquals(DoctorConstants.DOCTOR_ID, doctor.getId());		
 	}
 }
