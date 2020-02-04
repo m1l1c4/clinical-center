@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import tim31.pswisa.constants.UserConstants;
@@ -17,6 +18,7 @@ import tim31.pswisa.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
+//@TestPropertySource("classpath:test.properties")
 public class UserServiceTest {
 
 	@Autowired
@@ -33,7 +35,7 @@ public class UserServiceTest {
 		testUser.setName(UserConstants.USER1_NAME);
 		testUser.setSurname(UserConstants.USER1_SURNAME);
 		testUser.setPassword(UserConstants.USER1_PASS);
-		testUser.setId(100L);
+		testUser.setId(UserConstants.USER1_ID);
 		
         Mockito.when(userRepositoryMocked.findOneByEmail(email)).thenReturn(testUser);
         

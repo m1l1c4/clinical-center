@@ -8,6 +8,7 @@ import tim31.pswisa.controller.CheckupControllerTest;
 import tim31.pswisa.repository.CheckupRepositoryTest;
 import tim31.pswisa.repository.PatientRepositoryTest;
 import tim31.pswisa.repository.UserRepositoryTest;
+import tim31.pswisa.service.CheckupServiceTest;
 import tim31.pswisa.service.EmailServiceTest;
 import tim31.pswisa.service.PatientServiceTest;
 import tim31.pswisa.service.UserServiceTest;
@@ -21,7 +22,8 @@ import tim31.pswisa.service.UserServiceTest;
   UserServiceTest.class,
   PatientServiceTest.class,
   EmailServiceTest.class,
-  CheckupControllerTest.class
+  CheckupControllerTest.class,
+  CheckupServiceTest.class
 })
 public class AllTests {
 	
