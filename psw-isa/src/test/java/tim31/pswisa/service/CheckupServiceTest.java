@@ -2,6 +2,8 @@ package tim31.pswisa.service;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.HashSet;
 
@@ -63,6 +65,7 @@ public class CheckupServiceTest {
 		Mockito.when(checkupRepositoryMocked.findOneById(checkupTest.getId())).thenReturn(null);
 		boolean ret = checkupService.bookQuickApp(checkupTest.getId(), UserConstants.USER1_EMAIL);
 		assertFalse(ret);
+		verify(checkupRepositoryMocked, times(1)).findOneById(checkupTest.getId());
 	}
 
 	@Test
@@ -115,5 +118,10 @@ public class CheckupServiceTest {
 
 		boolean ret = checkupService.bookQuickApp(checkupTest.getId(), UserConstants.USER1_EMAIL);
 		assertTrue(ret);
+		
+		verify(checkupRepositoryMocked, times(1)).findOneById(checkupTest.getId());
+		verify(userRepositoryMocked, times(2)).findOneByEmail(testUser.getEmail());
+		verify(patientRepositoryMocked, times(1)).findByUserId(testPatient.getUser().getId());
+		verify(checkupRepositoryMocked, times(1)).save(checkupTest);
 	}
 }

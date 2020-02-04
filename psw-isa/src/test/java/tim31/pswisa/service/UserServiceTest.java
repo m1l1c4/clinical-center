@@ -1,6 +1,8 @@
 package tim31.pswisa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import tim31.pswisa.constants.UserConstants;
@@ -42,5 +43,6 @@ public class UserServiceTest {
 		User user = userService.findOneByEmail(email);
 		assertEquals(testUser.getEmail(), user.getEmail());
 		assertEquals(testUser.getId(), user.getId());
+		verify(userRepositoryMocked, times(1)).findOneByEmail(email);
 	}
 }

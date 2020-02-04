@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import tim31.pswisa.controller.CheckupControllerTest;
+import tim31.pswisa.controller.CheckupControllerUnitTest;
 import tim31.pswisa.repository.CheckupRepositoryTest;
 import tim31.pswisa.repository.PatientRepositoryTest;
 import tim31.pswisa.repository.UserRepositoryTest;
@@ -23,7 +24,8 @@ import tim31.pswisa.service.UserServiceTest;
   PatientServiceTest.class,
   EmailServiceTest.class,
   CheckupControllerTest.class,
-  CheckupServiceTest.class
+  CheckupServiceTest.class,
+  CheckupControllerUnitTest.class
 })
 public class AllTests {
 	

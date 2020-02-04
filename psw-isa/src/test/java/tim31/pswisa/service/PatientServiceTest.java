@@ -1,6 +1,8 @@
 package tim31.pswisa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,5 +55,6 @@ public class PatientServiceTest {
 		assertEquals(testPatient.getUser().getId(), patient.getUser().getId());
 		assertEquals(testPatient.getId(), patient.getId());
 		assertEquals(testPatient.getJbo(), patient.getJbo());
+		verify(patientRepositoryMocked,times(1)).findByUserId(testPatient.getUser().getId());
 	}
 }
