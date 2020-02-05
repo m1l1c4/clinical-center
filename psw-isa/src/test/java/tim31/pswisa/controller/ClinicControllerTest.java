@@ -14,14 +14,16 @@ import javax.annotation.PostConstruct;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.verify;
-import org.mockito.Mockito;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -36,6 +38,8 @@ import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
+import tim31.pswisa.model.UserTokenState;
+import tim31.pswisa.security.auth.JwtAuthenticationRequest;
 import tim31.pswisa.dto.*;
 
 @RunWith(SpringRunner.class)
@@ -52,11 +56,23 @@ public class ClinicControllerTest {
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 
+	private String accessToken;
+
+	@Autowired
+	TestRestTemplate restTemplate;
+	
 	@PostConstruct
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 
+	@Before
+	public void login() {
+		ResponseEntity<UserTokenState> responseEntity = restTemplate.postForEntity("/login",
+				new JwtAuthenticationRequest("pacijent@gmail.com", "sifra1"), UserTokenState.class);
+		accessToken = "Bearer " + responseEntity.getBody().getAccessToken();
+	}
+	
 	@Test
 	public void testSearchClinicsControllerNonClinics() throws Exception {
 		String[] params = { CheckupTypeConstants.CHECK_UP_TYPE_NAME_FALSE, CheckupConstants.LOCAL_DATE_1.toString() };
@@ -67,8 +83,6 @@ public class ClinicControllerTest {
 				.andExpect(jsonPath("$.object").doesNotExist());
 
 	}
-
-	
 
 	@Test
 	public void testSearchClinicsControllerOk() throws Exception {
@@ -83,7 +97,6 @@ public class ClinicControllerTest {
 				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_2.intValue())));
 	}
 
-	
 	@Test
 	public void testFilterClinicsControllerNonClinics() throws Exception {
 		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
@@ -181,7 +194,5 @@ public class ClinicControllerTest {
 				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())));
 
 	}
-
-
 
 }

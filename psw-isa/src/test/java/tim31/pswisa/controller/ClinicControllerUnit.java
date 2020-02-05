@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -18,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -35,6 +38,8 @@ import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
+import tim31.pswisa.model.UserTokenState;
+import tim31.pswisa.security.auth.JwtAuthenticationRequest;
 import tim31.pswisa.service.ClinicService;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -59,10 +64,14 @@ public class ClinicControllerUnit {
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 
+	
+
 	@PostConstruct
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
+
+	
 
 	@Test
 	public void testSearchClinicsControllerNonClinicsUnit() throws Exception {
@@ -223,6 +232,8 @@ public class ClinicControllerUnit {
 		mockMvc.perform(post("/clinic/filterClinic/" + "10").contentType(contentType).content(jsonString))
 				.andExpect(status().isOk()).andExpect(jsonPath("$").value(hasSize(1)))
 				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())));
+
+		// verify(clinicServiceMock, times(1)).filterClinics("10", clinicsFilter);
 
 	}
 
