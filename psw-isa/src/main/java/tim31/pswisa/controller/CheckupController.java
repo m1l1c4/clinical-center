@@ -275,12 +275,12 @@ public class CheckupController {
 	 * @param request - HttpServerRequest request - used for finding logged user
 	 * @return
 	 */
-	@PreAuthorize("hasRole('ROLE_PACIJENT')")
-	@PostMapping(value = "/patientHistory/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type, HttpServletRequest request) {
+	@PreAuthorize("hasRole('PACIJENT') or hasRole('DOKTOR')")
+	@PostMapping(value = "/patientHistory/{type}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type,@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
-		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email, type);
+		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(id, email, type);
 		if (patientCheckups != null) {
 			return new ResponseEntity<>(patientCheckups, HttpStatus.OK);
 		}

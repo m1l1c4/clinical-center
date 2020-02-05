@@ -129,4 +129,12 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 */
 	List<Checkup> findAllByScheduledAndDateAndPatientIdAndTip(boolean scheduled, LocalDate date, Long id, String type);
 
+	/**
+	 * gets from database all checkups where type is "PREGLED" from one patient and are finished
+	 * @param finished - if checkup is finished or not
+	 * @param id - patient id
+	 * @param type - type of checkup
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
+	List<Checkup> findAllByFinishedAndPatientIdAndTip(boolean finished, Long id, String type);
 }

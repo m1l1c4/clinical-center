@@ -465,7 +465,7 @@ public class CheckUpService {
 	 * @param type - type of checkup
 	 * @return
 	 */
-	public HashMap<Integer, List<CheckupDTO>> getPatientCheckups(String email, String type) {
+	public HashMap<Integer, List<CheckupDTO>> getPatientCheckups(Long id, String email, String type) {
 		User loggedUser = userService.findOneByEmail(email);
 		HashMap<Integer, List<CheckupDTO>> ret = new HashMap<Integer, List<CheckupDTO>>(2);
 		List<CheckupDTO> incomingCheckups = new ArrayList<CheckupDTO>();
@@ -473,7 +473,7 @@ public class CheckUpService {
 		if (loggedUser == null) {
 			return null;
 		}
-		Patient loggedPatient = patientService.findOneByUserId(loggedUser.getId());
+		Patient loggedPatient = patientService.findOneByUserId(id);
 		if (loggedPatient == null) {
 			return null;
 		}		
@@ -570,6 +570,10 @@ public class CheckUpService {
 		/*Report rep = checkupToCancel.getReport();
 		rep.setCheckUp(null);	
 		reportService.save(rep);*/
+	}
+	
+	public List<Checkup> findAllByFinishedAndPatientIdAndTip(boolean finished, Long id, String type) {
+		return checkupRepository.findAllByFinishedAndPatientIdAndTip(finished, id, type);
 	}
 
 }
