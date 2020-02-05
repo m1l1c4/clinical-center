@@ -7,6 +7,7 @@ import org.junit.runners.Suite;
 import tim31.pswisa.controller.ClinicControllerTest;
 import tim31.pswisa.repository.CheckupRepositoryTest;
 import tim31.pswisa.repository.CheckupTypeRepositoryTest;
+import tim31.pswisa.selenium.SearchAndFilterClinics;
 import tim31.pswisa.service.ClinicServiceTest;
 
 
@@ -15,6 +16,7 @@ import tim31.pswisa.service.ClinicServiceTest;
   ClinicServiceTest.class,
   CheckupTypeRepositoryTest.class,
   ClinicControllerTest.class,
+  SearchAndFilterClinics.class,
   
 })
 public class AllTests {

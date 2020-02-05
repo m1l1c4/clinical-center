@@ -1,46 +1,50 @@
 package tim31.pswisa.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 import javax.annotation.PostConstruct;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.verify;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
 import tim31.pswisa.TestUtil;
 import tim31.pswisa.constants.CheckupConstants;
 import tim31.pswisa.constants.CheckupTypeConstants;
 import tim31.pswisa.constants.ClinicConstants;
 import tim31.pswisa.constants.DoctorConstants;
 import tim31.pswisa.constants.UserConstants;
+import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
-import tim31.pswisa.dto.*;
+import tim31.pswisa.service.ClinicService;
+
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class ClinicControllerTest {
+public class ClinicControllerUnit {
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
@@ -48,6 +52,9 @@ public class ClinicControllerTest {
 	private MockMvc mockMvc;
 
 	public static final String pre_url = "/clinic/searchClinic";
+
+	@MockBean
+	private ClinicService clinicServiceMock;
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -58,39 +65,62 @@ public class ClinicControllerTest {
 	}
 
 	@Test
-	public void testSearchClinicsControllerNonClinics() throws Exception {
+	public void testSearchClinicsControllerNonClinicsUnit() throws Exception {
 		String[] params = { CheckupTypeConstants.CHECK_UP_TYPE_NAME_FALSE, CheckupConstants.LOCAL_DATE_1.toString() };
-
 		String jsonString = TestUtil.json(params);
+
+		Mockito.when(clinicServiceMock.searchClinics(params)).thenReturn(null);
 
 		mockMvc.perform(post(pre_url).contentType(contentType).content(jsonString)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.object").doesNotExist());
 
+		verify(clinicServiceMock, times(1)).searchClinics(params);
+
 	}
 
-	
-
 	@Test
-	public void testSearchClinicsControllerOk() throws Exception {
+	public void testSearchClinicsControllerOkUnit() throws Exception {
 
 		String[] params = { CheckupTypeConstants.CHECK_UP_TYPE_NAME, CheckupConstants.LOCAL_DATE_1.toString() };
+		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
+				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
+
+		Clinic clinic2 = new Clinic(ClinicConstants.ID_C_2, ClinicConstants.NAZIV_2, ClinicConstants.GRAD_2,
+				ClinicConstants.DRZAVA_2, ClinicConstants.ADRESA_2, ClinicConstants.RAITING_2, ClinicConstants.OPIS_2);
+
+		List<ClinicDTO> clinics = new ArrayList<ClinicDTO>();
+
+		clinics.add(new ClinicDTO(clinic1));
+		clinics.add(new ClinicDTO(clinic2));
 
 		String jsonString = TestUtil.json(params);
+
+		Mockito.when(clinicServiceMock.searchClinics(params)).thenReturn(clinics);
 
 		mockMvc.perform(post(pre_url).contentType(contentType).content(jsonString)).andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())))
 				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_2.intValue())));
+
+		verify(clinicServiceMock, times(1)).searchClinics(params);
+
 	}
 
-	
 	@Test
-	public void testFilterClinicsControllerNonClinics() throws Exception {
+	public void testFilterControllerClinicsOneUnit() throws Exception {
 		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
 				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
 
 		Clinic clinic2 = new Clinic(ClinicConstants.ID_C_2, ClinicConstants.NAZIV_2, ClinicConstants.GRAD_2,
 				ClinicConstants.DRZAVA_2, ClinicConstants.ADRESA_2, ClinicConstants.RAITING_2, ClinicConstants.OPIS_2);
+
+		List<Clinic> clinicsFilter = new ArrayList<Clinic>();
+		clinicsFilter.add(clinic1);
+		clinicsFilter.add(clinic2);
+
+		ArrayList<Clinic> pomList = new ArrayList<Clinic>();
+		pomList.add(clinic1);
+		pomList.add(clinic2);
 
 		List<ClinicDTO> clinics = new ArrayList<ClinicDTO>();
 		ClinicDTO clinic11 = new ClinicDTO(clinic1);
@@ -124,17 +154,22 @@ public class ClinicControllerTest {
 		srchType.setId(CheckupTypeConstants.CHECK_UP_TYPE_ID);
 		srchType.setTypePrice(100);
 
-		String[] params = { CheckupTypeConstants.CHECK_UP_TYPE_NAME, DoctorConstants.DATE_OK };
+		List<Clinic> retValue = new ArrayList<Clinic>();
+		retValue.add(clinic1);
+
+		Mockito.when(clinicServiceMock.filterClinics("15", pomList)).thenReturn(retValue);
 
 		String jsonString = TestUtil.json(clinics);
 
-		mockMvc.perform(post("/clinic/filterClinic/" + "7").contentType(contentType).content(jsonString))
+		mockMvc.perform(post("/clinic/filterClinic/" + "15").contentType(contentType).content(jsonString))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.object").doesNotExist());
+
+		// verify(clinicServiceMock, times(1)).filterClinics("15", pomList);
 
 	}
 
 	@Test
-	public void testFilterClinicsController() throws Exception {
+	public void testFilterClinicsControllerUnit() throws Exception {
 
 		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
 				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
@@ -160,6 +195,10 @@ public class ClinicControllerTest {
 		user2.setSurname(UserConstants.PREZIME_2);
 		user2.setType(UserConstants.TIP);
 
+		ArrayList<Clinic> clinicsFilter = new ArrayList<Clinic>();
+		clinicsFilter.add(clinic1);
+		clinicsFilter.add(clinic2);
+
 		MedicalWorker mw1 = new MedicalWorker(DoctorConstants.DOCTOR_ID_1, user1, clinic1, DoctorConstants.TIP_D_1);
 		clinic1.getMedicalStuff().add(mw1);
 
@@ -173,6 +212,11 @@ public class ClinicControllerTest {
 		srchType.setName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);
 		srchType.setId(CheckupTypeConstants.CHECK_UP_TYPE_ID);
 		srchType.setTypePrice(100);
+
+		List<Clinic> returnValue = new ArrayList<Clinic>();
+		returnValue.add(clinic1);
+
+		Mockito.when(clinicServiceMock.filterClinics("10", clinicsFilter)).thenReturn(returnValue);
 
 		String jsonString = TestUtil.json(clinics);
 
@@ -181,7 +225,5 @@ public class ClinicControllerTest {
 				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())));
 
 	}
-
-
 
 }

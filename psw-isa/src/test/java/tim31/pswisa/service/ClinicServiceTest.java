@@ -2,6 +2,9 @@ package tim31.pswisa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,18 +46,21 @@ public class ClinicServiceTest {
 		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
 				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
 
-		Clinic clinic2 = new Clinic(ClinicConstants.ID_C_2, ClinicConstants.NAZIV_2, ClinicConstants.GRAD_1,
-				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
+		Clinic clinic2 = new Clinic(ClinicConstants.ID_C_2, ClinicConstants.NAZIV_2, ClinicConstants.GRAD_2,
+				ClinicConstants.DRZAVA_2, ClinicConstants.ADRESA_2, ClinicConstants.RAITING_2, ClinicConstants.OPIS_2);
 
 		String raiting = ClinicConstants.RAITING_OK_1;
 		String raiting2 = ClinicConstants.RAITING_OK_2;
 		String raiting3 = ClinicConstants.RAITING_OK_3;
+		String raiting4 = ClinicConstants.RAITING_OK_4;
+
 		ArrayList<Clinic> clinics = new ArrayList<Clinic>();
 		clinics.add(clinic1);
 		clinics.add(clinic2);
-		assertEquals(clinics.size(), clinicService.filterClinics(raiting, clinics).size());
-		assertEquals(clinics.size(), clinicService.filterClinics(raiting2, clinics).size());
-		assertEquals(clinics.size(), clinicService.filterClinics(raiting3, clinics).size());
+		assertEquals(1, clinicService.filterClinics(raiting, clinics).size());
+		assertEquals(2, clinicService.filterClinics(raiting2, clinics).size());
+		assertEquals(1, clinicService.filterClinics(raiting3, clinics).size());
+		assertEquals(0, clinicService.filterClinics(raiting4, clinics).size());
 
 	}
 
@@ -66,8 +72,11 @@ public class ClinicServiceTest {
 		srchType.setId(CheckupTypeConstants.CHECK_UP_TYPE_ID);
 		srchType.setTypePrice(100);
 		String[] params = { CheckupTypeConstants.CHECK_UP_TYPE_NAME_FALSE, DoctorConstants.DATE_OK };
-		Mockito.when(checkupTypeRepository.findOneByName(CheckupTypeConstants.CHECK_UP_TYPE_NAME)).thenReturn(srchType);
+		Mockito.when(checkupTypeRepository.findOneByName(CheckupTypeConstants.CHECK_UP_TYPE_NAME_FALSE))
+				.thenReturn(srchType);
 		List<ClinicDTO> rezultat = clinicService.searchClinics(params);
+		// verify(checkupTypeRepository,
+		// times(1)).findOneByName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);
 		assertNull(rezultat);
 	}
 
@@ -81,6 +90,8 @@ public class ClinicServiceTest {
 		String[] params = { "NE POSTOJI", DoctorConstants.DATE_OK };
 		Mockito.when(checkupTypeRepository.findOneByName(CheckupTypeConstants.CHECK_UP_TYPE_NAME)).thenReturn(null);
 		List<ClinicDTO> rezultat = clinicService.searchClinics(params);
+		// verify(checkupTypeRepository,
+		// times(1)).findOneByName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);
 		assertNull(rezultat);
 	}
 

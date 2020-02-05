@@ -9,6 +9,7 @@ public class ClinicConstants {
 	public static final String RAITING_OK_1 = "10";
 	public static final String RAITING_OK_2 = "5";
 	public static final String RAITING_OK_3 = "7";
+	public static final String RAITING_OK_4 = "11";
 
 	public static final String GRAD_1 = "Foca";
 	public static final String GRAD_2 = "Novi Sad";
