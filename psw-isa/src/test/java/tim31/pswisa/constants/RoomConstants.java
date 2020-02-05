@@ -28,6 +28,14 @@ public class RoomConstants {
 	public static final boolean FREE_1 = true;
 	public static final boolean FREE_2 = false;
 	public static final boolean FREE_3 = false;
+  
+  	public static final Long ROOM_ID = 1L;
+	public static final Long ROOM_ID_FALSE = 1000L;
+	public static final String ROOM_NAME = "Interno";
+	public static final String ROOM_TYPE = "PREGLED";
+	public static final boolean ROOM_IS_FREE = true;
+	public static final int ROOM_NUMBER = 102;
+	public static final LocalDate ROOM_FRDATE = LocalDate.parse("2020-02-23");
 
 
 

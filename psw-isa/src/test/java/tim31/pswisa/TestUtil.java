@@ -1,3 +1,4 @@
+
 package tim31.pswisa;
 
 import java.io.IOException;
@@ -12,5 +13,4 @@ public class TestUtil {
 
 		return mapper.writeValueAsString(object);
 	}
-
 }

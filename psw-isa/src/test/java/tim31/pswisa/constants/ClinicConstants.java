@@ -36,5 +36,11 @@ public class ClinicConstants {
 	public static final String OPIS_1 = "Klinika je organizovana kao Specijalna bolnica za oftalmolgiju i Centar za refraktivnu hirurgiju.";
 	public static final String OPIS_2 = "Zahvaljujući iskustvu, stručnom kadru, timskom radu, ali prije svega potpunoj predanosti i posvećenosti, obezbjeđujemo visok nivo liječenja i zdravstvene njege svim pacijentima.";
 	public static final String OPIS_3 = "Neki opis 3";
+  
+  public static final Long CLINIC_ID = 1L;
+	public static final String CLINIC_NAME = "KC NOVI SAD";
+	public static final String CLINIC_CITY = "NOVI SAD";
+	public static final String CLINIC_ADRESS = "neka adresa";
+	public static final String CLINIC_DESCRIPTION = "Klinika je organizovana kao Specijalna bolnica za oftalmolgiju i Centar za refraktivnu hirurgiju.";
 
 }

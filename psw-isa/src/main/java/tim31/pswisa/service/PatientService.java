@@ -23,6 +23,9 @@ public class PatientService {
 
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private CheckUpService checkupService;
 
 	public List<PatientDTO> getAllPatients() {
 		List<Patient> temp = patientRepository.findAll();
@@ -122,29 +125,25 @@ public class PatientService {
 		return ret;
 	}
 
+	/**
+	 * returns all patient diagnoses from checkup history
+	 * 
+	 * @param loggedPatient - logged-in patient
+	 * @return List<DiagnoseDTO> - list of all diagnoses
+	 */
 	private List<DiagnoseDTO> patientDiagnoses(Patient loggedPatient) {
 		List<DiagnoseDTO> patientDiagnoses = new ArrayList<DiagnoseDTO>();
 		LocalDate currentDate = LocalDate.now();
-		for (Checkup ch : loggedPatient.getAppointments()) {
-			if (ch.isScheduled() && ch.getDate().isBefore(currentDate) && ch.getTip().equals("PREGLED")) {
+		List<Checkup> checkupsHistory = checkupService.findAllByFinishedAndPatientIdAndTip(true,
+										loggedPatient.getId(), "PREGLED");		
+		for (Checkup ch : checkupsHistory) {			
 				MedicalWorker doctor = findDoctor(ch); // getDcotors should work bc I assume there is one doctor per
-														// checkup
-				if (doctor != null) {
-					/*
-					 * ovaj if zbog predefinisanih pregleda pa je report prazan a pregled se kao
-					 * desio, realno pregledi ce se zakazivati kroz aplikaciju a ne povlaciti iz
-					 * skripte
-					 */
-					Report temp = new Report();
-					if (ch.getReport() == null) {
-						temp = new Report(new HashSet<Recipe>(), loggedPatient.getMedicalRecord(), ch, "neke info",
-								"dijagnoza");
-					}
-
-					patientDiagnoses.add(new DiagnoseDTO(temp.getDiagnose(), ch.getDate(), doctor.getUser().getName(),
-							doctor.getUser().getSurname(), doctor.getClinic().getName()));
-				}
-			}
+				if (ch.getReport().getDiagnose().isEmpty()) {
+					ch.getReport().setDiagnose("nema dijagnoze");
+				} 
+				patientDiagnoses.add(new DiagnoseDTO(ch.getReport().getDiagnose(), ch.getDate(), doctor.getUser().getName(),
+						doctor.getUser().getSurname(), doctor.getClinic().getName()));
+			
 		}
 		return patientDiagnoses;
 	}

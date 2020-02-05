@@ -14,6 +14,7 @@ import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RoomDTO;
+import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
@@ -616,13 +617,14 @@ public class ClinicService {
 		return filtered;
 	}
 
+	@Transactional(readOnly = false)
 	public List<MedicalWorkerDTO> doctorsInClinic(String name, String type, String date) {
 		Clinic cl = clinicRepository.findOneByName(name);
 		List<MedicalWorkerDTO> doctors = new ArrayList<MedicalWorkerDTO>();
 		int counter = 0;
 		if (cl != null) {
 			for (MedicalWorker medicalWorker : cl.getMedicalStuff()) {
-				if (medicalWorker.getType().equals(type)) {
+				if (medicalWorker.getType().equals(type) && !absentForTheDate(date, medicalWorker)) {
 					for (Checkup c : medicalWorker.getCheckUps()) {
 						if (c.getDate().toString().equals(date)) {
 							counter++;
@@ -630,10 +632,10 @@ public class ClinicService {
 					}
 					if (counter < 7) {
 						MedicalWorkerDTO mw = new MedicalWorkerDTO(medicalWorker);
-						doctors.add(mw);
-						// break;
+						doctors.add(mw);						
 					}
 				}
+				counter = 0;
 			}
 			boolean taken = false;
 			ArrayList<String> pom = new ArrayList<String>(); // list of times of appointments for specific date
@@ -661,7 +663,8 @@ public class ClinicService {
 		return null;
 
 	}
-
+	
+	@Transactional(readOnly = false)
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
 		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
 		LocalDate realDate = LocalDate.parse(date);
@@ -671,7 +674,7 @@ public class ClinicService {
 			ArrayList<String> pom = new ArrayList<String>();
 			for (int i = mww.getStartHr(); i < mww.getEndHr(); i++) {
 				for (Checkup ch : mww.getCheckUps()) {
-					if (Integer.parseInt(ch.getTime()) == i && ch.getDate()==(realDate)) {
+					if (Integer.parseInt(ch.getTime()) == i && ch.getDate().toString().equals(date)) {
 						taken = true;	
 						break;
 					}
@@ -750,6 +753,23 @@ public class ClinicService {
 		for (Room r : clinic.getRooms())
 			r.setClinic(clinic);
 		return clinicRepository.save(clinic);
+	}
+	
+	/**
+	 * checks if doctor is absent for specific date
+	 * @param date
+	 * @param mw
+	 * @return
+	 */
+	private boolean absentForTheDate(String date, MedicalWorker mw) {
+		LocalDate searchDate = LocalDate.parse(date);
+		if (mw.getUser().getType().equals("DOKTOR")) {
+			for (Absence absence : mw.getHollydays()) {
+				if (absence.getStartVacation().isBefore(searchDate) && absence.getEndVacation().isAfter(searchDate))
+						return true;
+			}
+		}
+		return false;
 	}
 	
 }

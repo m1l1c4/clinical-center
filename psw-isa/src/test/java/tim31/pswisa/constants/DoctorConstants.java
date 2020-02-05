@@ -12,5 +12,7 @@ public class DoctorConstants {
 	public static final String DATE_OK = "2020-01-23";
 	public static final String DATE_NON = "";
 
-	
+		public static final Long DOCTOR_ID = 1L;
+	public static final String DOCTOR_PHONE = "062547896";
 }
+
