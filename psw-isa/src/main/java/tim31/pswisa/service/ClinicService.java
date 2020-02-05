@@ -766,10 +766,10 @@ public class ClinicService {
 		if (mw.getUser().getType().equals("DOKTOR")) {
 			for (Absence absence : mw.getHollydays()) {
 				if (absence.getStartVacation().isBefore(searchDate) && absence.getEndVacation().isAfter(searchDate))
-						return false;
+						return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	
 }
