@@ -72,6 +72,18 @@ public class MedicalWorker {
 	public MedicalWorker() {
 		super();
 	}
+	
+	
+
+	public MedicalWorker(Long id, User user, Clinic clinic,  String tip) {
+		super();
+		this.id = id;
+		this.user = user;
+		this.clinic = clinic;
+		this.tip = tip;
+	}
+
+
 
 	public MedicalWorker(MedicalWorker m) {
 		this.id = m.id;

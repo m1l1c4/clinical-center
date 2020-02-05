@@ -89,6 +89,8 @@ public class Clinic {
 	 * key - tip pregleda value - cena za taj tip pregleda
 	 */
 	// private HashMap<String, Double> pricelist;
+	
+	
 
 	public Clinic() {
 		super();
@@ -97,6 +99,18 @@ public class Clinic {
 		
 	public Clinic(Long id, String name, String city, String country,
 			String address, double rating, String description) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.city = city;
+		this.country = country;
+		this.address = address;
+		this.rating = rating;
+		this.description = description;
+	}
+
+	public Clinic(Long id, String name, String city, String country, String address, double rating,
+			String description) {
 		super();
 		this.id = id;
 		this.name = name;
