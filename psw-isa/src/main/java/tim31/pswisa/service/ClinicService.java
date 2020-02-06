@@ -593,6 +593,7 @@ public class ClinicService {
 							result.add(pom);
 							break;
 						}
+						counter = 0;
 					}
 				}
 			}
