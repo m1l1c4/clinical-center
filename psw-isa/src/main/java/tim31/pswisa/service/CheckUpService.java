@@ -489,6 +489,7 @@ public class CheckUpService {
 		Patient loggedPatient = patientService.findOneByUserId(id);
 		if (loggedPatient == null) {
 			return null;	
+		}
 		incomingCheckups = getIncomingChps(loggedPatient, type);
 		historyCheckups = getChpsFromPast(loggedPatient, type);			
 		ret.put(1, incomingCheckups);

@@ -13,6 +13,7 @@ public class UserConstants {
 	public static final Long USER_ID_2 = 7L;
 	
   	public static final String USER2_EMAIL = "pacijent@gmail.com";
+	public static final Long USER1_ID = 1L;
 	public static final String EMAIL_2 = "doktor@gmail.com";
 	public static final String PASS_2 = "123";
 	public static final String IME_2 = "Pero";

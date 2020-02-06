@@ -1,12 +1,13 @@
 package tim31.pswisa.controller;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
 
 import javax.annotation.PostConstruct;
-import org.mockito.Mockito.times;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -97,6 +98,6 @@ public class AdminControllerUnitTest {
 				.andExpect(status().isOk());
 		
 		verify(checkupService, times(1)).update(inputCheckup);
-				
+
 	}
 }

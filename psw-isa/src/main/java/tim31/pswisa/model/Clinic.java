@@ -49,8 +49,8 @@ public class Clinic {
 	private String address;
 
 	@Column(name = "rating", unique = false, nullable = true)
-	private double rating;	
-	
+	private double rating;
+
 	@Column(name = "description", unique = false, nullable = false)
 	private String description;
 
@@ -89,24 +89,10 @@ public class Clinic {
 	 * key - tip pregleda value - cena za taj tip pregleda
 	 */
 	// private HashMap<String, Double> pricelist;
-	
-	
 
 	public Clinic() {
 		super();
 
-	}
-		
-	public Clinic(Long id, String name, String city, String country,
-			String address, double rating, String description) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.city = city;
-		this.country = country;
-		this.address = address;
-		this.rating = rating;
-		this.description = description;
 	}
 
 	public Clinic(Long id, String name, String city, String country, String address, double rating,
@@ -237,8 +223,6 @@ public class Clinic {
 		this.version = version;
 	}
 
-	
-	
 	/*
 	 * public HashMap<String, Double> getPricelist() { return pricelist; }
 	 * 
