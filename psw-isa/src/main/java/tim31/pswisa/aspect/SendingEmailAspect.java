@@ -28,8 +28,7 @@ public class SendingEmailAspect {
 			returning = "result")
 	public void sampleAdviceReturning(JoinPoint joinPoint, CheckupDTO ch, String email, boolean result) throws Throwable {
 		SimpleMailMessage msg = new SimpleMailMessage();
-		//for (ClinicAdministrator cladmin : clinicAdministratorService.findAll()){
-			//msg.setTo(cladmin.getUser().getEmail());
+		
 			msg.setTo("pswisa.tim31.2019@gmail.com");		// for testing purposes all emails are sent to this address
 			msg.setFrom(env.getProperty("spring.mail.username"));
 			msg.setSubject("Zahtev za zakazivanje pregleda");
@@ -41,7 +40,7 @@ public class SendingEmailAspect {
 			content+="Datum i vreme: " + ch.getDate() + " " + ch.getTime() + "h\n";
 			msg.setText(content);		
 			javaMailSender.send(msg);
-		//}
+		
 
 	}
 }

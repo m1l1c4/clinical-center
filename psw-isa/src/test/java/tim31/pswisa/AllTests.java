@@ -25,9 +25,17 @@ import tim31.pswisa.service.UserServiceTest;
   EmailServiceTest.class,
   CheckupControllerTest.class,
   CheckupServiceTest.class,
-  CheckupControllerUnitTest.class
+  CheckupControllerUnitTest.class,
+  DoctorRepositoryTest.class,
+  RoomRepositoryTest.class,
+  DoctorServiceTest.class,
+  RoomServiceTest.class ,
+  AdminControllerTest.class,
+  ClinicServiceTest.class,
+  CheckupTypeRepositoryTest.class,
+  ClinicControllerTest.class,
+  SearchAndFilterClinics.class,
 })
 public class AllTests {
 	
 }
-

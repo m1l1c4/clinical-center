@@ -290,13 +290,13 @@ public class CheckupController {
 	 * @param request - HttpServerRequest request - used for finding logged user
 	 * @return
 	 */
-	// @PreAuthorize("hasRole('ROLE_PACIJENT') or hasRole('ROLE_DOCTOR')")
+
+	@PreAuthorize("hasRole('PACIJENT') or hasRole('DOKTOR')")
 	@PostMapping(value = "/patientHistory/{type}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type,
-			@PathVariable Long id, HttpServletRequest request) {
+	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type,@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
-		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email, type, id);
+		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(id, email, type);
 		if (patientCheckups != null) {
 			return new ResponseEntity<>(patientCheckups, HttpStatus.OK);
 		}
@@ -338,6 +338,23 @@ public class CheckupController {
 		}
 		return new ResponseEntity<CheckupDTO>(checkup, HttpStatus.OK);
 	}
+	
+	/**
+	 * returns checkup report needed for presenting additional info of checkup
+	 * 
+	 * @param request
+	 * @param id - checkup id
+	 * @return
+	 */
+	@PreAuthorize("hasRole('ROLE_PACIJENT')")
+	@PostMapping(value = "/infoReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RecipeDTO> checkupDetails(HttpServletRequest request, @PathVariable Long id) {		
+		RecipeDTO report = recipeService.additionalCheckupInfo(id);
+		if (report == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<RecipeDTO>(report, HttpStatus.OK);
+	}
 
 	@PostMapping(value = "/updateReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReportDTO> updateReport(HttpServletRequest request, @RequestBody ReportDTO r) {
@@ -349,23 +366,5 @@ public class CheckupController {
 		}
 		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	}
-	
-	/**
-	 * returns checkup report needed for presenting additional info of checkup
-	 * 
-	 * @param request
-	 * @param id - checkup id
-	 * @return
-	 */
-	//@PreAuthorize("hasRole('ROLE_PACIJENT')")
-	@PostMapping(value = "/infoReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<RecipeDTO> checkupDetails(HttpServletRequest request, @PathVariable Long id) {		
-		RecipeDTO report = recipeService.additionalCheckupInfo(id);
-		if (report == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<RecipeDTO>(report, HttpStatus.OK);
-	}
-
 
 }

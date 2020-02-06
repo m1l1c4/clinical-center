@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 
 import tim31.pswisa.model.Room;
 
@@ -39,7 +40,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	@Query("select r from Room r where r.id = :id")
 	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "0") })
-	Room findOneById(Long id);
+	Room findOneById(@Param("id")Long id);
 
 	/**
 	 * This method servers for getting one room by clinic and number
@@ -63,4 +64,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	 * @return - (Room) This method returns found room
 	 */
 	Room findOneByNumber(int number);
+	
+	
 }

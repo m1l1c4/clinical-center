@@ -53,7 +53,10 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 	 */
 
 	List<MedicalWorker> findAllByClinicId(Long id);
-
+	/*@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("select s from MedicalWorker s where s.user.type = ?1 and s.clinic.id = ?2")
+	@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="0")})*/
+	
 	@Query("select s from MedicalWorker s where s.user.type = ?1 and s.clinic.id = ?2")
 	List<MedicalWorker> findAllDoctors(String type, Long id);
 

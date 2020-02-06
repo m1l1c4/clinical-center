@@ -31,6 +31,9 @@ public class CheckupDTO {
 		if (c.getPatient() != null) {
 			this.patient = new PatientDTO(c.getPatient());
 		}
+		if (c.getRoom() != null) {
+			this.room = new RoomDTO(c.getRoom());
+		}
 
 		if (c.getRoom() != null) {
 			this.room = new RoomDTO(c.getRoom());

@@ -4,8 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import tim31.pswisa.dto.CheckupDTO;
@@ -37,6 +42,15 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	@Query("select c from Checkup c inner join c.doctors d where d.id = :id and c.scheduled = :scheduled and c.finished = :finished")
 	Set<CheckupDTO> findAllByScheduledAndMedicalWorkerIdAndFinished(@Param("scheduled") boolean scheduled, @Param("id") Long id, @Param("finished") boolean finished);
 
+	/**
+	 * This method servers for finding all check-ups by scheduled, medical worker id and finished parametar
+	 * 
+	 * @param roomId - id of room
+	 * @param time       - time of check-up
+	 * @param date  - date of check-up
+	 * @return - (Check-up) This method one check-up by sent parameters
+	 * 
+	 */
 	Checkup findOneByRoomIdAndTimeAndDate(Long roomId, String time, LocalDate date);
 	/**
 	 * This method servers for getting all check-ups from database by room id
@@ -67,7 +81,12 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 * @param id - check-up id that has to be returned
 	 * @return - (Checkup) This method returns one check-up
 	 */
-	Checkup findOneById(Long id);
+
+	@Lock(LockModeType.PESSIMISTIC_READ)	// dodato za pesimisticko zaklj zakazivanja brzog pregleda
+	@Query("select ch from Checkup ch where ch.id = :id")
+	//@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="0")})
+	Checkup findOneById(@Param("id")Long id);
+
 
 	/**
 	 * This method servers for getting all check-ups by room id and time and date of
@@ -119,4 +138,12 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 */
 	List<Checkup> findAllByScheduledAndDateAndPatientIdAndTip(boolean scheduled, LocalDate date, Long id, String type);
 
+	/**
+	 * gets from database all checkups where type is "PREGLED" from one patient and are finished
+	 * @param finished - if checkup is finished or not
+	 * @param id - patient id
+	 * @param type - type of checkup
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
+	List<Checkup> findAllByFinishedAndPatientIdAndTip(boolean finished, Long id, String type);
 }

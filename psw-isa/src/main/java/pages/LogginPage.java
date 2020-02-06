@@ -34,6 +34,10 @@ public class LogginPage {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(loginEmail));
 	}
 
+	public void ensureIsNotVisibleModal() {
+		(new WebDriverWait(driver, 30)).until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmButton")));
+	}
+
 	public void ensureIsDisplayedPassword() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(loginPassword));
 	}
@@ -42,8 +46,8 @@ public class LogginPage {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(confirmButton));
 	}
 
-	public void ensureIsNotVisibleModal() {
-		(new WebDriverWait(driver, 10)).until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmButton")));
+	public void ensureIsDisplayedShowModalLogin() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(showModalLogin));
 	}
 
 	public WebDriver getDriver() {

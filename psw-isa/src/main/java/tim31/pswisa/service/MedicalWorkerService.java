@@ -1,10 +1,10 @@
 package tim31.pswisa.service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -313,8 +313,8 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findOneById(id);
 	}
 
-	public List<MedicalWorkerDTO> searchDoctors(String[] params) {
-		// if (params[0].typ)
+	@Transactional(readOnly = false)
+	public List<MedicalWorkerDTO> searchDoctors(String[] params) {		
 		List<MedicalWorkerDTO> forSearch = clinicService.doctorsInClinic(params[0], params[1], params[2]);
 		String name = params[3].equals("") ? "" : params[3];
 		String surname = params[4].equals("") ? "" : params[4];
@@ -337,9 +337,9 @@ public class MedicalWorkerService {
 
 	public boolean checkParams(MedicalWorkerDTO mw, String name, String surname, int rating) {
 
-		if (!name.equals("") && !mw.getUser().getName().contains(name))
+		if (!name.equals("") && !mw.getUser().getName().toLowerCase().contains(name.toLowerCase()))
 			return false;
-		if (!surname.equals("") && !mw.getUser().getSurname().contains(surname))
+		if (!surname.equals("") && !mw.getUser().getSurname().toLowerCase().contains(surname.toLowerCase()))
 			return false;
 		if (rating != 0 && mw.getRating() != rating)
 			return false;
@@ -385,6 +385,7 @@ public class MedicalWorkerService {
 		return ret;
 	}
 
+	@Transactional(readOnly = false)
 	public List<MedicalWorker> findAllDoctors(String type, Long id) {
 		return medicalWorkerRepository.findAllDoctors(type, id);
 	}

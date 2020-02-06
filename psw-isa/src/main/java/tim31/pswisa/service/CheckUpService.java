@@ -7,10 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +22,18 @@ import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
-import tim31.pswisa.model.User;
-import tim31.pswisa.repository.CheckUpRepository;
-
 import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Room;
+import tim31.pswisa.model.User;
+import tim31.pswisa.repository.CheckUpRepository;
 
 @Service
 @Transactional(readOnly = true)
 public class CheckUpService {
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
@@ -99,6 +102,7 @@ public class CheckUpService {
 	 * @param id - id of check-up
 	 * @return - (Checkup) This method returns all absence from database
 	 */
+	@Transactional(readOnly = false)
 	public Checkup findOneById(Long id) {
 		return checkupRepository.findOneById(id);
 	}
@@ -215,35 +219,55 @@ public class CheckUpService {
 	 * calls aspect for sending email to all clinical administrators
 	 * 
 	 * @input CheckupDTO ch - checkup that needs to be booked
-	 * @output boolean flag - defining wheather and request is successfully added or
+	 * @output boolean flag - defining whether request is successfully added or
 	 *         not
 	 */
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ)
 	public boolean checkupToAdmin(CheckupDTO ch, String email) {
+		logger.info("slanje requesta adminu pocelo " + email);
 		Checkup newCh = new Checkup(0, false, ch.getDate(), ch.getTime(), ch.getType(), 1, 0, null, false);
 		User u = userService.findOneByEmail(email);
 		Patient p = patientService.findOneByUserId(u.getId());
-		MedicalWorker mw = medicalWorkerService.findOneById(ch.getMedicalWorker().getId());
+		boolean ok = checkIfAvailable(ch.getMedicalWorker(), ch.getDate(), ch.getTime());
 		Clinic c = clinicService.findOneByName(ch.getClinic().getName());
 		CheckUpType chType = checkUpTypeService.findOneByName(ch.getCheckUpType().getName());
 		ArrayList<ClinicAdministrator> clAdmins = (ArrayList<ClinicAdministrator>) cladminService.findAll();
 
-		if (u == null || p == null || mw == null || c == null || clAdmins == null || chType == null) {
+		if (u == null || p == null || !ok || c == null || clAdmins == null || chType == null) {
+			logger.info("slanje requesta adminu zavrseno sa false" + email);
 			return false;
 		} else {
 			newCh.setPatient(p);
-			newCh.getDoctors().add(mw);
+			newCh.getDoctors().add(medicalWorkerService.findOneById(ch.getMedicalWorker().getId()));
 			newCh.setClinic(c);
 			newCh.setCheckUpType(chType);
 			newCh.setPending(true);
 			newCh.setScheduled(false);
 			newCh.setRatedClinic(false);
 			newCh.setRatedDoctor(false);
-			checkupRepository.save(newCh);
-
+			save(newCh);
+			logger.info("slanje requesta adminu zavrseno sa true" + email);
 			return true;
 		}
 
+	}
+	
+	/**
+	 * checks if given doctor is available at given time, after the request is started
+	 * @param mw
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	private boolean checkIfAvailable(MedicalWorkerDTO mw, LocalDate date, String time) {		
+		String d = date.toString();
+		MedicalWorkerDTO doc = clinicService.getSelectedDoctor((Long)mw.getId(), d);
+		HashMap<String, List<String>> timesInOneDay = doc.getAvailableCheckups();		
+		for (String t : timesInOneDay.get(d)) {
+			if (t.equals(time)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -335,8 +359,10 @@ public class CheckUpService {
 			return checkupRepository.save(checkup);
 		}
 	}
-
+	
+	
 	public List<CheckupDTO> getAllQuicks(Long id) {
+		logger.info("POCELO DOBAVLJANJE SVIH BRZIH");
 		List<MedicalWorker> doctors = medicalWorkerService.findAllDoctors("DOKTOR", id);
 		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
 		for (MedicalWorker mw : doctors) {
@@ -346,33 +372,37 @@ public class CheckUpService {
 				}
 			}
 		}
-
+		logger.info("ZAVRSENO DOBAVLJANJE SVIH BRZIH");
 		return ret;
 	}
 
-	@Transactional(readOnly = false)
+	/** books choosen quick checkup for patient
+	 * 
+	 * @param id - checkup id
+	 * @param email - user email, used for finding patient
+	 * @return (boolean) flag - defines whether a checkup is successfully booked or not
+	 */
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public boolean bookQuickApp(Long id, String email) {
-		boolean ret = true;
+		logger.info("POCEO SA ZAKAZIVANJEM BRZOG" + email);
+		boolean ret = true;		
 		Checkup foundCheckup = checkupRepository.findOneById(id);
-		if (foundCheckup == null) {
+		if (foundCheckup == null || foundCheckup.getPatient() != null) {	//if checkup has patient than it's already booked
+			logger.info("NEUSPESNO ZAKAZIVANJE" + email);
 			ret = false;
-		} else {
+		} else {	
 			User u = userService.findOneByEmail(email);
 			Patient p = patientService.findOneByUserId(u.getId());
-			foundCheckup.setPatient(p);
-			double price = foundCheckup.getPrice() - foundCheckup.getPrice() * (foundCheckup.getDiscount() / 100);
-			foundCheckup.setPrice(price); // when checkup is finished, set price to previous without discount
+			foundCheckup.setPatient(p);			
 			checkupRepository.save(foundCheckup); // because of adding patient to checkup
-
 			try {
 				emailService.quickAppConfirmationEmail(email, foundCheckup);
-			} catch (MailException e) {
-				// TODO Auto-generated catch block
+			} catch (MailException e) {				
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+			} catch (InterruptedException e) {				
 				e.printStackTrace();
 			}
+			logger.info("USPESNO ZAKAZIVANJE" + email);
 			ret = true;
 		}
 
@@ -448,7 +478,7 @@ public class CheckUpService {
 	 * @param type  - type of checkup
 	 * @return
 	 */
-	public HashMap<Integer, List<CheckupDTO>> getPatientCheckups(String email, String type, Long id) {
+	public HashMap<Integer, List<CheckupDTO>> getPatientCheckups(Long id, String email, String type) {
 		User loggedUser = userService.findOneByEmail(email);
 		HashMap<Integer, List<CheckupDTO>> ret = new HashMap<Integer, List<CheckupDTO>>(2);
 		List<CheckupDTO> incomingCheckups = new ArrayList<CheckupDTO>();
@@ -458,10 +488,9 @@ public class CheckUpService {
 		}
 		Patient loggedPatient = patientService.findOneByUserId(id);
 		if (loggedPatient == null) {
-			return null;
-		}
+			return null;	
 		incomingCheckups = getIncomingChps(loggedPatient, type);
-		historyCheckups = getChpsFromPast(loggedPatient, type);
+		historyCheckups = getChpsFromPast(loggedPatient, type);			
 		ret.put(1, incomingCheckups);
 		ret.put(2, historyCheckups);
 
@@ -470,7 +499,6 @@ public class CheckUpService {
 
 	/**
 	 * returns all future checkups depending on type
-	 * 
 	 * @param p
 	 * @param type
 	 * @return
@@ -478,7 +506,8 @@ public class CheckUpService {
 	private List<CheckupDTO> getIncomingChps(Patient p, String type) {
 		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
 		for (Checkup checkup : p.getAppointments()) {
-			if (checkup.getDate().isAfter(LocalDate.now()) && checkup.isScheduled() && checkup.getTip().equals(type)) {
+			if (checkup.getDate().isAfter(LocalDate.now()) && checkup.isScheduled() 
+					&& checkup.getTip().equals(type) ) {
 				CheckupDTO temp = new CheckupDTO(checkup);
 				MedicalWorker doctor = patientService.findDoctor(checkup);
 				if (doctor != null) {
@@ -492,7 +521,6 @@ public class CheckUpService {
 
 	/**
 	 * returns all previous checkups depending on type
-	 * 
 	 * @param p
 	 * @param type
 	 * @return
@@ -556,6 +584,10 @@ public class CheckUpService {
 		 * Report rep = checkupToCancel.getReport(); rep.setCheckUp(null);
 		 * reportService.save(rep);
 		 */
+	}
+	
+	public List<Checkup> findAllByFinishedAndPatientIdAndTip(boolean finished, Long id, String type) {
+		return checkupRepository.findAllByFinishedAndPatientIdAndTip(finished, id, type);
 	}
 
 }
