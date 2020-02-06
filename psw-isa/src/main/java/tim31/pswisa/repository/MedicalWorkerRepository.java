@@ -30,7 +30,7 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 	 * @param id - id of medical worker
 	 * @return - (MedicalWorker) This method returns searched medical worker
 	 */
-	@Lock(LockModeType.PESSIMISTIC_READ)
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select mw from MedicalWorker mw where mw.id = :id")
 	@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="0")})
 	MedicalWorker findOneById(@Param("id")Long id);

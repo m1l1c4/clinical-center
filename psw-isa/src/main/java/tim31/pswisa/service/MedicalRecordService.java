@@ -47,5 +47,9 @@ public class MedicalRecordService {
 		medicalRecord.setWeight(mr.getWeight());
 		return medicalRecordRepository.save(medicalRecord);
 	}
+	
+	public MedicalRecord findOneByPatientId(Long id) {
+		return medicalRecordRepository.findOneByPatientId(id);
+	}
 
 }

@@ -45,12 +45,12 @@ public class Clinic {
 		this.country = country;
 	}
 
-	@Column(name = "address", unique = true, nullable = false)
+	@Column(name = "address", unique = false, nullable = false)
 	private String address;
 
 	@Column(name = "rating", unique = false, nullable = true)
-	private double rating;	
-	
+	private double rating;
+
 	@Column(name = "description", unique = false, nullable = false)
 	private String description;
 
@@ -94,9 +94,9 @@ public class Clinic {
 		super();
 
 	}
-		
-	public Clinic(Long id, String name, String city, String country,
-			String address, double rating, String description) {
+
+	public Clinic(Long id, String name, String city, String country, String address, double rating,
+			String description) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -223,8 +223,6 @@ public class Clinic {
 		this.version = version;
 	}
 
-	
-	
 	/*
 	 * public HashMap<String, Double> getPricelist() { return pricelist; }
 	 * 

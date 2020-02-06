@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import tim31.pswisa.model.Room;
 import tim31.pswisa.repository.RoomRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class RoomService {
 
 	@Autowired
@@ -56,6 +59,7 @@ public class RoomService {
 	 * @param room - room that has to be saved
 	 * @return - (Room) This method returns saved room
 	 */
+	@Transactional(readOnly = false)
 	public Room save(Room room) {
 		return roomRepository.save(room);
 	}
@@ -66,6 +70,7 @@ public class RoomService {
 	 * @param room - room that has to be updated
 	 * @return - (Room) This method returns updated room
 	 */
+	@Transactional(readOnly = false)
 	public Room update(Room ct) {
 		return roomRepository.save(ct);
 	}

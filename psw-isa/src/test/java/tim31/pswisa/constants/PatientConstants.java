@@ -10,3 +10,4 @@ public class PatientConstants {
 	public static final boolean PATIENT1_PROCESSED = false;
 
 }
+
