@@ -13,6 +13,7 @@ import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Recipe;
 import tim31.pswisa.model.Report;
+import tim31.pswisa.model.User;
 import tim31.pswisa.repository.ReportRepository;
 
 @Service
@@ -29,6 +30,12 @@ public class ReportService {
 
 	@Autowired
 	private PatientService patientService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private MedicalWorkerService medicalWorkerService;
 
 	public Report add(ReportDTO r) {
 		Report report = new Report();
@@ -73,6 +80,21 @@ public class ReportService {
 	
 	public Report save(Report r) {
 		return reportRepository.save(r);
+	}
+	
+	public ReportDTO update(String email, ReportDTO r) {
+		User user = userService.findOneByEmail(email);
+		if(user != null) {
+			MedicalWorker medicalWorker = medicalWorkerService.findByUser(user.getId());
+			Report report = reportRepository.findOneById(r.getId());
+			if(r.getCheckUp().getMedicalWorker().getId()!= medicalWorker.getId()) {
+				return null;
+			}
+			report.setInformations(r.getInformations());
+			report = save(report);
+			return new ReportDTO(report);
+		}
+		return null;
 	}
 
 }

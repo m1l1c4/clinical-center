@@ -19,8 +19,10 @@ import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.ClinicAdministrator;
+import tim31.pswisa.model.MedicalRecord;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
+import tim31.pswisa.model.Recipe;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpRepository;
@@ -66,7 +68,13 @@ public class MedicalWorkerService {
 	private ClinicRepository clinicRepository;
 	
 	@Autowired
-	private CheckUpRepository checkupRepository;;
+	private CheckUpRepository checkupRepository;
+	
+	@Autowired
+	private RecipeService recipeService;
+	
+	@Autowired
+	private MedicalRecordService medicalRecordService;
 
 	public MedicalWorker findOneByUserId(Long id) {
 		return medicalWorkerRepository.findOneByUserId(id);
@@ -175,6 +183,8 @@ public class MedicalWorkerService {
 			if (ok == 0) {
 				checkup.setPatient(p);
 				checkup.setScheduled(false);
+				checkup.setRatedDoctor(false);
+				checkup.setRatedClinic(false);
 				checkup.setTip(c.getType());
 				checkup.getDoctors().add(medWorker);
 				checkup.setTime(c.getTime());
@@ -204,19 +214,30 @@ public class MedicalWorkerService {
 	 * @param pom  - email of patient
 	 * @return - (String) This method returns string 'DA' or 'NE'
 	 */
-	public String canAccess(User user, String pom) {
+	public String canAccess(User user, Long id) {
 		String retVal = "NE";
-		User user1 = userService.findOneByEmail(pom);
-		Patient p = patientService.findOneByUserId(user1.getId());
+		Patient p = patientService.findOneByUserId(id);
 		MedicalWorker medWorker = findByUser(user.getId());
 		
-		 for (Checkup c : p.getAppointments()) { 
-			 MedicalWorker mw = (MedicalWorker) c.getDoctors().toArray()[0];
-			 if(mw.getUser().getEmail().equals((medWorker.getUser().getEmail())) && c.isFinished()) {
-				 retVal = "DA"; 
+		if(user.getType().equals("DOKTOR")) {
+			 for (Checkup c : p.getAppointments()) { 
+				 MedicalWorker mw = (MedicalWorker) c.getDoctors().toArray()[0];
+				 if(mw.getUser().getEmail().equals((medWorker.getUser().getEmail())) && c.isFinished()) {
+					 retVal = "DA"; 
+				 }
 			 }
-		 }
-		 return retVal;
+		}
+		else if(user.getType().equals("MEDICINAR")) {
+			MedicalRecord medicalRecord = medicalRecordService.findOneByPatientId(p.getId());
+			List<Recipe> recipes = recipeService.findAllByVerifiedAndNurseId(true, medWorker.getId());
+			for(Recipe r:recipes) {
+				if(r.getReport().getMedicalRecord().getId() == medicalRecord.getId()) {
+					return "DA";
+				}
+			}
+		}
+		return retVal;
+
 	}
 
 	public List<MedicalWorkerDTO> findDoctors(Clinic clinic, String name, String typeD) {
@@ -287,6 +308,7 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.save(medicalWorker);
 	}
 
+	@Transactional(readOnly = false)
 	public MedicalWorker findOneById(Long id) {
 		return medicalWorkerRepository.findOneById(id);
 	}

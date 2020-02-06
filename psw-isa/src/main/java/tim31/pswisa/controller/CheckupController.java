@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.RecipeDTO;
 import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Absence;
 import tim31.pswisa.model.Checkup;
@@ -37,6 +38,7 @@ import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.CodebookService;
 import tim31.pswisa.service.MedicalWorkerService;
+import tim31.pswisa.service.RecipeService;
 import tim31.pswisa.service.ReportService;
 import tim31.pswisa.service.UserService;
 
@@ -70,9 +72,13 @@ public class CheckupController {
 
 	@Autowired
 	private AbsenceService absenceService;
+	
+	@Autowired
+	private RecipeService recipeService;
 
 	/**
 	 * Method for adding report after examination of patient
+	 * 
 	 * @param r - report that has to be added
 	 * @return - This method returns created report
 	 */
@@ -87,9 +93,11 @@ public class CheckupController {
 
 	/**
 	 * This method servers for adding new appointment for booking with one click
+	 * 
 	 * @param c       - check-up that has to be added
 	 * @param request - information of logged user
-	 * @return - (CheckupDTO) This method returns added appointment if doctor are not busy
+	 * @return - (CheckupDTO) This method returns added appointment if doctor are
+	 *         not busy
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/addAppointment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -116,6 +124,7 @@ public class CheckupController {
 
 	/**
 	 * Method for getting one check-up
+	 * 
 	 * @param id - if of the check-up in database
 	 * @return - This method returns found check-in
 	 */
@@ -130,6 +139,7 @@ public class CheckupController {
 
 	/**
 	 * Method for creating recipes after examination of the patient
+	 * 
 	 * @param recipes - codes of the selected codes from the codebook
 	 * @return - This method returns message if all recipes are created successfully
 	 */
@@ -144,7 +154,7 @@ public class CheckupController {
 		}
 		return new ResponseEntity<>("Uspjesno dodato", HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/checkupRequest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReportDTO> checkupRequest(@RequestBody CheckupDTO ch, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -156,12 +166,15 @@ public class CheckupController {
 		}
 	}
 
-
 	/**
-	 * Method for changing check-up after finding a room, date and time for the appointment/operation by clinic administrator
-	 * @param c - check-up with the id of the check-up that has to be updated and new informations about appointment
+	 * Method for changing check-up after finding a room, date and time for the
+	 * appointment/operation by clinic administrator
+	 * 
+	 * @param c - check-up with the id of the check-up that has to be updated and
+	 *          new informations about appointment
 	 * @return - This method returns updated check-up
 	 */
+	//@PreAuthorize("hasRole('ADMINISTRATOR')")
 	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> updateCheckup(@RequestBody CheckupDTO c) {
 		Checkup checkup;
@@ -169,8 +182,7 @@ public class CheckupController {
 			checkup = checkupService.update(c);
 			if (checkup != null) {
 				return new ResponseEntity<CheckupDTO>(new CheckupDTO(checkup), HttpStatus.OK);
-			}
-			else {
+			} else {
 				return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 
 			}
@@ -179,14 +191,17 @@ public class CheckupController {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 		}
-		
+
 	}
 
 	/**
-	 * Method for adding doctors which clinic administrator has selected to must attend the operation 
+	 * Method for adding doctors which clinic administrator has selected to must
+	 * attend the operation
+	 * 
 	 * @param doctors - id's of the doctors which will be assigned to operation
-	 * @param id - id of the check-up in the database
-	 * @return - This method returns message about success of adding doctors to check-up
+	 * @param id      - id of the check-up in the database
+	 * @return - This method returns message about success of adding doctors to
+	 *         check-up
 	 */
 	@PostMapping(value = "/addDoctors/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addDoctors(@RequestBody Long[] doctors, @PathVariable Long id) {
@@ -206,8 +221,9 @@ public class CheckupController {
 
 	/**
 	 * Method for getting all check-ups of the logged in user
+	 * 
 	 * @param request - request for getting logged in user
-	 * @param id - id of the room if logged in user is administrator of clinic
+	 * @param id      - id of the room if logged in user is administrator of clinic
 	 * @return - This method returns all check-ups of the logged in user
 	 */
 	@GetMapping(value = "/getCheckups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -225,8 +241,10 @@ public class CheckupController {
 
 	/**
 	 * Method for getting all absences of one medical worker
+	 * 
 	 * @param id - id of the medical worker in the database
-	 * @return - This method returns all absences and holidays of the one medical worker
+	 * @return - This method returns all absences and holidays of the one medical
+	 *         worker
 	 */
 	@PostMapping(value = "/getVacations/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AbsenceDTO>> getVacations(@PathVariable Long id) {
@@ -253,8 +271,8 @@ public class CheckupController {
 	 * @param id - key for finding available checkup
 	 * @return string - message for successful / unsuccessful booking
 	 */
-	//@PreAuthorize("hasRole('ROLE_PACIJENT')")
-	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)	
+	// @PreAuthorize("hasRole('ROLE_PACIJENT')")
+	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> bookQuickApp(@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
@@ -264,23 +282,27 @@ public class CheckupController {
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}
-	
+
 	/**
-	 * find 2 lists for patient checkups, one for history and one for incoming checkups
+	 * find 2 lists for patient checkups, one for history and one for incoming
+	 * checkups
+	 * 
 	 * @param request - HttpServerRequest request - used for finding logged user
 	 * @return
 	 */
-	@PostMapping(value = "/patientHistory", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(HttpServletRequest request) {
+	// @PreAuthorize("hasRole('ROLE_PACIJENT') or hasRole('ROLE_DOCTOR')")
+	@PostMapping(value = "/patientHistory/{type}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type,
+			@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
-		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email);
+		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(email, type, id);
 		if (patientCheckups != null) {
 			return new ResponseEntity<>(patientCheckups, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}
-	
+
 	@PostMapping(value = "/scheduleCheckup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> scheduleCheckup(@PathVariable Long id) {
 		boolean success = checkupService.scheduleCheckup(id);
@@ -289,7 +311,7 @@ public class CheckupController {
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}
-	
+
 	@PostMapping(value = "/cancelCheckup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> cancelCheckup(@PathVariable Long id) {
 		boolean success = checkupService.cancelCheckup(id);
@@ -316,5 +338,34 @@ public class CheckupController {
 		}
 		return new ResponseEntity<CheckupDTO>(checkup, HttpStatus.OK);
 	}
+
+	@PostMapping(value = "/updateReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ReportDTO> updateReport(HttpServletRequest request, @RequestBody ReportDTO r) {
+		String token = tokenUtils.getToken(request);
+		String email = tokenUtils.getUsernameFromToken(token);
+		ReportDTO report = reportService.update(email, r);
+		if (report != null) {
+			return new ResponseEntity<ReportDTO>(report, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	}
+	
+	/**
+	 * returns checkup report needed for presenting additional info of checkup
+	 * 
+	 * @param request
+	 * @param id - checkup id
+	 * @return
+	 */
+	//@PreAuthorize("hasRole('ROLE_PACIJENT')")
+	@PostMapping(value = "/infoReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RecipeDTO> checkupDetails(HttpServletRequest request, @PathVariable Long id) {		
+		RecipeDTO report = recipeService.additionalCheckupInfo(id);
+		if (report == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<RecipeDTO>(report, HttpStatus.OK);
+	}
+
 
 }

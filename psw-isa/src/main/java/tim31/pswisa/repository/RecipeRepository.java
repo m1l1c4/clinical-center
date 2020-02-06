@@ -28,4 +28,9 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 	 * @return - (Recipe) This method returns found recipe
 	 */
 	Recipe findOneById(Long id);
+	
+	List<Recipe> findAllByVerifiedAndNurseId(Boolean verified, Long nurseId);
+	
+	Recipe findOneByReportId(Long id);
+
 }
