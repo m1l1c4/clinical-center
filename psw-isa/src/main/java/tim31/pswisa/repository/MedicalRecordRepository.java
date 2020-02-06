@@ -12,4 +12,6 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Lo
 	 * @return - (MedicalRecors) found medical record
 	 */
 	MedicalRecord findOneById(Long id);
+	
+	MedicalRecord findOneByPatientId(Long id);
 }

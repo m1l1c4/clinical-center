@@ -45,7 +45,7 @@ public class Clinic {
 		this.country = country;
 	}
 
-	@Column(name = "address", unique = true, nullable = false)
+	@Column(name = "address", unique = false, nullable = false)
 	private String address;
 
 	@Column(name = "rating", unique = false, nullable = true)

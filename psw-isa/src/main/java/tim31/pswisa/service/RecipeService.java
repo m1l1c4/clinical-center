@@ -86,6 +86,10 @@ public class RecipeService {
 		return recipeRepository.save(recipe);
 	}
 	
+	public List<Recipe> findAllByVerifiedAndNurseId(boolean verified, Long nurseId){
+		return recipeRepository.findAllByVerifiedAndNurseId(verified, nurseId);
+	}
+
 	@Transactional(readOnly = false)
 	public RecipeDTO additionalCheckupInfo(Long id) {		
 		Checkup ch = checkupService.findOneById(id);
@@ -99,6 +103,5 @@ public class RecipeService {
 	public Recipe findOneByReportId(Long id) {
 		return recipeRepository.findOneByReportId(id);
 	}
-	
-	
+
 }

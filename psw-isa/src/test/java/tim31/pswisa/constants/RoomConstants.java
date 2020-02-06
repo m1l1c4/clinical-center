@@ -38,5 +38,4 @@ public class RoomConstants {
 	public static final LocalDate ROOM_FRDATE = LocalDate.parse("2020-02-23");
 
 
-
 }

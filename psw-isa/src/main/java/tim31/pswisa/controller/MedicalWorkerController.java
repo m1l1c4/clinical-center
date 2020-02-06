@@ -84,13 +84,13 @@ public class MedicalWorkerController {
 	 * @return - (String) This method returns string 'da' or 'ne' depending of
 	 *         conditions
 	 */
-	@PostMapping(value = "/canAccessToMedicalRecord", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> canAccessController(HttpServletRequest request, @RequestBody String pom) {
+	@GetMapping(value = "/canAccessToMedicalRecord/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> canAccessController(HttpServletRequest request, @PathVariable Long id) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
 		if (user != null) {
-			String isOk = medicalWorkerService.canAccess(user, pom);
+			String isOk = medicalWorkerService.canAccess(user, id);
 			return new ResponseEntity<>(isOk, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);

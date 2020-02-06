@@ -29,5 +29,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 	 */
 	Recipe findOneById(Long id);
 	
+	List<Recipe> findAllByVerifiedAndNurseId(Boolean verified, Long nurseId);
+	
 	Recipe findOneByReportId(Long id);
+
 }
