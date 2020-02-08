@@ -191,6 +191,7 @@ public class CheckupController {
 		try {
 			checkup = checkupService.update(c);
 			if (checkup != null) {
+				emailService.notifyDoctor(checkup.getId());
 				return new ResponseEntity<CheckupDTO>(new CheckupDTO(checkup), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);

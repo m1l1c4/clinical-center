@@ -91,7 +91,7 @@ public class CheckupControllerUnitTest {
 		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
 		checkupTest.setTime(CheckupConstants.CHECKUP_TIME);
 		checkupTest.setId(CheckupConstants.CHECKUP_ID);
-		checkupTest.setDoctors(new HashSet<>());
+		checkupTest.setDoctors(new HashSet<MedicalWorker>());
 		checkupTest.getDoctors().add(doctorTest);
 		Room testRoom = new Room();
 		testRoom.setName(RoomConstants.ROOM_NAME);

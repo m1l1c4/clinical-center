@@ -317,7 +317,7 @@ public class CheckUpService {
 		}		
 		Checkup checkup = checkupRepository.findOneById(c.getId());
 		Room room = roomService.myFindOne(c.getRoom().getId());
-		try { Thread.sleep(7000); } catch (InterruptedException e) { }
+		//try { Thread.sleep(7000); } catch (InterruptedException e) { }
 		checkup.setDate(c.getDate());
 		checkup.setTime(c.getTime());
 		checkup.setRoom(room);
@@ -327,7 +327,7 @@ public class CheckUpService {
 			MedicalWorker doctor = medicalWorkerService.findOneById(c.getMedicalWorker().getId());
 			checkup.getDoctors().add(doctor);
 		}
-		checkup = save(checkup);
+		checkup = save(checkup);		
 		return checkup;
 	}
 

@@ -1,13 +1,10 @@
 package tim31.pswisa.service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.util.HashSet;
 
 import javax.mail.MessagingException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,7 +45,7 @@ public class EmailServiceTest {
 		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
 		checkupTest.setTime(CheckupConstants.CHECKUP_TIME);
 		checkupTest.setId(CheckupConstants.CHECKUP_ID);
-		checkupTest.setDoctors(new HashSet<>());
+		checkupTest.setDoctors(new HashSet<MedicalWorker>());
 		checkupTest.getDoctors().add(doctorTest);
 		Room testRoom = new Room();
 		testRoom.setName(RoomConstants.ROOM_NAME);
@@ -78,7 +75,7 @@ public class EmailServiceTest {
 		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
 		checkupTest.setTime(CheckupConstants.CHECKUP_TIME);
 		checkupTest.setId(CheckupConstants.CHECKUP_ID);
-		checkupTest.setDoctors(new HashSet<>());
+		checkupTest.setDoctors(new HashSet<MedicalWorker>());
 		checkupTest.getDoctors().add(doctorTest);
 		Room testRoom = new Room();
 		testRoom.setName(RoomConstants.ROOM_NAME);
@@ -137,13 +134,27 @@ public class EmailServiceTest {
 		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
 		checkupTest.setTime(CheckupConstants.CHECKUP_TIME);
 		checkupTest.setId(CheckupConstants.CHECKUP_ID);
-		checkupTest.setDoctors(new HashSet<>());
+		checkupTest.setDoctors(new HashSet<MedicalWorker>());
 		checkupTest.getDoctors().add(doctorTest);
 		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
 				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
 		checkupTest.setClinic(clinic1);
 		assertThrows(NullPointerException.class, () -> {
 			emailService.quickAppConfirmationEmail(UserConstants.EMAIL_1, checkupTest);
-		});	}
+		});
+	}
+	
+	@Test
+	public void testNotifyDoctorEmail() throws InterruptedException, MessagingException, NullPointerException {
+		assertDoesNotThrow(() -> emailService.notifyDoctor(CheckupConstants.CHECKUP_ID));
+	}
+	
+	@Test
+	public void testNotifyDoctorNullException() throws InterruptedException, MessagingException, NullPointerException {
+		assertThrows(NullPointerException.class, () -> {
+			emailService.notifyDoctor(CheckupConstants.CHECKUP_ID_FALSE);
+		});
+
+	}
 
 }

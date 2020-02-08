@@ -19,7 +19,6 @@ import tim31.pswisa.model.Room;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @TestPropertySource("classpath:application-test.properties")
-@TestPropertySource("classpath:application-test.properties")
 public class RoomRepositoryTest {
 	@Autowired
 	RoomRepository roomRepository;
