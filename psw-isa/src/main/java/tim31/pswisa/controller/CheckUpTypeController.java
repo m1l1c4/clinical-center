@@ -51,7 +51,7 @@ public class CheckUpTypeController {
 	 * @return - (String) This method returns string "Obrisano" if type is deleted
 	 *         or "Greska" can't delete that type
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ADMINISTRATOR')")
 	@PostMapping(value = "/deleteType/{name}")
 	public ResponseEntity<String> deleteTypeController(@PathVariable String name, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -75,7 +75,7 @@ public class CheckUpTypeController {
 	 * @return - (ArrayList<CheckUpTypeDTO>) This method returns list of all
 	 *         check-ups type in clinic if user is not null
 	 */
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_DOCTOR', 'ROLE_PACIJENT', 'ROLE_CCADMIN', 'ROLE_STAFF')")
+    //@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_DOCTOR', 'ROLE_PACIJENT', 'ROLE_CCADMIN', 'ROLE_STAFF')")
 	@GetMapping(value = "/getTypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<CheckUpTypeDTO>> getTypes(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
@@ -97,7 +97,7 @@ public class CheckUpTypeController {
 	 * @return - (CheckUpTypeDTO) This method returns added check-up type in clinic
 	 * 
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ADMINISTRATOR')")
 	@PostMapping(value = "/addType", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckUpTypeDTO> addTypeController(@RequestBody CheckUpTypeDTO type,
 			HttpServletRequest request) {

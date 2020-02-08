@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -51,7 +52,7 @@ public class MedicalWorker {
 
 	@Column(name = "rating", unique = false, nullable = true)
 	private double rating;
-	
+
 	@Column(name = "startHr", unique = false, nullable = true)
 	private int startHr;
 
@@ -65,6 +66,9 @@ public class MedicalWorker {
 	@ManyToMany(mappedBy = "doctors")
 	private Set<Checkup> checkUps = new HashSet<Checkup>();
 
+	@Version
+	private Long version;
+
 	// just for nurse
 	// @ManyToMany(mappedBy = "medicalWorkers")
 	// private Set<Recipe> receipts = new HashSet<Recipe>();
@@ -72,18 +76,14 @@ public class MedicalWorker {
 	public MedicalWorker() {
 		super();
 	}
-	
-	
 
-	public MedicalWorker(Long id, User user, Clinic clinic,  String tip) {
+	public MedicalWorker(Long id, User user, Clinic clinic, String tip) {
 		super();
 		this.id = id;
 		this.user = user;
 		this.clinic = clinic;
 		this.tip = tip;
 	}
-
-
 
 	public MedicalWorker(MedicalWorker m) {
 		this.id = m.id;
@@ -207,6 +207,14 @@ public class MedicalWorker {
 
 	public void setTip(String tip) {
 		this.tip = tip;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

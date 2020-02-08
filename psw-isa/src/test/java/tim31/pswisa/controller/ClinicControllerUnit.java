@@ -15,13 +15,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.openqa.selenium.remote.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.elasticsearch.rest.RestClientAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,11 +49,13 @@ import tim31.pswisa.service.ClinicService;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 public class ClinicControllerUnit {
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -64,14 +71,13 @@ public class ClinicControllerUnit {
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 
-	
+	@Autowired
+	private TestRestTemplate restTemplate;
 
 	@PostConstruct
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
-
-	
 
 	@Test
 	public void testSearchClinicsControllerNonClinicsUnit() throws Exception {
@@ -94,29 +100,24 @@ public class ClinicControllerUnit {
 		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
 				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
 
-		Clinic clinic2 = new Clinic(ClinicConstants.ID_C_2, ClinicConstants.NAZIV_2, ClinicConstants.GRAD_2,
-				ClinicConstants.DRZAVA_2, ClinicConstants.ADRESA_2, ClinicConstants.RAITING_2, ClinicConstants.OPIS_2);
-
 		List<ClinicDTO> clinics = new ArrayList<ClinicDTO>();
 
 		clinics.add(new ClinicDTO(clinic1));
-		clinics.add(new ClinicDTO(clinic2));
 
 		String jsonString = TestUtil.json(params);
 
 		Mockito.when(clinicServiceMock.searchClinics(params)).thenReturn(clinics);
 
 		mockMvc.perform(post(pre_url).contentType(contentType).content(jsonString)).andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(2)))
-				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())))
-				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_2.intValue())));
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())));
 
 		verify(clinicServiceMock, times(1)).searchClinics(params);
 
 	}
 
 	@Test
-	public void testFilterControllerClinicsOneUnit() throws Exception {
+	public void testFilterControllerClinicsNoneUnit() throws Exception {
 		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
 				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
 
@@ -131,11 +132,9 @@ public class ClinicControllerUnit {
 		pomList.add(clinic1);
 		pomList.add(clinic2);
 
-		List<ClinicDTO> clinics = new ArrayList<ClinicDTO>();
-		ClinicDTO clinic11 = new ClinicDTO(clinic1);
-		ClinicDTO clinic12 = new ClinicDTO(clinic2);
-		clinics.add(clinic11);
-		clinics.add(clinic12);
+		List<Clinic> clinics = new ArrayList<Clinic>();
+		clinics.add(clinic1);
+		clinics.add(clinic2);
 		clinic1.setMedicalStuff(new HashSet<MedicalWorker>());
 		clinic2.setMedicalStuff(new HashSet<MedicalWorker>());
 
@@ -168,12 +167,10 @@ public class ClinicControllerUnit {
 
 		Mockito.when(clinicServiceMock.filterClinics("15", pomList)).thenReturn(retValue);
 
-		String jsonString = TestUtil.json(clinics);
+		String jsonString = TestUtil.json(pomList);
 
 		mockMvc.perform(post("/clinic/filterClinic/" + "15").contentType(contentType).content(jsonString))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.object").doesNotExist());
-
-		// verify(clinicServiceMock, times(1)).filterClinics("15", pomList);
 
 	}
 
@@ -186,54 +183,19 @@ public class ClinicControllerUnit {
 		Clinic clinic2 = new Clinic(ClinicConstants.ID_C_2, ClinicConstants.NAZIV_2, ClinicConstants.GRAD_2,
 				ClinicConstants.DRZAVA_2, ClinicConstants.ADRESA_2, ClinicConstants.RAITING_2, ClinicConstants.OPIS_2);
 
-		List<ClinicDTO> clinics = new ArrayList<ClinicDTO>();
-		ClinicDTO clinic11 = new ClinicDTO(clinic1);
-		ClinicDTO clinic12 = new ClinicDTO(clinic2);
-		clinics.add(clinic11);
-		clinics.add(clinic12);
-		clinic1.setMedicalStuff(new HashSet<MedicalWorker>());
-		clinic2.setMedicalStuff(new HashSet<MedicalWorker>());
+		List<Clinic> clinics = new ArrayList<Clinic>();
+		clinics.add(clinic1);
+		clinics.add(clinic2);
 
-		User user1 = new User();
-		user1.setName(UserConstants.IME_1);
-		user1.setSurname(UserConstants.PREZIME_1);
-		user1.setType(UserConstants.TIP);
+		List<Clinic> retValue = new ArrayList<Clinic>();
 
-		User user2 = new User();
-		user2.setName(UserConstants.IME_2);
-		user2.setSurname(UserConstants.PREZIME_2);
-		user2.setType(UserConstants.TIP);
-
-		ArrayList<Clinic> clinicsFilter = new ArrayList<Clinic>();
-		clinicsFilter.add(clinic1);
-		clinicsFilter.add(clinic2);
-
-		MedicalWorker mw1 = new MedicalWorker(DoctorConstants.DOCTOR_ID_1, user1, clinic1, DoctorConstants.TIP_D_1);
-		clinic1.getMedicalStuff().add(mw1);
-
-		MedicalWorker mw2 = new MedicalWorker(DoctorConstants.DOCTOR_ID_2, user2, clinic2, DoctorConstants.TIP_D_1);
-		clinic2.getMedicalStuff().add(mw2);
-
-		CheckUpType srchType = new CheckUpType();
-		srchType.setClinics(new HashSet<Clinic>());
-		srchType.getClinics().add(clinic1);
-		srchType.getClinics().add(clinic2);
-		srchType.setName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);
-		srchType.setId(CheckupTypeConstants.CHECK_UP_TYPE_ID);
-		srchType.setTypePrice(100);
-
-		List<Clinic> returnValue = new ArrayList<Clinic>();
-		returnValue.add(clinic1);
-
-		Mockito.when(clinicServiceMock.filterClinics("10", clinicsFilter)).thenReturn(returnValue);
+		Mockito.when(clinicServiceMock.filterClinics("greska", (ArrayList<Clinic>) clinics)).thenReturn(retValue);
 
 		String jsonString = TestUtil.json(clinics);
-
-		mockMvc.perform(post("/clinic/filterClinic/" + "10").contentType(contentType).content(jsonString))
-				.andExpect(status().isOk()).andExpect(jsonPath("$").value(hasSize(1)))
-				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())));
-
-		// verify(clinicServiceMock, times(1)).filterClinics("10", clinicsFilter);
+	     		
+		mockMvc.perform(post("/clinic/filterClinic/" + "greska").contentType(contentType).content(jsonString))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.object").doesNotExist());
 
 	}
 

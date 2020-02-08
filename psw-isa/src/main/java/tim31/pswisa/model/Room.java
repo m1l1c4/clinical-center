@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -46,18 +47,22 @@ public class Room {
 	@JsonBackReference(value = "room_mov")
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Clinic clinic;
+	
+	@Version
+	private Long version;
 
 	public Room() {
 		super();
 		bookedCheckups = new HashSet<Checkup>();
+		this.isFree = true;
 	}
 
-	public Room(Long id, String name, String type, boolean isFree, int number, Clinic clinic, LocalDate first) {
+	public Room(Long id, String name, String type, int number, Clinic clinic, LocalDate first) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.tipRoom = type;
-		this.isFree = isFree;
+		this.isFree = true;
 		this.number = number;
 		this.clinic = clinic;
 		this.firstFreeDate = first;
@@ -125,6 +130,22 @@ public class Room {
 
 	public void setFirstFreeDate(LocalDate firstFreeDate) {
 		this.firstFreeDate = firstFreeDate;
+	}
+
+	public String getTipRoom() {
+		return tipRoom;
+	}
+
+	public void setTipRoom(String tipRoom) {
+		this.tipRoom = tipRoom;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

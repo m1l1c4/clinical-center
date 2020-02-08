@@ -7,7 +7,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.constants.ClinicConstants;
 import tim31.pswisa.constants.RoomConstants;
@@ -16,6 +18,8 @@ import tim31.pswisa.model.Room;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@TestPropertySource("classpath:application-test.properties")
+@TestPropertySource("classpath:application-test.properties")
 public class RoomRepositoryTest {
 	@Autowired
 	RoomRepository roomRepository;
@@ -24,6 +28,7 @@ public class RoomRepositoryTest {
 	TestEntityManager entityManager;
 
 	@Test
+	@Transactional
 	public void testFindOneById() {
 		Room testRoom = new Room();		
 		Clinic clinicTest = new Clinic();

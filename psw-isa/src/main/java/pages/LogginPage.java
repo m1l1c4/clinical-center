@@ -90,4 +90,12 @@ public class LogginPage {
 		this.showModalLogin = showModallogin;
 	}
 
+	public void login(String email, String password) {
+		getShowModalLogin().click();
+		ensureIsDisplayedEmail();
+		loginEmail.sendKeys(email);
+		loginPassword.sendKeys("sifra1");
+		confirmButton.click();
+		ensureIsNotVisibleModal();
+	}
 }

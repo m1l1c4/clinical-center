@@ -273,9 +273,7 @@ public class EmailService {
 	 * @throws InterruptedException
 	 */
 	@Async
-	public void quickAppConfirmationEmail(String email, Checkup checkup) throws MailException, InterruptedException {
-		User u = userService.findOneByEmail(email);
-		String text = "";
+	public void quickAppConfirmationEmail(String email, Checkup checkup) throws MailException, InterruptedException {		String text = "";
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
@@ -288,7 +286,6 @@ public class EmailService {
 				+ "Price: " + checkup.getPrice();
 		msg.setText(text);
 		javaMailSender.send(msg);
-
 		System.out.println("Email sent.");
 	}
 

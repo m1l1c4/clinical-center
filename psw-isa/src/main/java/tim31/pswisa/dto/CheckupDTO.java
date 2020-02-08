@@ -24,9 +24,8 @@ public class CheckupDTO {
 
 	public CheckupDTO(Checkup c) {
 		this(c.getId(), c.getDiscount(), c.isScheduled(), c.getDate(), c.getTime(), c.getTip(), c.getDuration(),
-				c.getDiscount(), null, null, new ClinicDTO(c.getClinic()),
-				new MedicalWorkerDTO((MedicalWorker) c.getDoctors().toArray()[0]),
-				new CheckUpTypeDTO(c.getCheckUpType()), c.isFinished());
+				c.getDiscount(), null, null, new ClinicDTO(c.getClinic()), null, new CheckUpTypeDTO(c.getCheckUpType()),
+				c.isFinished());
 
 		if (c.getPatient() != null) {
 			this.patient = new PatientDTO(c.getPatient());
@@ -37,6 +36,10 @@ public class CheckupDTO {
 
 		if (c.getRoom() != null) {
 			this.room = new RoomDTO(c.getRoom());
+		}
+
+		if (c.getDoctors().size() > 0) {
+			this.medicalWorker = new MedicalWorkerDTO((MedicalWorker) c.getDoctors().toArray()[0]);
 		}
 
 	}

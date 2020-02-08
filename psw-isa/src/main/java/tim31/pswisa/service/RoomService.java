@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class RoomService {
 	 * @param room - room that has to be saved
 	 * @return - (Room) This method returns saved room
 	 */
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.MANDATORY)
 	public Room save(Room room) {
 		return roomRepository.save(room);
 	}
@@ -129,5 +130,10 @@ public class RoomService {
 			}
 		}
 		return ret;
+	}
+	
+	@Transactional(readOnly = false, propagation = Propagation.MANDATORY)
+	public Room myFindOne(Long id) {
+		return roomRepository.myfindOne(id);
 	}
 }

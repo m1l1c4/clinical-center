@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,6 +45,7 @@ import tim31.pswisa.dto.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 public class ClinicControllerTest {
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -60,7 +62,7 @@ public class ClinicControllerTest {
 
 	@Autowired
 	TestRestTemplate restTemplate;
-	
+
 	@PostConstruct
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -72,7 +74,7 @@ public class ClinicControllerTest {
 				new JwtAuthenticationRequest("pacijent@gmail.com", "sifra1"), UserTokenState.class);
 		accessToken = "Bearer " + responseEntity.getBody().getAccessToken();
 	}
-	
+
 	@Test
 	public void testSearchClinicsControllerNonClinics() throws Exception {
 		String[] params = { CheckupTypeConstants.CHECK_UP_TYPE_NAME_FALSE, CheckupConstants.LOCAL_DATE_1.toString() };
@@ -92,13 +94,12 @@ public class ClinicControllerTest {
 		String jsonString = TestUtil.json(params);
 
 		mockMvc.perform(post(pre_url).contentType(contentType).content(jsonString)).andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(2)))
-				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())))
-				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_2.intValue())));
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())));
 	}
 
 	@Test
-	public void testFilterClinicsControllerNonClinics() throws Exception {
+	public void testFilterClinicsControllerOneClinics() throws Exception {
 		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
 				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
 
@@ -137,12 +138,11 @@ public class ClinicControllerTest {
 		srchType.setId(CheckupTypeConstants.CHECK_UP_TYPE_ID);
 		srchType.setTypePrice(100);
 
-		String[] params = { CheckupTypeConstants.CHECK_UP_TYPE_NAME, DoctorConstants.DATE_OK };
-
 		String jsonString = TestUtil.json(clinics);
 
 		mockMvc.perform(post("/clinic/filterClinic/" + "7").contentType(contentType).content(jsonString))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.object").doesNotExist());
+				.andExpect(status().isOk()).andExpect(jsonPath("$").value(hasSize(1)))
+				.andExpect(jsonPath("$.[*].id").value(hasItem(ClinicConstants.ID_C_1.intValue())));
 
 	}
 
