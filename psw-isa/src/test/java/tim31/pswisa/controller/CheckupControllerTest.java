@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,6 +29,7 @@ import tim31.pswisa.security.auth.JwtAuthenticationRequest;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 public class CheckupControllerTest {
 
 	private static final String URL_PREFIX = "/checkup/";
@@ -59,7 +61,7 @@ public class CheckupControllerTest {
 
 	@Test
 	public void testbookQuickApp() throws Exception {
-		mockMvc.perform(post(URL_PREFIX + "bookQuickApp/" + CheckupConstants.CHECKUP_ID).header("Authorization", accessToken).contentType(contentType))
+		mockMvc.perform(post(URL_PREFIX + "bookQuickApp/" + CheckupConstants.CHECKUP_ID2).header("Authorization", accessToken).contentType(contentType))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").value("Uspesno zakazivanje pregleda"));
 	}

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ import tim31.pswisa.service.CheckUpService;
 import tim31.pswisa.service.CheckUpTypeService;
 import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.CodebookService;
+import tim31.pswisa.service.EmailService;
 import tim31.pswisa.service.MedicalWorkerService;
 import tim31.pswisa.service.RecipeService;
 import tim31.pswisa.service.ReportService;
@@ -75,6 +77,9 @@ public class CheckupController {
 	
 	@Autowired
 	private RecipeService recipeService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	/**
 	 * Method for adding report after examination of patient
@@ -99,7 +104,7 @@ public class CheckupController {
 	 * @return - (CheckupDTO) This method returns added appointment if doctor are
 	 *         not busy
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ADMINISTRATOR')")
 	@PostMapping(value = "/addAppointment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> addAppointmentController(@RequestBody CheckupDTO c, HttpServletRequest request) {
 		User doctorOne = userService.findOneByEmail(c.getMedicalWorker().getUser().getEmail());
@@ -159,11 +164,16 @@ public class CheckupController {
 	public ResponseEntity<ReportDTO> checkupRequest(@RequestBody CheckupDTO ch, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
-		if (checkupService.checkupToAdmin(ch, email)) {
-			return new ResponseEntity<>(HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		try {
+			if (checkupService.checkupToAdmin(ch, email)) {
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+
 	}
 
 	/**
@@ -271,14 +281,27 @@ public class CheckupController {
 	 * @param id - key for finding available checkup
 	 * @return string - message for successful / unsuccessful booking
 	 */
-	// @PreAuthorize("hasRole('ROLE_PACIJENT')")
+	// @PreAuthorize("hasRole('PACIJENT')")
 	@PostMapping(value = "/bookQuickApp/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> bookQuickApp(@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
-		boolean success = checkupService.bookQuickApp(id, email);
-		if (success) {
-			return new ResponseEntity<>("Uspesno zakazivanje pregleda", HttpStatus.OK);
+		Checkup success;
+		try {
+			success = checkupService.bookQuickApp(id, email);
+			try {
+				emailService.quickAppConfirmationEmail(email, success);
+			} catch (MailException e) {				
+				e.printStackTrace();
+			} catch (InterruptedException e) {				
+				e.printStackTrace();
+			}
+			if (success != null) {
+				return new ResponseEntity<>("Uspesno zakazivanje pregleda", HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 	}
@@ -346,7 +369,7 @@ public class CheckupController {
 	 * @param id - checkup id
 	 * @return
 	 */
-	@PreAuthorize("hasRole('ROLE_PACIJENT')")
+	@PreAuthorize("hasRole('PACIJENT')")
 	@PostMapping(value = "/infoReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RecipeDTO> checkupDetails(HttpServletRequest request, @PathVariable Long id) {		
 		RecipeDTO report = recipeService.additionalCheckupInfo(id);

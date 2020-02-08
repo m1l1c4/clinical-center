@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import tim31.pswisa.constants.CheckupConstants;
@@ -33,6 +34,7 @@ import tim31.pswisa.repository.CheckUpTypeRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 public class ClinicServiceTest {
 
 	@Autowired
@@ -114,7 +116,7 @@ public class ClinicServiceTest {
 				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
 
 		Clinic clinic2 = new Clinic(ClinicConstants.ID_C_2, ClinicConstants.NAZIV_2, ClinicConstants.GRAD_1,
-				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
+				ClinicConstants.DRZAVA_2, ClinicConstants.ADRESA_2, ClinicConstants.RAITING_2, ClinicConstants.OPIS_2);
 
 		List<ClinicDTO> clinics = new ArrayList<ClinicDTO>();
 		ClinicDTO clinic11 = new ClinicDTO(clinic1);
@@ -143,7 +145,6 @@ public class ClinicServiceTest {
 		CheckUpType srchType = new CheckUpType();
 		srchType.setClinics(new HashSet<Clinic>());
 		srchType.getClinics().add(clinic1);
-		srchType.getClinics().add(clinic2);
 		srchType.setName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);
 		srchType.setId(CheckupTypeConstants.CHECK_UP_TYPE_ID);
 		srchType.setTypePrice(100);
@@ -153,7 +154,7 @@ public class ClinicServiceTest {
 		String[] params1 = { CheckupTypeConstants.CHECK_UP_TYPE_NAME, CheckupConstants.LOCAL_DATE_1.toString() };
 		List<ClinicDTO> rezultat = clinicService.searchClinics(params1);
 
-		assertEquals(clinics.size(), rezultat.size());
+		assertEquals(1, rezultat.size());
 
 	}
 

@@ -1,10 +1,13 @@
 package tim31.pswisa.service;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -15,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.MailException;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import tim31.pswisa.constants.CheckupConstants;
@@ -38,6 +43,7 @@ import tim31.pswisa.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 public class CheckupServiceTest {
 
 	@Autowired
@@ -58,24 +64,27 @@ public class CheckupServiceTest {
 	@MockBean
 	private MedicalWorkerRepository doctorRepositoryMocked;
 	
+	@MockBean
+	private EmailService emailServiceMocked;
+	
 	@Test
-	public void testBookQuickAppFalse() {
+	public void testBookQuickAppFalse() throws Exception {
 		
 		Checkup checkupTest = new Checkup();
 		checkupTest.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
 		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
 		checkupTest.setId(CheckupConstants.CHECKUP_ID_FALSE);
 		Mockito.when(checkupRepositoryMocked.findOneById(checkupTest.getId())).thenReturn(null);
-		boolean ret = checkupService.bookQuickApp(checkupTest.getId(), UserConstants.USER1_EMAIL);
+		Checkup ret = checkupService.bookQuickApp(checkupTest.getId(), UserConstants.USER1_EMAIL);
 		assertNull(ret);
 	}
 	
 	@Test
-	public void testBookQuickApp() {
+	public void testBookQuickApp() throws Exception {
 		Checkup checkupTest = new Checkup();
 		checkupTest.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
 		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
-		checkupTest.setId(CheckupConstants.CHECKUP_ID_FALSE);
+		checkupTest.setId(CheckupConstants.CHECKUP_ID2);
 		
 		Mockito.when(checkupRepositoryMocked.findOneById(checkupTest.getId())).thenReturn(checkupTest);
 		
@@ -100,11 +109,16 @@ public class CheckupServiceTest {
 		
 		Mockito.when(patientRepositoryMocked.findByUserId(testPatient.getUser().getId())).thenReturn(testPatient);
 		
-		checkupTest.setPatient(testPatient);
-		Mockito.when(checkupRepositoryMocked.save(checkupTest)).thenReturn(checkupTest);
+		Checkup checkupTest2 = new Checkup();
+		checkupTest2.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
+		checkupTest2.setDate(CheckupConstants.CHECKUP_DATE);
+		checkupTest2.setId(CheckupConstants.CHECKUP_ID2);
+		checkupTest2.setPatient(testPatient);
 
-		boolean ret = checkupService.bookQuickApp(checkupTest.getId(), UserConstants.USER1_EMAIL);
-		assertTrue(ret);
+		Mockito.when(checkupRepositoryMocked.save(checkupTest)).thenReturn(checkupTest2);
+		Mockito.doNothing().when(emailServiceMocked).quickAppConfirmationEmail(UserConstants.EMAIL_1, checkupTest2);
+		Checkup ret = checkupService.bookQuickApp(checkupTest.getId(), UserConstants.USER1_EMAIL);
+		assertEquals(checkupTest2.getId(), ret.getId());
 	}
 	
 	@Test

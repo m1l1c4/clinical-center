@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -37,6 +38,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 public class AdminControllerTest {
 
 	private static final String URL_PREFIX = "/checkup/";
@@ -83,6 +85,7 @@ public class AdminControllerTest {
 		inputCheckup.setMedicalWorker(doctorTest);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
+		//String body = TestUtil.json(inputCheckup);
 		String body = mapper.valueToTree(inputCheckup).toString();		
 		mockMvc.perform(post(URL_PREFIX + "update" ).header("Authorization", accessToken)
 				.contentType(contentType)

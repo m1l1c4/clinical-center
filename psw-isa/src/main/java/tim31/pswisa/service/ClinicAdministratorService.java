@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.AbsenceDTO;
 import tim31.pswisa.dto.CheckupDTO;
@@ -62,13 +64,17 @@ public class ClinicAdministratorService {
 	 * 
 	 * @return - (void>) non return value
 	 */
+	@Transactional(readOnly = false)
 	public void scheuldeRoomsEndDay() {
 		List<Checkup> checkups = checkupRepository.findAllByScheduled(false);
 		MedicalWorker mw = new MedicalWorker();
 		for (Checkup cek : checkups) {
+			boolean ok = false;
+			if(cek.getPatient() == null) {
+				ok = true;
+			}
 			mw = (MedicalWorker) cek.getDoctors().toArray()[0];
 			LocalDate date = cek.getDate();
-			boolean ok = false;
 			System.out.println("UDJE 1");
 			while (ok == false) {
 				// svi pregledi doktora, za taj dan, koji su zakazani ali od tog doktora
@@ -103,6 +109,7 @@ public class ClinicAdministratorService {
 	 * @param date - date of check-up
 	 * @return - (Check-up) non return value
 	 */
+	@Transactional(readOnly = false)
 	public Checkup newFunction(Checkup cek, ArrayList<String> tempArray, MedicalWorker mw, LocalDate date) {
 		for (String termin : tempArray) {
 			List<Room> allRooms = roomRepository.findAllByClinicIdAndTipRoom(mw.getClinic().getId(), cek.getTip());

@@ -4,13 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.LockModeType;
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import tim31.pswisa.dto.CheckupDTO;
@@ -81,10 +76,6 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 * @param id - check-up id that has to be returned
 	 * @return - (Checkup) This method returns one check-up
 	 */
-
-	@Lock(LockModeType.PESSIMISTIC_READ)	// dodato za pesimisticko zaklj zakazivanja brzog pregleda
-	@Query("select ch from Checkup ch where ch.id = :id")
-	//@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="0")})
 	Checkup findOneById(@Param("id")Long id);
 
 
@@ -146,4 +137,12 @@ public interface CheckUpRepository extends JpaRepository<Checkup, Long> {
 	 * @return - (List<Checkup>) This method returns list of found check-ups
 	 */
 	List<Checkup> findAllByFinishedAndPatientIdAndTip(boolean finished, Long id, String type);
+	
+	/**
+	 * gets from database all scheduled checkups from one clinic
+	 * @param scheduled - if checkup is scheduled or not
+	 * @param clinicId - id of the clinic
+	 * @return - (List<Checkup>) This method returns list of found check-ups
+	 */
+	List<Checkup> findAllByScheduledAndClinicId(boolean scheduled, Long clinicId);
 }

@@ -2,6 +2,8 @@ package tim31.pswisa.controller;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,14 +17,17 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import tim31.pswisa.TestUtil;
 import tim31.pswisa.constants.CheckupConstants;
 import tim31.pswisa.constants.DoctorConstants;
 import tim31.pswisa.constants.RoomConstants;
@@ -39,15 +44,16 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 public class AdminControllerUnitTest {
 	private static final String URL_PREFIX = "/checkup/";
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-
-	@Autowired
-	private CheckUpService checkupService;
 	
+	@MockBean
+	private CheckUpService checkupService;
+
 	private MockMvc mockMvc;
 
 	private String accessToken;
@@ -62,23 +68,23 @@ public class AdminControllerUnitTest {
 	public void login() {
 		ResponseEntity<UserTokenState> responseEntity = restTemplate.postForEntity("/login",
 				new JwtAuthenticationRequest("admin@gmail.com", "sifra1"), UserTokenState.class);
-		accessToken = "Bearer " + responseEntity.getBody().getAccessToken();		
-		
+		accessToken = "Bearer " + responseEntity.getBody().getAccessToken();
+
 	}
 
 	@PostConstruct
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
-	
+
 	@Test
-	public void testupdate() throws Exception {		
-		MedicalWorkerDTO doctorTest = new MedicalWorkerDTO();		
+	public void testupdate() throws Exception {
+		MedicalWorkerDTO doctorTest = new MedicalWorkerDTO();
 		doctorTest.setId(DoctorConstants.DOCTOR_ID);
 		RoomDTO room = new RoomDTO();
 		room.setId(RoomConstants.ROOM_ID);
 		Checkup checkup = new Checkup();
-		checkup.setId(CheckupConstants.CHECKUP_ID);			
+		checkup.setId(CheckupConstants.CHECKUP_ID_FALSE);
 		CheckupDTO inputCheckup = new CheckupDTO();
 		inputCheckup.setId(checkup.getId());
 		inputCheckup.setRoom(room);
@@ -87,17 +93,15 @@ public class AdminControllerUnitTest {
 		inputCheckup.setMedicalWorker(doctorTest);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
-		String body = mapper.valueToTree(inputCheckup).toString();		
-		Checkup retCheckup = new Checkup();
-		
-		Mockito.when(checkupService.update(inputCheckup)).thenReturn(retCheckup);
-		
-		mockMvc.perform(post(URL_PREFIX + "update" ).header("Authorization", accessToken)
-				.contentType(contentType)
-				.content(body))
-				.andExpect(status().isOk());
-		
-		verify(checkupService, times(1)).update(inputCheckup);
+		// String body = TestUtil.json(inputCheckup);
+		checkup = null;
+		when(checkupService.update(inputCheckup)).thenReturn(checkup);
+        //when(checkupService.update(any(CheckupDTO.class))).thenReturn(checkup);
 
+		String body = mapper.valueToTree(inputCheckup).toString();
+		body = mapper.writeValueAsString(inputCheckup);
+		mockMvc.perform(
+				post(URL_PREFIX + "update").header("Authorization", accessToken).content(body).contentType(contentType))
+				.andExpect(status().isExpectationFailed());
 	}
 }

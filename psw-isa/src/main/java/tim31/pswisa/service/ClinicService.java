@@ -641,7 +641,7 @@ public class ClinicService {
 			boolean taken = false;
 			ArrayList<String> pom = new ArrayList<String>(); // list of times of appointments for specific date
 			for (MedicalWorkerDTO mw : doctors) {
-				MedicalWorker medicalWorker = medicalWorkerService.findOneById(mw.getId());
+				MedicalWorker medicalWorker = medicalWorkerService.findOne(mw.getId());
 				for (int i = medicalWorker.getStartHr(); i < medicalWorker.getEndHr(); i++) {
 					for (Checkup ch : medicalWorker.getCheckUps()) {
 						if (Integer.parseInt(ch.getTime()) == i || ch.getPending()) {
@@ -667,7 +667,7 @@ public class ClinicService {
 	
 	@Transactional(readOnly = false)
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
-		MedicalWorker mww = medicalWorkerService.findOneById(parametar);
+		MedicalWorker mww = medicalWorkerService.findOne(parametar);
 		LocalDate realDate = LocalDate.parse(date);
 		if (mww != null) {
 			MedicalWorkerDTO mw = new MedicalWorkerDTO(mww);

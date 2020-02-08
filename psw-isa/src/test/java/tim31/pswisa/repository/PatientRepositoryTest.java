@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import tim31.pswisa.constants.PatientConstants;
@@ -16,6 +17,7 @@ import tim31.pswisa.model.User;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@TestPropertySource("classpath:application-test.properties")
 public class PatientRepositoryTest {
 
 	@Autowired PatientRepository patientRepository;

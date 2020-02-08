@@ -1,8 +1,13 @@
 package pages;
 
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -24,6 +29,12 @@ public class AdminPage {
 	
 	@FindBy(id = "bookRoomE2E")
 	private WebElement bookRoomE2E;
+	
+	@FindBy(xpath = "//*[@id=\"chooseRoomE2E\"]//tr")
+	private List<WebElement> rows;
+	
+	@FindBy(xpath = "//*[@id=\"zakaziE2E\"]//li")
+	private List<WebElement> lis;
 
 	public WebDriver getDriver() {
 		return driver;
@@ -90,10 +101,61 @@ public class AdminPage {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(chooseRoomE2E));
 	}
 
+	public AdminPage(WebDriver driver) {
+		super();
+		this.driver = driver;
+	}
+	
+	public AdminPage() {
+		super();
+	}
+
 	public void ensureIsDisplayedfindRoomE2E() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(findRoomE2E));
 	}
 
+	public WebElement findFirstBookingButton() {
+		List<WebElement> unorderedList = bookCheckupE2E.findElements(By.tagName("li"));
+		WebElement li = unorderedList.get(0);
+		return li.findElement(By.tagName("button"));
+	}
 	
+	public WebElement findFirstRoomButton() {
+		return rows.get(1).findElement(By.tagName("button"));
+	}
 	
+	public void scroll(int x, int y) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("scroll(0, 700);");
+	}
+
+	public List<WebElement> getRows() {
+		return rows;
+	}
+
+	public void setRows(List<WebElement> rows) {
+		this.rows = rows;
+	}
+	
+	public void ensureRows() {
+		(new WebDriverWait(driver, 20)).until(new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(WebDriver input) {
+				// TODO Auto-generated method stub
+				return rows.size() > 1;
+			}
+		});
+	}
+	
+	public void ensureList() {
+		(new WebDriverWait(driver, 20)).until(new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(WebDriver input) {
+				// TODO Auto-generated method stub
+				return lis.size() > 1;
+			}
+		});
+	}
 }

@@ -1,83 +1,149 @@
 package tim31.pswisa.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import javax.annotation.Resource;
-import javax.mail.Message;
+import java.util.HashSet;
+
 import javax.mail.MessagingException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetupTest;
-
 import tim31.pswisa.constants.CheckupConstants;
+import tim31.pswisa.constants.ClinicConstants;
+import tim31.pswisa.constants.DoctorConstants;
+import tim31.pswisa.constants.RoomConstants;
 import tim31.pswisa.constants.UserConstants;
+import tim31.pswisa.model.Checkup;
+import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.MedicalWorker;
+import tim31.pswisa.model.Room;
+import tim31.pswisa.model.User;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 public class EmailServiceTest {
-/*
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+
+	@Autowired
+	private EmailService emailService;
 
 	@Test
-	public void testSend() {
-		String body = "We announce you that you successfully booked medical appointment for"
-				+ CheckupConstants.CHECKUP_DATE;
-		GreenMailUtil.sendTextEmailTest("pswisa.tim31.2019@gmail.com", "pswisa.tim31.2019@gmail.com", "Booking checkup confirmation", body);
-		assertEquals(body, GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+	public void testQuickAppConfirmationEmail() throws InterruptedException, MessagingException, NullPointerException {
+		Checkup checkupTest = new Checkup();
+		MedicalWorker doctorTest = new MedicalWorker();
+		User user1 = new User();
+		user1.setName(UserConstants.IME_1);
+		user1.setSurname(UserConstants.PREZIME_1);
+		user1.setType(UserConstants.TIP);
+		doctorTest.setId(DoctorConstants.DOCTOR_ID);
+		doctorTest.setUser(user1);
+		checkupTest.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
+		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
+		checkupTest.setTime(CheckupConstants.CHECKUP_TIME);
+		checkupTest.setId(CheckupConstants.CHECKUP_ID);
+		checkupTest.setDoctors(new HashSet<>());
+		checkupTest.getDoctors().add(doctorTest);
+		Room testRoom = new Room();
+		testRoom.setName(RoomConstants.ROOM_NAME);
+		testRoom.setNumber(RoomConstants.ROOM_NUMBER);
+		testRoom.setTypeRoom(RoomConstants.ROOM_TYPE);
+		testRoom.setId(RoomConstants.ROOM_ID);
+		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
+				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
+		testRoom.setClinic(clinic1);
+		checkupTest.setRoom(testRoom);
+		checkupTest.setClinic(clinic1);
+		assertDoesNotThrow(() -> emailService.quickAppConfirmationEmail(UserConstants.EMAIL_1, checkupTest));
 	}
-*/
+
+	@Test
+	public void testQuickAppConfirmationEmailClinicNull()
+			throws InterruptedException, MessagingException, NullPointerException {
+		Checkup checkupTest = new Checkup();
+		MedicalWorker doctorTest = new MedicalWorker();
+		User user1 = new User();
+		user1.setName(UserConstants.IME_1);
+		user1.setSurname(UserConstants.PREZIME_1);
+		user1.setType(UserConstants.TIP);
+		doctorTest.setId(DoctorConstants.DOCTOR_ID);
+		doctorTest.setUser(user1);
+		checkupTest.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
+		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
+		checkupTest.setTime(CheckupConstants.CHECKUP_TIME);
+		checkupTest.setId(CheckupConstants.CHECKUP_ID);
+		checkupTest.setDoctors(new HashSet<>());
+		checkupTest.getDoctors().add(doctorTest);
+		Room testRoom = new Room();
+		testRoom.setName(RoomConstants.ROOM_NAME);
+		testRoom.setNumber(RoomConstants.ROOM_NUMBER);
+		testRoom.setTypeRoom(RoomConstants.ROOM_TYPE);
+		testRoom.setId(RoomConstants.ROOM_ID);
+		checkupTest.setRoom(testRoom);
+		assertThrows(NullPointerException.class, () -> {
+			emailService.quickAppConfirmationEmail(UserConstants.EMAIL_1, checkupTest);
+		});
+	}
+
+	@Test
+	public void testQuickAppConfirmationEmailUserNull()
+			throws InterruptedException, MessagingException, NullPointerException {
+		Checkup checkupTest = new Checkup();
+		checkupTest.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
+		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
+		checkupTest.setTime(CheckupConstants.CHECKUP_TIME);
+		checkupTest.setId(CheckupConstants.CHECKUP_ID);
+		Room testRoom = new Room();
+		testRoom.setName(RoomConstants.ROOM_NAME);
+		testRoom.setNumber(RoomConstants.ROOM_NUMBER);
+		testRoom.setTypeRoom(RoomConstants.ROOM_TYPE);
+		testRoom.setId(RoomConstants.ROOM_ID);
+		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
+				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
+		testRoom.setClinic(clinic1);
+		checkupTest.setRoom(testRoom);
+		checkupTest.setClinic(clinic1);
+		assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+			emailService.quickAppConfirmationEmail(UserConstants.EMAIL_1, checkupTest);
+		});
+	}
+
+	@Test
+	public void testQuickAppConfirmationCheckupNull()
+			throws InterruptedException, MessagingException, NullPointerException {
+		Checkup checkupTest = new Checkup();
+		assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+			emailService.quickAppConfirmationEmail(UserConstants.EMAIL_1, checkupTest);
+		});
+	}
 	
-	 @Resource
-	    private JavaMailSenderImpl emailSender;
-	 
-		@Rule
-		public final GreenMailRule testSmtp = new GreenMailRule(ServerSetupTest.SMTP);
-	 
-	   // private GreenMail testSmtp;
-	 
-	    @Before
-	    public void testSmtpInit(){
-	        //testSmtp = new GreenMail(ServerSetupTest.SMTP);
-	        testSmtp.start();
-	 
-	        //don't forget to set the test port!
-	        emailSender.setPort(587);
-	        emailSender.setHost("smtp.gmail.com");
-	    }
-	 
-	    @Test
-	    public void testEmail() throws InterruptedException, MessagingException {
-	        SimpleMailMessage message = new SimpleMailMessage();
-	 
-	        message.setFrom("pswisa.tim31.2019@gmail.com");
-	        message.setTo("pswisa.tim31.2019@gmail.com");
-	        message.setSubject("test subject");
-	        message.setText("test message");
-	        emailSender.send(message);
-	         
-	        Message[] messages = testSmtp.getReceivedMessages();
-	        assertEquals(1, messages.length);
-	        assertEquals("test subject", messages[0].getSubject());
-	        String body = GreenMailUtil.getBody(messages[0]).replaceAll("=\r?\n", "");
-	        assertEquals("test message", body);
-	    }
-	 
-	    @After
-	    public void cleanup(){
-	        testSmtp.stop();
-	    }
+	@Test
+	public void testQuickAppConfirmationEmailRoomNull() throws InterruptedException, MessagingException, NullPointerException {
+		Checkup checkupTest = new Checkup();
+		MedicalWorker doctorTest = new MedicalWorker();
+		User user1 = new User();
+		user1.setName(UserConstants.IME_1);
+		user1.setSurname(UserConstants.PREZIME_1);
+		user1.setType(UserConstants.TIP);
+		doctorTest.setId(DoctorConstants.DOCTOR_ID);
+		doctorTest.setUser(user1);
+		checkupTest.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
+		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
+		checkupTest.setTime(CheckupConstants.CHECKUP_TIME);
+		checkupTest.setId(CheckupConstants.CHECKUP_ID);
+		checkupTest.setDoctors(new HashSet<>());
+		checkupTest.getDoctors().add(doctorTest);
+		Clinic clinic1 = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1, ClinicConstants.GRAD_1,
+				ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1, ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
+		checkupTest.setClinic(clinic1);
+		assertThrows(NullPointerException.class, () -> {
+			emailService.quickAppConfirmationEmail(UserConstants.EMAIL_1, checkupTest);
+		});	}
+
 }

@@ -16,10 +16,19 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
+/*
+@Table(uniqueConstraints = {
+	      @UniqueConstraint(columnNames = {"DateOfCheckup", "TimeOfCheckup", "room_id"}, name = "uniqueNameConstraint"),
+		  @UniqueConstraint(columnNames = {"DateOfCheckup", "TimeOfCheckup", "room_id", }, name = "uniqueNameConstraint")}
+	)
+	*/
 public class Checkup {
 
 	@Id
@@ -60,12 +69,12 @@ public class Checkup {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Clinic clinic;
 
-	//@JsonBackReference(value = "doctor_checkup_mov")
+	// @JsonBackReference(value = "doctor_checkup_mov")
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "DOCTOR_AND_CHECKUP", joinColumns = {
-			@JoinColumn(name = "checkup_id") }, inverseJoinColumns = { @JoinColumn(name = "medical_worker_id") })
+	@JoinTable(name = "DOCTOR_AND_CHECKUP", joinColumns = { @JoinColumn(name = "checkup_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "medical_worker_id") })
 	private Set<MedicalWorker> doctors = new HashSet<MedicalWorker>();
-	
+
 	@JsonBackReference(value = "checkup")
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private CheckUpType checkUpType;
@@ -73,23 +82,28 @@ public class Checkup {
 	@JsonBackReference(value = "checkup_report_mov")
 	@OneToOne(mappedBy = "checkUp", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Report report;
-	
+
 	@Column(name = "isRatedDoctor", nullable = true)
 	private boolean isRatedDoctor;
-	
+
 	@Column(name = "isRatedClinic", nullable = true)
 	private boolean isRatedClinic;
-	
-	/*@JsonBackReference(value = "ca_mov")
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private ClinicAdministrator clinicAdministrator;*/
-	
+
+	/*
+	 * @JsonBackReference(value = "ca_mov")
+	 * 
+	 * @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL) private
+	 * ClinicAdministrator clinicAdministrator;
+	 */
+
 	@Column(name = "pending", nullable = true)
-	private boolean pending;	// T or F depending on whether a patient sent request or not
-	
+	private boolean pending; // T or F depending on whether a patient sent request or not
 
 	@Column(name = "finished")
 	private boolean finished;
+
+	@Version
+	private Long version;
 
 	public Checkup() {
 
@@ -223,7 +237,6 @@ public class Checkup {
 		this.report = report;
 	}
 
-
 	public boolean getPending() {
 		return pending;
 	}
@@ -231,7 +244,6 @@ public class Checkup {
 	public void setPending(boolean pending) {
 		this.pending = pending;
 	}
-	
 
 	public Set<MedicalWorker> getDoctors() {
 		return doctors;
@@ -263,6 +275,14 @@ public class Checkup {
 
 	public void setFinished(boolean finished) {
 		this.finished = finished;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

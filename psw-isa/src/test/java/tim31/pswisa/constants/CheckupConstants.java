@@ -49,6 +49,7 @@ public class CheckupConstants {
 	public static final String TIP_PREGLEDA_2 = "DERMATOLOSKI";
 
 	public static final Long CHECKUP_ID = 1L;
+	public static final Long CHECKUP_ID2 = 2L;
 	public static final Long CHECKUP_ID_FALSE = 1000L;
 	public static final String CHECKUP_CHTYPE = "KARDIOLOSKI";
 	public static final boolean CHECKUP_SCHEDULED = false;

@@ -3,12 +3,10 @@ package tim31.pswisa.repository;
 import java.util.List;
 
 import javax.persistence.LockModeType;
-import javax.persistence.QueryHint;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import tim31.pswisa.model.Room;
@@ -37,9 +35,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	 * @param id - room id
 	 * @return - (Room) This method returns one room
 	 */
-	@Lock(LockModeType.PESSIMISTIC_READ)
-	@Query("select r from Room r where r.id = :id")
-	@QueryHints({ @QueryHint(name = "javax.persistence.lock.timeout", value = "0") })
 	Room findOneById(@Param("id")Long id);
 
 	/**
@@ -65,5 +60,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	 */
 	Room findOneByNumber(int number);
 	
+	@Lock(LockModeType.PESSIMISTIC_FORCE_INCREMENT)
+	@Query("select r from Room r where r.id = :id")
+	Room myfindOne(@Param("id") Long id);
 	
 }

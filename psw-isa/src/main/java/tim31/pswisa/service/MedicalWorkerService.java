@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.CheckupDTO;
@@ -308,7 +309,6 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.save(medicalWorker);
 	}
 
-	@Transactional(readOnly = false)
 	public MedicalWorker findOneById(Long id) {
 		return medicalWorkerRepository.findOneById(id);
 	}
@@ -418,5 +418,9 @@ public class MedicalWorkerService {
 		return (prevRating + rating) / 2;		
 	}
 	
+	@Transactional(readOnly = false, propagation = Propagation.MANDATORY)
+	public MedicalWorker myFindOne(Long id) {
+		return medicalWorkerRepository.myFindOne(id);
+	}
 	
 }

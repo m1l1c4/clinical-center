@@ -1,7 +1,13 @@
 package pages;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -32,12 +38,28 @@ public class PatientPage {
 
 	@FindBy(id = "predefinisaniPregledi")
 	private WebElement quickAppointments;
+
+	@FindBy(xpath = "//*[@id=\"tableE2E\"]//tr")
+	private List<WebElement> rows;
 	
+	@FindBy(xpath = "//*[@id=\"pregledi\"]/div")
+	private List<WebElement> cards;
+
 	@FindBy(id = "pregledi")
 	private WebElement checkups;
 
+	@FindBy(id = "alert")
+	private WebElement alert;
+	
+	@FindBy(id = "labelHide")
+	private WebElement label;
+	
 	public void ensureIsDisplayedAllClinicsE2E() {
-		(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOf(allClinicsE2E));
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(allClinicsE2E));
+	}
+	
+	public void ensureIsDisplayedAlert() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(alert));
 	}
 
 	public void ensureIsDisplayedTypeOfCheckupE2E() {
@@ -51,9 +73,55 @@ public class PatientPage {
 	public void ensureIsDisplayedDateOfsSarchE2E() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(searchE2E));
 	}
+	
+	public void ensureIsDisplayedQuickAppointments() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(quickAppointments));
+	}
+	
+	public void ensureIsDisplayedFilter() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(filterOcjena));
+	}
+
 
 	public void ensureIsDisplayedTableE2E() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(tableE2E));
+	}
+	
+	public void ensureIsDisplayedLabel() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(label));
+	}
+
+	public void ensureRows() {
+		(new WebDriverWait(driver, 20)).until(new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(WebDriver input) {
+				// TODO Auto-generated method stub
+				return rows.size() > 1;
+			}
+		});
+	}
+	
+	public void ensureCards() {
+		(new WebDriverWait(driver, 20)).until(new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(WebDriver input) {
+				// TODO Auto-generated method stub
+				return cards.size() > 0;
+			}
+		});
+	}
+	
+	public void ensureLessCards(List<WebElement> oldCards) {
+		(new WebDriverWait(driver, 20)).until(new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(WebDriver input) {
+				// TODO Auto-generated method stub
+				return oldCards.size() > cards.size();
+			}
+		});
 	}
 
 	public WebDriver getDriver() {
@@ -136,4 +204,59 @@ public class PatientPage {
 		this.checkups = checkups;
 	}
 
+	public PatientPage(WebDriver driver) {
+		super();
+		this.driver = driver;
+	}
+
+	public PatientPage() {
+		super();
+	}
+
+	public List<WebElement> getRows() {
+		return rows;
+	}
+
+	public void setRows(List<WebElement> rows) {
+		this.rows = rows;
+	}
+	
+	public WebElement findFirstButtonClinic() {
+        WebElement row = rows.get(1);
+        return row.findElement(By.tagName("button"));
+	}
+	
+	public WebElement findFirstButtonBook() {
+        WebElement card = cards.get(0);
+        return card.findElement(By.tagName("button"));
+	}
+
+	public List<WebElement> getCards() {
+		return cards;
+	}
+
+	public void setCards(List<WebElement> cards) {
+		this.cards = cards;
+	}
+
+	public void setTypeOfCheckup(String type) {
+		typeOfCheckupE2E.click();
+		typeOfCheckupE2E.sendKeys("KARDIOLOSKI");
+		typeOfCheckupE2E.click();
+	}
+	
+	public void setOcjena(String a) {
+		filterOcjena.clear();
+		filterOcjena.sendKeys(a);
+		filterClick.click();
+	}
+	
+	public void setDateOfCheckup(String a, String b, String c) {
+		dateOfCheckupE2E.click();
+		dateOfCheckupE2E.sendKeys(a);
+		dateOfCheckupE2E.click();
+		dateOfCheckupE2E.sendKeys(b);
+		dateOfCheckupE2E.sendKeys(Keys.TAB);
+		dateOfCheckupE2E.sendKeys(c);
+	}
 }

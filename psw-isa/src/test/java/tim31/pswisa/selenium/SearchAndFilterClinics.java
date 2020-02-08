@@ -7,16 +7,22 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.PageFactory;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import pages.LogginPage;
 import pages.PatientPage;
 
+@RunWith(SpringRunner.class)
+@TestPropertySource("classpath:application-test.properties")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class SearchAndFilterClinics {
 
 	private WebDriver browser;
@@ -27,85 +33,65 @@ public class SearchAndFilterClinics {
 
 	@Before
 	public void setup() throws InterruptedException {
-		System.setProperty("webdriver.chrome.driver", "src/test/java/resources/chromedriver.exe");
+		System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver.exe");
 		browser = new ChromeDriver();
 		browser.manage().window().maximize();
 		browser.navigate().to("http://localhost:3000/register-page");
 		logginPage = PageFactory.initElements(browser, LogginPage.class);
 		patientPage = PageFactory.initElements(browser, PatientPage.class);
-		logginPage.getShowModalLogin().click();
-		logginPage.ensureIsDisplayedEmail();
-		logginPage.getLoginEmail().sendKeys("pacijent@gmail.com");
-		logginPage.getLoginPassword().sendKeys("sifra1");
-		logginPage.getConfirmButton().click();
-		logginPage.ensureIsNotVisibleModal();
-
-		Thread.sleep(500);
-		assertEquals("http://localhost:3000/patient-page/5", browser.getCurrentUrl());
-
 	}
 
+	@Rollback
 	@Test
 	public void seleniumSearchAndFilterClinicsOk() throws InterruptedException {
-
-		Thread.sleep(500);
+		logginPage.login("pacijent@gmail.com", "sifra1");
+		patientPage.ensureIsDisplayedAllClinicsE2E();
+		assertEquals("http://localhost:3000/patient-page/5", browser.getCurrentUrl());
 		patientPage.getAllClinicsE2E().click();
-		Thread.sleep(500);
 
-		patientPage.getTypeOfCheckupE2E().click();
-		patientPage.getTypeOfCheckupE2E().sendKeys("KARDIOLOSKI");
-		patientPage.getTypeOfCheckupE2E().click();
-
-		patientPage.getDateOfCheckupE2E().click();
-		patientPage.getDateOfCheckupE2E().sendKeys("23");
-		patientPage.getDateOfCheckupE2E().click();
-		patientPage.getDateOfCheckupE2E().sendKeys("Jan");
-		patientPage.getDateOfCheckupE2E().sendKeys(Keys.TAB);
-		patientPage.getDateOfCheckupE2E().sendKeys("2020");
+		patientPage.ensureIsDisplayedTypeOfCheckupE2E();
+		patientPage.setTypeOfCheckup("KARDIOLOSKI");
+		patientPage.setDateOfCheckup("23", "Jan", "2020");
 
 		patientPage.getSearchE2E().click();
+		patientPage.ensureRows();
+		patientPage.ensureIsDisplayedFilter();
+		List<WebElement> tableAfterSearch = patientPage.getRows();
+		assertEquals(1, tableAfterSearch.size() - 1);
 
-		List<WebElement> tableAfterSearch = patientPage.getTableE2E().findElements(By.tagName("tr"));
-		assertEquals(2, tableAfterSearch.size() - 1);
+		patientPage.setOcjena("5");
 
-		patientPage.getFilterOcjena().clear();
-		patientPage.getFilterOcjena().sendKeys("20");
-		patientPage.getFilterClick().click();
-		List<WebElement> tableAfterFilter = patientPage.getTableE2E().findElements(By.tagName("tr"));
-		assertEquals(0, tableAfterFilter.size() - 1);
+		patientPage.ensureIsDisplayedLabel();
+		List<WebElement> tableAfterFilter = patientPage.getRows();
+		assertEquals(1, tableAfterFilter.size() - 1);
 
 	}
 
 	@Test
 	public void seleniumSearchAndFilterClinicsNonEnteredValue() throws InterruptedException {
 
-		Thread.sleep(500);
+		logginPage.login("pacijent@gmail.com", "sifra1");
+		patientPage.ensureIsDisplayedAllClinicsE2E();
+		assertEquals("http://localhost:3000/patient-page/5", browser.getCurrentUrl());
 		patientPage.getAllClinicsE2E().click();
-		Thread.sleep(500);
 
-		patientPage.getDateOfCheckupE2E().click();
-		patientPage.getDateOfCheckupE2E().sendKeys("23");
-		patientPage.getDateOfCheckupE2E().click();
-		patientPage.getDateOfCheckupE2E().sendKeys("Jan");
-		patientPage.getDateOfCheckupE2E().sendKeys(Keys.TAB);
-		patientPage.getDateOfCheckupE2E().sendKeys("2020");
+		patientPage.ensureIsDisplayedDateOfCheckupE2E();
+		patientPage.setDateOfCheckup("23", "Jan", "2020");
 
 		patientPage.getSearchE2E().click();
+		patientPage.ensureIsDisplayedFilter();
+		List<WebElement> tableAfterSearch = patientPage.getRows();
+		assertEquals(1, tableAfterSearch.size() - 1);
 
-		List<WebElement> tableAfterSearch = patientPage.getTableE2E().findElements(By.tagName("tr"));
-		assertEquals(2, tableAfterSearch.size() - 1);
-
-		patientPage.getFilterOcjena().clear();
-		patientPage.getFilterOcjena().sendKeys("10");
-		patientPage.getFilterClick().click();
-		List<WebElement> tableAfterFilter = patientPage.getTableE2E().findElements(By.tagName("tr"));
-		assertEquals(1, tableAfterFilter.size() - 1);
+		patientPage.setOcjena("20");
+		patientPage.ensureIsDisplayedLabel();
+		List<WebElement> tableAfterFilter = patientPage.getRows();
+		assertEquals(0, tableAfterFilter.size() - 1);
 
 	}
 
 	@After
 	public void tearDown() throws InterruptedException {
-		Thread.sleep(1000);
 		browser.close();
 	}
 
