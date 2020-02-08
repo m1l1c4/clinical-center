@@ -1,0 +1,14 @@
+sudo: required
+language: java
+jdk: oraclejdk8
+
+services:
+  - postgresql
+
+before_install:
+  - chmod +x mvnw
+  
+before_script: 
+  - cd centersystem
+  
+  ./mvnw install -DskipTests=true -B
