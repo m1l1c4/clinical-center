@@ -6,9 +6,8 @@ services:
   - postgresql
 
 before_install:
-  - chmod +x mvnw
-
-before_script:
   - cd psw-isa
+  - chmod +x ./mvnw
 
-  ./mvnw install -DskipTests=true -B
+script:
+  - ./mvnw clean install -DskipTests=true -B
