@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -130,7 +131,7 @@ public class ClinicAdministratorController {
 	 * 
 	 */
 
-    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+    //@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/requestsForRoom", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CheckupDTO>> requestForRoomController(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
