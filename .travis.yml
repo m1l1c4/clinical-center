@@ -8,4 +8,7 @@ services:
 before_install:
   - chmod +x mvnw
   
-  ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+before_script: 
+  - cd centersystem
+  
+  ./mvnw install -DskipTests=true -B
