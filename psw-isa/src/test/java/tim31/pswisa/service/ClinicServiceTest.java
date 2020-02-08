@@ -2,8 +2,6 @@ package tim31.pswisa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,8 +27,8 @@ import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Clinic;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.User;
-import tim31.pswisa.service.ClinicService;
 import tim31.pswisa.repository.CheckUpTypeRepository;
+import tim31.pswisa.repository.ClinicRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -42,6 +40,9 @@ public class ClinicServiceTest {
 
 	@MockBean
 	private CheckUpTypeRepository checkupTypeRepository;
+	
+	@MockBean
+	private ClinicRepository clinicRepositoryMocked;
 
 	@Test
 	public void testFilterClinicsOk() {
@@ -158,33 +159,14 @@ public class ClinicServiceTest {
 
 	}
 
-	/*
-	 * Clinic clinic = new Clinic(ClinicConstants.ID_C_1, ClinicConstants.NAZIV_1,
-	 * ClinicConstants.GRAD_1, ClinicConstants.DRZAVA_1, ClinicConstants.ADRESA_1,
-	 * ClinicConstants.RAITING_1, ClinicConstants.OPIS_1);
-	 * 
-	 * Room room = new Room(RoomConstants.ID_R_1, RoomConstants.NAME_1,
-	 * RoomConstants.TIP_1, RoomConstants.FREE_1, RoomConstants.NUMBER_1, clinic,
-	 * RoomConstants.FIRST_DATE_1);
-	 * 
-	 * Checkup cek1 = new Checkup(CheckupConstants.DISCOUNT_1,
-	 * CheckupConstants.SCHEDULED_1, CheckupConstants.LOCAL_DATE_1,
-	 * CheckupConstants.TIME_1, CheckupConstants.TIP_1, CheckupConstants.DURATION_1,
-	 * CheckupConstants.PRICE_1, room, CheckupConstants.FINISHED_1);
-	 * 
-	 * Checkup cek2 = new Checkup(CheckupConstants.DISCOUNT_2,
-	 * CheckupConstants.SCHEDULED_2, CheckupConstants.LOCAL_DATE_2,
-	 * CheckupConstants.TIME_2, CheckupConstants.TIP_2, CheckupConstants.DURATION_1,
-	 * CheckupConstants.PRICE_2, room, CheckupConstants.FINISHED_2);
-	 * 
-	 * Checkup cek3 = new Checkup(CheckupConstants.DISCOUNT_3,
-	 * CheckupConstants.SCHEDULED_3, CheckupConstants.LOCAL_DATE_3,
-	 * CheckupConstants.TIME_3, CheckupConstants.TIP_3, CheckupConstants.DURATION_1,
-	 * CheckupConstants.PRICE_3, room, CheckupConstants.FINISHED_3);
-	 * 
-	 * 
-	 * 
-	 * }
-	 */
+	@Test
+	public void findOneByNameTest() {
+		Clinic clinicTest = new Clinic();
+		clinicTest.setId(ClinicConstants.CLINIC_ID);
+		clinicTest.setName(ClinicConstants.CLINIC_NAME);
+		Mockito.when(clinicRepositoryMocked.findOneByName(clinicTest.getName())).thenReturn(clinicTest);
+		Clinic clinic = clinicService.findOneByName(ClinicConstants.CLINIC_NAME);
+		assertEquals(ClinicConstants.CLINIC_NAME, clinic.getId());		
+	}
 
 }

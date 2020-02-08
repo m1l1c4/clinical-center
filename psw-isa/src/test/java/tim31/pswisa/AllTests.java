@@ -16,7 +16,6 @@ import tim31.pswisa.repository.DoctorRepositoryTest;
 import tim31.pswisa.repository.PatientRepositoryTest;
 import tim31.pswisa.repository.RoomRepositoryTest;
 import tim31.pswisa.repository.UserRepositoryTest;
-import tim31.pswisa.service.CheckupServiceTest;
 import tim31.pswisa.service.ClinicServiceTest;
 import tim31.pswisa.service.DoctorServiceTest;
 import tim31.pswisa.service.EmailServiceTest;
@@ -39,7 +38,6 @@ import tim31.pswisa.service.UserServiceTest;
 	PatientRepositoryTest.class,
 	RoomRepositoryTest.class,
 	UserRepositoryTest.class,
-	CheckupServiceTest.class,
 	ClinicServiceTest.class,
 	DoctorServiceTest.class,
 	EmailServiceTest.class,

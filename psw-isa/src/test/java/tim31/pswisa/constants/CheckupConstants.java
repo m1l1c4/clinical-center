@@ -21,6 +21,7 @@ public class CheckupConstants {
 	public static final LocalDate LOCAL_DATE_2 = LocalDate.parse("2020-01-23");
 	public static final LocalDate LOCAL_DATE_3 = LocalDate.parse("2020-01-12");
 	
+	
 	public static final String TIME_1 = "1";
 	public static final String TIME_2 = "2";
 	public static final String TIME_3 = "3";
@@ -65,6 +66,8 @@ public class CheckupConstants {
 	public static final boolean CHECKUP_FINISHED = false;
 	public static final int CHECKUP_COUNT =  1; // number of checkups in one room in given date
 
-
+	// for checkup request
+	public static final LocalDate CHECKUP_DATER = LocalDate.parse("2020-02-10");
+	
 }
 

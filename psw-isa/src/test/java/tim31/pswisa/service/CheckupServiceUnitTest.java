@@ -1,13 +1,9 @@
 package tim31.pswisa.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -18,33 +14,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.MailException;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import tim31.pswisa.constants.CheckupConstants;
+import tim31.pswisa.constants.CheckupTypeConstants;
+import tim31.pswisa.constants.ClinicConstants;
 import tim31.pswisa.constants.DoctorConstants;
 import tim31.pswisa.constants.PatientConstants;
 import tim31.pswisa.constants.RoomConstants;
 import tim31.pswisa.constants.UserConstants;
+import tim31.pswisa.dto.CheckUpTypeDTO;
 import tim31.pswisa.dto.CheckupDTO;
+import tim31.pswisa.dto.ClinicDTO;
 import tim31.pswisa.dto.MedicalWorkerDTO;
 import tim31.pswisa.dto.RoomDTO;
+import tim31.pswisa.model.CheckUpType;
 import tim31.pswisa.model.Checkup;
+import tim31.pswisa.model.Clinic;
+import tim31.pswisa.model.ClinicAdministrator;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 import tim31.pswisa.repository.CheckUpRepository;
 import tim31.pswisa.repository.MedicalWorkerRepository;
-import tim31.pswisa.repository.PatientRepository;
 import tim31.pswisa.repository.RoomRepository;
 import tim31.pswisa.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
-public class CheckupServiceTest {
+public class CheckupServiceUnitTest {
 
 	@Autowired
 	private CheckUpService checkupService;
@@ -56,7 +57,7 @@ public class CheckupServiceTest {
 	private UserRepository userRepositoryMocked;
 	
 	@MockBean
-	private PatientRepository patientRepositoryMocked;
+	private PatientService patientServiceMocked;
 	
 	@MockBean
 	private RoomRepository roomRepositoryMocked;
@@ -66,6 +67,18 @@ public class CheckupServiceTest {
 	
 	@MockBean
 	private EmailService emailServiceMocked;
+	
+	@MockBean
+	private ClinicService clinicServiceMocked;
+	
+	@MockBean
+	private CheckUpTypeService checkuptypeServiceMocked;
+	
+	@MockBean
+	private ClinicAdministratorService clAdminsServiceMocked;
+	
+	@MockBean
+	private MedicalWorkerService medicalWorkerServiceMocked;
 	
 	@Test
 	public void testBookQuickAppFalse() throws Exception {
@@ -107,7 +120,7 @@ public class CheckupServiceTest {
 		testPatient.setProcessed(PatientConstants.PATIENT1_PROCESSED);
 		testPatient.setId(1L);
 		
-		Mockito.when(patientRepositoryMocked.findByUserId(testPatient.getUser().getId())).thenReturn(testPatient);
+		Mockito.when(patientServiceMocked.findOneByUserId(testPatient.getUser().getId())).thenReturn(testPatient);
 		
 		Checkup checkupTest2 = new Checkup();
 		checkupTest2.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
@@ -211,6 +224,57 @@ public class CheckupServiceTest {
 		
 		assertNull(retCheckup);
 	}
+	
+	@Test		//unit
+	public void checkupToAdminTest() {		
+		CheckupDTO inputDto = new CheckupDTO();
+		inputDto.setDate(CheckupConstants.CHECKUP_DATER);
+		inputDto.setTime(CheckupConstants.CHECKUP_TIME);
+		inputDto.setType("PREGLED");
+		Checkup newCh = new Checkup(0, false, inputDto.getDate(), inputDto.getTime(), inputDto.getType(),
+						1, 0, null, false);
+		User u = new User();
+		u.setEmail("pacijent@gmail.com");
+		u.setId(PatientConstants.PATIENT_ID);
+		Mockito.when(userRepositoryMocked.findOneByEmail("pacijent@gmail.com")).thenReturn(u);
+		
+		Patient p = new Patient();
+		p.setUser(u);
+		Mockito.when(patientServiceMocked.findOneByUserId(u.getId())).thenReturn(p);
+		
+		MedicalWorkerDTO inputMwDto = new MedicalWorkerDTO();
+		inputMwDto.setId(DoctorConstants.DOCTOR_ID);
+		inputDto.setMedicalWorker(inputMwDto);
+		ClinicDTO clinicDto = new ClinicDTO();
+		clinicDto.setName(ClinicConstants.NAZIV_1);
+		inputDto.setClinic(clinicDto);
+		Clinic clinic = new Clinic();
+		Mockito.when(clinicServiceMocked.findOneByName(clinicDto.getName())).thenReturn(clinic);
+		
+		CheckUpTypeDTO inputTypeTest = new CheckUpTypeDTO();
+		inputTypeTest.setName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);
+		inputDto.setCheckUpType(inputTypeTest);
+		CheckUpType retCheckUpType = new CheckUpType();
+		retCheckUpType.setName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);
+		Mockito.when(checkuptypeServiceMocked.findOneByName(inputDto.getCheckUpType().getName())).thenReturn(retCheckUpType);
+	
+		ArrayList<ClinicAdministrator> admins = new ArrayList<ClinicAdministrator>(1);
+		Mockito.when(clAdminsServiceMocked.findAll()).thenReturn(admins);
+		MedicalWorker doctor = new MedicalWorker();
+		Mockito.when(medicalWorkerServiceMocked.myFindOne(inputDto.getMedicalWorker().getId()))
+			   .thenReturn(doctor);
+		
+		boolean ret = false;
+		try {
+			ret = checkupService.checkupToAdmin(inputDto, "pacijent@gmail.com");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertTrue(ret);
+	
+	}
+	
 	
 	
 }
