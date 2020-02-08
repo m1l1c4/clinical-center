@@ -726,6 +726,7 @@ public class ClinicService {
 		return ret;
 	}
 	
+	@Transactional(readOnly = false)
 	public boolean rateClinic(String email, String[] param) {	
 		Long checkupId ;
 		double rating;

@@ -493,7 +493,8 @@ public class CheckUpService {
 	private List<CheckupDTO> getIncomingChps(Patient p, String type) {
 		List<CheckupDTO> ret = new ArrayList<CheckupDTO>();
 		for (Checkup checkup : p.getAppointments()) {
-			if (checkup.getDate().isAfter(LocalDate.now()) && checkup.isScheduled() && checkup.getTip().equals(type)) {
+			if (checkup.getDate().isAfter(LocalDate.now()) || TypeCondition(type, checkup)
+				&& checkup.isScheduled() && checkup.getTip().equals(type) ) {
 				CheckupDTO temp = new CheckupDTO(checkup);
 				MedicalWorker doctor = patientService.findDoctor(checkup);
 				if (doctor != null) {
@@ -505,6 +506,14 @@ public class CheckUpService {
 		return ret;
 	}
 
+	
+	private boolean TypeCondition(String type, Checkup checkup) {
+		if (type.equals("OPERACIJA"))
+			return checkup.getDate().isEqual(LocalDate.now());
+		else 
+			return checkup.getDate().isEqual(LocalDate.now()) && !checkup.isFinished() ;
+	}
+	
 	/**
 	 * returns all previous checkups depending on type
 	 * 

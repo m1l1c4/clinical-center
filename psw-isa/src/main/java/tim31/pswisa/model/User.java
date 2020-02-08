@@ -1,6 +1,7 @@
 package tim31.pswisa.model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import javax.persistence.Table;
 
 import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -220,6 +222,9 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
+		/*Authority auth = new Authority();
+		auth.setName("ROLE_" + type);
+		this.authorities.add(auth);*/
 		return this.authorities;
 	}
 

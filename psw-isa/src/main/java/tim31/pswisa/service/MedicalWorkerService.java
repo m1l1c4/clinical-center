@@ -390,7 +390,7 @@ public class MedicalWorkerService {
 		return medicalWorkerRepository.findAllDoctors(type, id);
 	}
 	
-
+	@Transactional(readOnly = false)
 	public boolean rateDoctor(String email, String[] param) {	
 		Long checkupId ;
 		double rating;

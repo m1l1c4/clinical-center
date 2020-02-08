@@ -87,18 +87,14 @@ public class PatientController {
 		}
 	}
 
-	@GetMapping(value = "/getPatientProfile", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> getPatient(HttpServletRequest request) {
-		String jwt_token = tokenUtils.getToken(request);
-		String email = tokenUtils.getUsernameFromToken(jwt_token);
+	@GetMapping(value = "/getPatientProfile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PatientDTO> getPatient(@PathVariable Long id, HttpServletRequest request) {
 		ResponseEntity<PatientDTO> ret;
-		User up = userService.findOneByEmail(email);
-		Patient p = patientService.findOneByUserId(up.getId());
+		Patient p = patientService.findOneByUserId(id);
 		if (p != null)
 			ret = new ResponseEntity<>(new PatientDTO(p), HttpStatus.OK);
 		else
 			ret = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
 		return ret;
 	}
 
