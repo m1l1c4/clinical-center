@@ -11,3 +11,5 @@ before_install:
 
 script:
   - ./mvnw clean install -DskipTests=true -B
+
+dist: trusty
