@@ -402,6 +402,5 @@ public class PatientPage {
 	public void setButtonSecondClick(WebElement buttonSecondClick) {
 		this.buttonSecondClick = buttonSecondClick;
 	}
-
 	
 }
