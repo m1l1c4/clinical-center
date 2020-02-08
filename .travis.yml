@@ -7,8 +7,8 @@ services:
 
 before_install:
   - chmod +x mvnw
-  
-before_script: 
-  - cd centersystem
-  
+
+before_script:
+  - cd psw-isa
+
   ./mvnw install -DskipTests=true -B
