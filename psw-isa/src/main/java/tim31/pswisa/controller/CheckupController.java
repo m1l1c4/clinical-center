@@ -291,7 +291,7 @@ public class CheckupController {
 	 * @return
 	 */
 
-	@PreAuthorize("hasRole('PACIJENT') or hasRole('DOKTOR')")
+	@PreAuthorize("hasRole('ROLE_PACIJENT') or hasRole('ROLE_DOKTOR')")
 	@PostMapping(value = "/patientHistory/{type}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type,@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);

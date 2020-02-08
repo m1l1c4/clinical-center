@@ -49,7 +49,7 @@ public class ClinicAdministratorController {
 	 * @return - (ClinicAdministratorDTO) This method returns clinic administrator
 	 * 
 	 */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/getAdministrator", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicAdministratorDTO> getAdministrator(HttpServletRequest request) {
 
@@ -129,7 +129,7 @@ public class ClinicAdministratorController {
 	 *         that have to be booked by administrator
 	 * 
 	 */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/requestsForRoom", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CheckupDTO>> requestForRoomController(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
