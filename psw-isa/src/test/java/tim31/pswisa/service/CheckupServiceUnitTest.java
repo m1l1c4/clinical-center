@@ -197,9 +197,9 @@ public class CheckupServiceUnitTest {
 		checkupTest.setScheduled(CheckupConstants.CHECKUP_SCHEDULED);
 		checkupTest.setDate(CheckupConstants.CHECKUP_DATE);
 		checkupTest.setTime(CheckupConstants.CHECKUP_TIME_FALSE);
-		checkupTest.setId(CheckupConstants.CHECKUP_ID);
+		checkupTest.setId(CheckupConstants.CHECKUP_ID_FALSE);
 		checkupTest.setMedicalWorker(doctorTest);
-		Mockito.when(checkupRepositoryMocked.findOneById(checkupTest.getId())).thenReturn(tempCheckup);
+		checkupTest.setType(CheckupConstants.CHECKUP_CHTYPE);
 		
 		RoomDTO testRoom = new RoomDTO();
 		Room tempRoom = new Room();
@@ -208,13 +208,14 @@ public class CheckupServiceUnitTest {
 		testRoom.setTypeRoom(RoomConstants.ROOM_TYPE);
 		testRoom.setId(RoomConstants.ROOM_ID);
 		checkupTest.setRoom(testRoom);
+		List<Checkup> checkups = new ArrayList<>();
+		checkups.add(tempCheckup);
 		
+		Mockito.when(checkupRepositoryMocked.findAllByRoomIdAndTimeAndDate(checkupTest.getRoom().getId(),
+				checkupTest.getTime(), checkupTest.getDate())).thenReturn(checkups);
         Mockito.when(roomRepositoryMocked.findOneById(checkupTest.getRoom().getId())).thenReturn(tempRoom);
-		
-        List<Checkup> allInRoomTest = new ArrayList<Checkup>();		
-		Mockito.when(checkupRepositoryMocked.findAllByRoomIdAndTimeAndDate(tempRoom.getId(),
-				checkupTest.getTime(), checkupTest.getDate())).thenReturn(allInRoomTest);
-		
+		Mockito.when(checkupRepositoryMocked.findOneById(checkupTest.getId())).thenReturn(tempCheckup);
+
 		try {
 			retCheckup = checkupService.update(checkupTest);
 		} catch (Exception e) {

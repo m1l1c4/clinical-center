@@ -1,8 +1,6 @@
 package tim31.pswisa.service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import tim31.pswisa.dto.PatientDTO;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.MedicalWorker;
 import tim31.pswisa.model.Patient;
-import tim31.pswisa.model.Recipe;
-import tim31.pswisa.model.Report;
 import tim31.pswisa.repository.PatientRepository;
 
 @Service
@@ -133,7 +129,6 @@ public class PatientService {
 	 */
 	private List<DiagnoseDTO> patientDiagnoses(Patient loggedPatient) {
 		List<DiagnoseDTO> patientDiagnoses = new ArrayList<DiagnoseDTO>();
-		LocalDate currentDate = LocalDate.now();
 		List<Checkup> checkupsHistory = checkupService.findAllByFinishedAndPatientIdAndTip(true,
 										loggedPatient.getId(), "PREGLED");		
 		for (Checkup ch : checkupsHistory) {			

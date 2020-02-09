@@ -51,7 +51,7 @@ public class CheckupToAdmin {
 
 		patientPage.ensureIsDisplayedTypeOfCheckupE2E();
 		patientPage.setTypeOfCheckup("KARDIOLOSKI");
-		patientPage.setDateOfCheckup("23", "Jan", "2020");
+		patientPage.setDateOfCheckup("23", "Apr", "2020");
 
 		patientPage.getSearchE2E().click();
 		patientPage.ensureRows();
@@ -77,39 +77,10 @@ public class CheckupToAdmin {
 		patientPage.getButtonFirstClick().click();
 		patientPage.ensureIsDisplayedModal2();
 		patientPage.getButtonSecondClick().click();
-		patientPage.ensureIsNotVisible();
-		//assertEquals(1, 1);
-		
-		
-		
-		
-		
-
-	}
-
-	@Test
-	public void seleniumSearchAndFilterClinicsNonEnteredValue() throws InterruptedException {
-
-		logginPage.login("pacijent@gmail.com", "sifra1");
-		patientPage.ensureIsDisplayedAllClinicsE2E();
-		assertEquals("http://localhost:3000/patient-page/5", browser.getCurrentUrl());
-		patientPage.getAllClinicsE2E().click();
-
-		patientPage.ensureIsDisplayedDateOfCheckupE2E();
-		patientPage.setDateOfCheckup("23", "Jan", "2020");
-
-		patientPage.getSearchE2E().click();
-		patientPage.ensureIsDisplayedFilter();
-		List<WebElement> tableAfterSearch = patientPage.getRows();
-		assertEquals(1, tableAfterSearch.size() - 1);
-
-		patientPage.setOcjena("20");
 		patientPage.ensureIsDisplayedLabel();
-		List<WebElement> tableAfterFilter = patientPage.getRows();
-		assertEquals(0, tableAfterFilter.size() - 1);
+		//assertEquals(1, 1);
 
 	}
-
 	@After
 	public void tearDown() throws InterruptedException {
 		browser.close();

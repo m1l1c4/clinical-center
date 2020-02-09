@@ -68,7 +68,7 @@ import pages.LogginPage;
 		WebElement choosenRoom = adminPage.findFirstRoomButton();
 		choosenRoom.click();
 		
-		assertEquals(4, freeRooms.size());
+		assertEquals(3, freeRooms.size());
 
 		adminPage.ensureIsDisplayedbookRoomE2E();
 		WebElement book = adminPage.getBookRoomE2E();

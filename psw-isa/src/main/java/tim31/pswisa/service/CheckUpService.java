@@ -5,20 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.LockModeType;
-import javax.persistence.Persistence;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,6 +93,8 @@ public class CheckUpService {
 	public Checkup save(Checkup c) {
 		return checkupRepository.save(c);
 	}
+	
+	
 
 	/**
 	 * This method servers for getting one check-up by id from database
@@ -238,7 +232,7 @@ public class CheckUpService {
 		CheckUpType chType = checkUpTypeService.findOneByName(ch.getCheckUpType().getName());
 		ArrayList<ClinicAdministrator> clAdmins = (ArrayList<ClinicAdministrator>) cladminService.findAll();
 		MedicalWorker doctor = medicalWorkerService.myFindOne(ch.getMedicalWorker().getId());
-		try { Thread.sleep(7000); } catch (InterruptedException e) { }
+		//try { Thread.sleep(7000); } catch (InterruptedException e) { }
 
 		if (u == null || p == null || !ok || c == null || clAdmins == null || chType == null) {
 			logger.info("slanje requesta adminu zavrseno sa false" + email);
@@ -322,8 +316,8 @@ public class CheckUpService {
 		checkup.setTime(c.getTime());
 		checkup.setRoom(room);
 		checkup.setScheduled(true);
-		checkup.setDoctors(new HashSet<MedicalWorker>());
 		if(checkup.getTip().equals("PREGLED")){
+			checkup.setDoctors(new HashSet<MedicalWorker>());
 			MedicalWorker doctor = medicalWorkerService.findOneById(c.getMedicalWorker().getId());
 			checkup.getDoctors().add(doctor);
 		}
@@ -345,14 +339,18 @@ public class CheckUpService {
 		Checkup checkup = checkupRepository.findOneById(id);
 		checkup.setDoctors(new HashSet<MedicalWorker>());
 		for (Long mwId : workers) {
-			MedicalWorker mw = medicalWorkerService.findOneById(mwId);
-			try { Thread.sleep(7000); } catch (InterruptedException e) { }
+			MedicalWorker mw = medicalWorkerService.myFindOne(mwId);
+			//try { Thread.sleep(7000); } catch (InterruptedException e) { }
 			checkup.getDoctors().add(mw);
 		}
 		if (checkup.getDoctors().size() == 0) {
 			return null;
 		} else {
-			return save(checkup);
+			for(MedicalWorker doctor: checkup.getDoctors()) {
+				doctor.getCheckUps().add(checkup);
+				medicalWorkerService.save(doctor);
+			}
+			return checkup;
 		}
 	}
 

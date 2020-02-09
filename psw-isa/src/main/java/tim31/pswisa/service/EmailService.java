@@ -172,7 +172,7 @@ public class EmailService {
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo("pswisa.tim31.2019@gmail.com");
 		msg.setFrom(env.getProperty("spring.mail.username"));
-		msg.setSubject("Account confirmation");
+		msg.setSubject("Date changed");
 		msg.setText("Your operation has been resheduled for " + c.getDate().toString() + " " + c.getTime() + " in the room ."
 				+ c.getRoom().getName() + " number: " + c.getRoom().getNumber());
 		javaMailSender.send(msg);

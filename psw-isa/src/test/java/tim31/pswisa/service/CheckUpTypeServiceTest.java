@@ -35,6 +35,6 @@ public class CheckUpTypeServiceTest {
 		chTypeTest.setName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);				
 		Mockito.when(checkUpRepositoryMocked.findOneByName(chTypeTest.getName())).thenReturn(chTypeTest);
 		CheckUpType chType = checkUpTypeService.findOneByName(CheckupTypeConstants.CHECK_UP_TYPE_NAME);
-		assertEquals(DoctorConstants.DOCTOR_ID, chType.getName());		
+		assertEquals(chTypeTest.getName(), chType.getName());		
 	}
 }

@@ -28,7 +28,11 @@ public class ClinicRepositoryTest {
 	@Test
 	public void testFindOneByName() {
 		Clinic clinicTest = new Clinic();	
-		clinicTest.setCity(ClinicConstants.GRAD_1);
+		clinicTest.setCity(ClinicConstants.CLINIC_CITY2);
+		clinicTest.setName("BLA");
+		clinicTest.setAddress(ClinicConstants.ADRESA_1);
+		clinicTest.setDescription(ClinicConstants.CLINIC_DESCRIPTION);
+		clinicTest.setVersion(ClinicConstants.CLINIC_ID);
 		entityManager.persistAndFlush(clinicTest);		
 		Clinic clinic = clinicRepository.findOneByName(clinicTest.getName());
 		assertEquals(clinicTest.getId(), clinic.getId());

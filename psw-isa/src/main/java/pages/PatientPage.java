@@ -65,49 +65,49 @@ public class PatientPage {
 
 	@FindBy(id = "modal2")
 	private WebElement modal2;
-	
+
 	@FindBy(id = "timeOfCheckup")
 	private WebElement timeOfCheckup;
-	
+
 	@FindBy(id = "buttonFirstClick")
 	private WebElement buttonFirstClick;
-	
+
 	@FindBy(id = "buttonSecondClick")
 	private WebElement buttonSecondClick;
 
 	public WebElement findFirstClinicButton() {
-		List<WebElement>elements = rows.get(1).findElements(By.tagName("button"));
+		List<WebElement> elements = rows.get(1).findElements(By.tagName("button"));
 		return elements.get(1);
 	}
 
 	public void ensureIsNotVisible() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.invisibilityOf(modal2));
 	}
-	
+
 	public void ensureIsDisplayedModal1() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(modal1));
 	}
-	
+
 	public void ensureIsDisplayedModal2() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(modal2));
 	}
-	
+
 	public void ensureIsDisplayedAllClinicsE2E() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(allClinicsE2E));
 	}
 
 	public void ensureIsDisplayedAlert() {
-		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(alert));
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOf(alert));
 	}
 
 	public void ensureIsDisplayedTypeOfCheckupE2E() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(typeOfCheckupE2E));
 	}
-	
+
 	public void ensureIsDisplayedFirstClick() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(buttonFirstClick));
 	}
-	
+
 	public void ensureIsDisplayedSecondClick() {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(buttonSecondClick));
 	}
@@ -133,7 +133,7 @@ public class PatientPage {
 	}
 
 	public void ensureIsDisplayedLabel() {
-		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(label));
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.visibilityOf(label));
 	}
 
 	public void ensureIsDisplayDoctorSearch() {
@@ -315,7 +315,7 @@ public class PatientPage {
 		filterOcjena.sendKeys(a);
 		filterClick.click();
 	}
-	
+
 	public void setTimeOfCheckup(String a) {
 		timeOfCheckup.click();
 		timeOfCheckup.sendKeys(a);
@@ -402,5 +402,5 @@ public class PatientPage {
 	public void setButtonSecondClick(WebElement buttonSecondClick) {
 		this.buttonSecondClick = buttonSecondClick;
 	}
-	
+
 }

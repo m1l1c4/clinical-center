@@ -20,6 +20,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import tim31.pswisa.TestUtil;
@@ -76,7 +78,7 @@ public class AdminControllerTest {
 		RoomDTO room = new RoomDTO();
 		room.setId(RoomConstants.ROOM_ID);
 		Checkup checkup = new Checkup();
-		checkup.setId(CheckupConstants.CHECKUP_ID);			
+		checkup.setId(CheckupConstants.CHECKUP_ID3);			
 		CheckupDTO inputCheckup = new CheckupDTO();
 		inputCheckup.setId(checkup.getId());
 		inputCheckup.setRoom(room);

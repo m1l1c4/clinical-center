@@ -11,10 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tim31.pswisa.dto.RecipeDTO;
 import tim31.pswisa.model.Checkup;
 import tim31.pswisa.model.MedicalWorker;
-import tim31.pswisa.model.Patient;
 import tim31.pswisa.model.Recipe;
-import tim31.pswisa.model.Report;
-import tim31.pswisa.model.User;
 import tim31.pswisa.repository.RecipeRepository;
 
 @Service
@@ -23,12 +20,6 @@ public class RecipeService {
 
 	@Autowired
 	private RecipeRepository recipeRepository;
-	
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private PatientService patientService;
 	
 	@Autowired
 	private CheckUpService checkupService;

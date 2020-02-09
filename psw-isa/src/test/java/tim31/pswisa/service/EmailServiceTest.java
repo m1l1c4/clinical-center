@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 import javax.mail.MessagingException;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +27,7 @@ import tim31.pswisa.model.Room;
 import tim31.pswisa.model.User;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 public class EmailServiceTest {
 
@@ -149,7 +149,7 @@ public class EmailServiceTest {
 	
 	@Test
 	public void testNotifyDoctorEmail() throws InterruptedException, MessagingException, NullPointerException {
-		assertDoesNotThrow(() -> emailService.notifyDoctor(CheckupConstants.CHECKUP_ID));
+		assertDoesNotThrow(() -> emailService.notifyDoctor(CheckupConstants.CHECKUP_ID3));
 	}
 	
 	@Test

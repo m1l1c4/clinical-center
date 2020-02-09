@@ -166,7 +166,7 @@ public class ClinicServiceTest {
 		clinicTest.setName(ClinicConstants.CLINIC_NAME);
 		Mockito.when(clinicRepositoryMocked.findOneByName(clinicTest.getName())).thenReturn(clinicTest);
 		Clinic clinic = clinicService.findOneByName(ClinicConstants.CLINIC_NAME);
-		assertEquals(ClinicConstants.CLINIC_NAME, clinic.getId());		
+		assertEquals(clinicTest.getId(), clinic.getId());		
 	}
 
 }

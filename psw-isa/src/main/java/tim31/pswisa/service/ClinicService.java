@@ -118,7 +118,7 @@ public class ClinicService {
 		} else {
 			List<Checkup> checkups = checkupService.findAll();
 			for (Checkup c : checkups) {
-				if (c.getClinic().getId() == clinic.getId() && c.isScheduled()) {
+				if (c.getClinic().getId() == clinic.getId() && c.isScheduled() && c.isFinished()) {
 					LocalDate temp = c.getDate();
 					System.out.println(temp.toString());
 					System.out.println(c.getDate());
@@ -186,7 +186,7 @@ public class ClinicService {
 		}
 		List<Checkup> checkups = checkupService.findAll();
 		for (Checkup c : checkups) {
-			if (c.getClinic().getId() == clinic.getId() && c.isScheduled()) {
+			if (c.getClinic().getId() == clinic.getId() && c.isScheduled() ) {
 				String temp = c.getDate().toString();
 				String[] temp1 = temp.split("-");
 				String temp2 = temp1[1];
@@ -243,7 +243,7 @@ public class ClinicService {
 	 * @param clinic              - new data of clinic
 	 * @return - (Clinic) This method returns updated clinic
 	 */
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public Clinic updateClinic(ClinicAdministrator clinicAdministrator, ClinicDTO clinic) throws Exception {
 		Clinic nameOfClinic = clinicAdministrator.getClinic();
 		List<Clinic> temp = findAll();
@@ -498,7 +498,7 @@ public class ClinicService {
 			if (r.getNumber() == number) {
 				Set<Checkup> ceks = r.getBookedCheckups();
 				for (Checkup c : ceks) {
-					if (c.isFinished() == false) {
+					if (c.isScheduled() == true) {
 						return "";
 					}
 				}
@@ -553,10 +553,12 @@ public class ClinicService {
 		Room room1 = roomRepository.findOneByClinicIdAndNumber(klinika.getId(), room.getNumber());
 		Set<Checkup> ceks = room1.getBookedCheckups();
 		for (Checkup c : ceks) {
-			if (c.isFinished() == false) {
+			if (c.isScheduled() == true) {
 				return null;
 			}
 		}
+		System.out.println(room1.getName());
+		System.out.println(room.getName());
 		room1.setName(room.getName());
 		room1.setTypeRoom(room.getTypeRoom());
 		roomRepository.save(room1);
@@ -668,7 +670,6 @@ public class ClinicService {
 	@Transactional(readOnly = false)
 	public MedicalWorkerDTO getSelectedDoctor(Long parametar, String date) {
 		MedicalWorker mww = medicalWorkerService.findOne(parametar);
-		LocalDate realDate = LocalDate.parse(date);
 		if (mww != null) {
 			MedicalWorkerDTO mw = new MedicalWorkerDTO(mww);
 			boolean taken = false;
@@ -726,7 +727,7 @@ public class ClinicService {
 		return ret;
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public boolean rateClinic(String email, String[] param) {	
 		Long checkupId ;
 		double rating;

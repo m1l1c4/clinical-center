@@ -74,10 +74,10 @@ public class CheckupController {
 
 	@Autowired
 	private AbsenceService absenceService;
-	
+
 	@Autowired
 	private RecipeService recipeService;
-	
+
 	@Autowired
 	private EmailService emailService;
 
@@ -104,7 +104,7 @@ public class CheckupController {
 	 * @return - (CheckupDTO) This method returns added appointment if doctor are
 	 *         not busy
 	 */
-	@PreAuthorize("hasRole('ADMINISTRATOR')")
+	//@PreAuthorize("hasRole('ADMINISTRATOR')")
 	@PostMapping(value = "/addAppointment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> addAppointmentController(@RequestBody CheckupDTO c, HttpServletRequest request) {
 		User doctorOne = userService.findOneByEmail(c.getMedicalWorker().getUser().getEmail());
@@ -161,18 +161,18 @@ public class CheckupController {
 	}
 
 	@PostMapping(value = "/checkupRequest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ReportDTO> checkupRequest(@RequestBody CheckupDTO ch, HttpServletRequest request) {
+	public ResponseEntity<String> checkupRequest(@RequestBody CheckupDTO ch, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		try {
 			if (checkupService.checkupToAdmin(ch, email)) {
-				return new ResponseEntity<>(HttpStatus.OK);
+				return new ResponseEntity<>("true", HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		return new ResponseEntity<>("false", HttpStatus.NOT_ACCEPTABLE);
 
 	}
 
@@ -184,7 +184,7 @@ public class CheckupController {
 	 *          new informations about appointment
 	 * @return - This method returns updated check-up
 	 */
-	//@PreAuthorize("hasRole('ADMINISTRATOR')")
+	// @PreAuthorize("hasRole('ADMINISTRATOR')")
 	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CheckupDTO> updateCheckup(@RequestBody CheckupDTO c) {
 		Checkup checkup;
@@ -292,9 +292,9 @@ public class CheckupController {
 			success = checkupService.bookQuickApp(id, email);
 			try {
 				emailService.quickAppConfirmationEmail(email, success);
-			} catch (MailException e) {				
+			} catch (MailException e) {
 				e.printStackTrace();
-			} catch (InterruptedException e) {				
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			if (success != null) {
@@ -317,7 +317,8 @@ public class CheckupController {
 
 	@PreAuthorize("hasRole('ROLE_PACIJENT') or hasRole('ROLE_DOKTOR')")
 	@PostMapping(value = "/patientHistory/{type}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type,@PathVariable Long id, HttpServletRequest request) {
+	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type,
+			@PathVariable Long id, HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		HashMap<Integer, List<CheckupDTO>> patientCheckups = checkupService.getPatientCheckups(id, email, type);
@@ -362,17 +363,17 @@ public class CheckupController {
 		}
 		return new ResponseEntity<CheckupDTO>(checkup, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * returns checkup report needed for presenting additional info of checkup
 	 * 
 	 * @param request
-	 * @param id - checkup id
+	 * @param id      - checkup id
 	 * @return
 	 */
 	@PreAuthorize("hasRole('PACIJENT')")
 	@PostMapping(value = "/infoReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<RecipeDTO> checkupDetails(HttpServletRequest request, @PathVariable Long id) {		
+	public ResponseEntity<RecipeDTO> checkupDetails(HttpServletRequest request, @PathVariable Long id) {
 		RecipeDTO report = recipeService.additionalCheckupInfo(id);
 		if (report == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

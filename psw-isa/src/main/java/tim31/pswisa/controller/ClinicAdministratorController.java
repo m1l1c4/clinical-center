@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +49,7 @@ public class ClinicAdministratorController {
 	 * 
 	 */
 
-    //@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	// @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('CCADMIN')")
 	@GetMapping(value = "/getAdministrator", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicAdministratorDTO> getAdministrator(HttpServletRequest request) {
 
@@ -74,7 +73,7 @@ public class ClinicAdministratorController {
 	 *         from medical worker to clinic administrator who is logged
 	 * 
 	 */
-    //@PreAuthorize("hasRole('ADMINISTRATOR')")
+	// @PreAuthorize("hasRole('ADMINISTRATOR')")
 	@GetMapping(value = "/getRequestForVacation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AbsenceDTO>> getRequestForVacationController(HttpServletRequest request) {
 
@@ -105,7 +104,7 @@ public class ClinicAdministratorController {
 	 *         about success of this method
 	 * 
 	 */
-   // @PreAuthorize("hasRole('ADMINISTRATOR')")
+	// @PreAuthorize("hasRole('ADMINISTRATOR')")
 	@PostMapping(value = "/requestVacation/{reason}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> requestVacationController(HttpServletRequest request, @RequestBody AbsenceDTO a,
 			@PathVariable String reason) throws MailException, InterruptedException {
@@ -131,13 +130,13 @@ public class ClinicAdministratorController {
 	 * 
 	 */
 
-    //@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	// @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/requestsForRoom", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CheckupDTO>> requestForRoomController(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		if(user.getType().equals("ADMINISTRATOR")) {
+		if (user.getType().equals("ADMINISTRATOR")) {
 			List<CheckupDTO> returnValue = checkupService.findAllByScheduled(false, user);
 			return new ResponseEntity<>(returnValue, HttpStatus.OK);
 		}
@@ -153,7 +152,7 @@ public class ClinicAdministratorController {
 	 *         administrator
 	 * 
 	 */
-    //@PreAuthorize("hasRole('ADMINISTRATOR')")
+	// @PreAuthorize("hasRole('ADMINISTRATOR')")
 	@PostMapping(value = "/updateAdministrator", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ClinicAdministratorDTO> updateAdministratorController(@RequestBody ClinicAdministratorDTO ca,
 			HttpServletRequest request) {
@@ -177,19 +176,9 @@ public class ClinicAdministratorController {
 	 * @return (void) - This method has no return value
 	 */
 	@Scheduled(cron = "${scheduleRoom.cron}")
-	public void scheuldeRoom () {
+	public void scheuldeRoom() {
 		clinicAdministratorService.scheuldeRoomsEndDay();
 		System.out.println("POZVANA FUNKCIJA" + "        " + System.currentTimeMillis());
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 }

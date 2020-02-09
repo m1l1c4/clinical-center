@@ -49,37 +49,7 @@ import tim31.pswisa.repository.UserRepository;
 @TestPropertySource("classpath:application-test.properties")
 public class CheckupServiceIntegracioniTest {
 	@Autowired
-	private CheckUpService checkupService;
-	
-	@MockBean
-	private CheckUpRepository checkupRepositoryMocked;
-	
-	@MockBean
-	private UserRepository userRepositoryMocked;
-	
-	@MockBean
-	private PatientService patientServiceMocked;
-	
-	@MockBean
-	private RoomRepository roomRepositoryMocked;
-	
-	@MockBean
-	private MedicalWorkerRepository doctorRepositoryMocked;
-	
-	@MockBean
-	private EmailService emailServiceMocked;
-	
-	@MockBean
-	private ClinicService clinicServiceMocked;
-	
-	@MockBean
-	private CheckUpTypeService checkuptypeServiceMocked;
-	
-	@MockBean
-	private ClinicAdministratorService clAdminsServiceMocked;
-	
-	@MockBean
-	private MedicalWorkerService medicalWorkerServiceMocked;
+	private CheckUpService checkupService;	
 	
 	@Test
 	public void testBookQuickAppFalseIntegracioni() throws Exception {

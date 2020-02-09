@@ -276,6 +276,7 @@ public class MedicalWorkerService {
 	 * @param mw - informations of new medical worker
 	 * @return - (MedicalWorkerDTO) This method returns created medical worker
 	 */
+	@Transactional(readOnly = false)
 	public MedicalWorker save(MedicalWorkerDTO mw) {
 		User user = userRepository.findOneByEmail(mw.getUser().getEmail());
 		if (user != null) {
@@ -421,6 +422,11 @@ public class MedicalWorkerService {
 	@Transactional(readOnly = false, propagation = Propagation.MANDATORY)
 	public MedicalWorker myFindOne(Long id) {
 		return medicalWorkerRepository.myFindOne(id);
+	}
+	
+	@Transactional(readOnly = false)
+	public MedicalWorker save(MedicalWorker m) {
+		return medicalWorkerRepository.save(m);
 	}
 	
 }

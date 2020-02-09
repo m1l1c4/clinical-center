@@ -108,7 +108,7 @@ public class CheckupRequestControllerTest {
 			mockMvc.perform(post(URL_PREFIX + "checkupRequest" ).header("Authorization", accessToken)
 					.contentType(contentType)
 					.content(body))
-					.andExpect(status().isExpectationFailed())	;
+					.andExpect(status().isNotAcceptable())	;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
