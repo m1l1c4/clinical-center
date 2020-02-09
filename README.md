@@ -4,7 +4,7 @@ Informacioni sistem kliničkog centra čija je osnovna namena zakazivanje pregle
 Pokretanje serverskog dela aplikacije:
  - klonirati repozitorijum u lokalni direktorijum
  - projekat importovati u Eclipse razvojno okruženje
- - instalirati PostgresSQL i napraviti novu konekciju sa kredencijalima koji se nalaze u application.properties 
+ - instalirati PostgresSQL i napraviti novu konekciju sa kredencijalima koji se nalaze u <code> application.properties </code>
    fajlu unutar projekta
   
  Pokretanje klijentskog dela aplikacije:
