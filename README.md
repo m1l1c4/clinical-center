@@ -19,4 +19,4 @@ Pokretanje serverskog dela aplikacije:
  2. Dragana Mihajlović RA41/2016
  3. Milica Škipina RA42/2016
   
-  
+  deployment https://test-ivana-dms.herokuapp.com/login
