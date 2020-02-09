@@ -17,7 +17,6 @@ import tim31.pswisa.service.MedicalRecordService;
 import tim31.pswisa.service.PatientService;
 
 @RestController
-@RequestMapping(value = "/email")
 public class EmailController {
 
 	@Autowired
