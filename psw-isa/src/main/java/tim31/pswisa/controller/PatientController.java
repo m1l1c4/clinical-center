@@ -27,7 +27,6 @@ import tim31.pswisa.service.PatientService;
 import tim31.pswisa.service.UserService;
 
 @RestController
-@RequestMapping(value = "/patient")
 public class PatientController {
 
 	@Autowired
