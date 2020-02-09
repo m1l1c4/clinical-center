@@ -111,7 +111,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/clinic/getRooms/*", "/clinic/roomAvailability/*/*", "/clinic/getDetails/*", "/getUser",
 				"/rollingInTheDeep", "/getMedicalWorker", "/canAccessToMedicalRecord/*", "/getRecipes",
 				"/getAllDoctors", "/getAllAvailable/*/*/*", "/patientRequests", "/getPatients", "/getPatientProfile/*",
-				"/getMedicalRecord/*", "/");
+				"/getMedicalRecord/*", "/", "/patientsRequests");
 
 		// web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html",
 		// "/favicon.ico", "/**/*.html",
