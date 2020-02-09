@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import tim31.pswisa.dto.AbsenceDTO;
@@ -27,6 +28,7 @@ import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.UserService;
 
 @RestController
+@RequestMapping(value = "/ccadmin")
 public class ClinicAdministratorController {
 
 	@Autowired

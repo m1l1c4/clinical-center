@@ -91,7 +91,7 @@ public class AbsenceService {
 		absence.setClinicOfAbsence(clinic);
 		absence.setEndVacation(a.getEndVacation());
 		absence.setStartVacation(a.getStartVacation());
-		absence.setMw(mw);
+		absence.setMedicalWorker(mw);
 		absence.setTypeOfAbsence(a.getTypeOfAbsence());
 		absence = abesenceRepository.save(absence);
 		return absence;

@@ -1,7 +1,10 @@
 package tim31.pswisa.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import tim31.pswisa.model.Codebook;
 
+@Getter @Setter
 public class CodebookDTO {
 
 	private Long id;
@@ -22,38 +25,6 @@ public class CodebookDTO {
 		this.id = id;
 		this.name = name;
 		this.code = code;
-		this.type = type;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
 		this.type = type;
 	}
 

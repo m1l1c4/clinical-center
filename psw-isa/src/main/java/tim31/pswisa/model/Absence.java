@@ -13,7 +13,12 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
 public class Absence {
 
 	@Id
@@ -37,7 +42,6 @@ public class Absence {
 	@Column(name = "typeOfAbsence")
 	private String typeOfAbsence;
 
-	// SENT, ACCEPTED, PASSED
 	@Column(name = "accepted")
 	private String accepted;
 
@@ -53,62 +57,6 @@ public class Absence {
 		this.clinicOfAbsence = c;
 		this.typeOfAbsence = t;
 		this.accepted = a;
-	}
-
-	public String getAccepted() {
-		return accepted;
-	}
-
-	public void setAccepted(String accepted) {
-		this.accepted = accepted;
-	}
-
-	public Clinic getClinicOfAbsence() {
-		return clinicOfAbsence;
-	}
-
-	public void setClinicOfAbsence(Clinic clinicOfAbsence) {
-		this.clinicOfAbsence = clinicOfAbsence;
-	}
-
-	public String getTypeOfAbsence() {
-		return typeOfAbsence;
-	}
-
-	public void setTypeOfAbsence(String typeOfAbsence) {
-		this.typeOfAbsence = typeOfAbsence;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public MedicalWorker getMw() {
-		return medicalWorker;
-	}
-
-	public void setMw(MedicalWorker mw) {
-		this.medicalWorker = mw;
-	}
-
-	public LocalDate getStartVacation() {
-		return startVacation;
-	}
-
-	public void setStartVacation(LocalDate start) {
-		this.startVacation = start;
-	}
-
-	public LocalDate getEndVacation() {
-		return endVacation;
-	}
-
-	public void setEndVacation(LocalDate end) {
-		this.endVacation = end;
 	}
 
 }

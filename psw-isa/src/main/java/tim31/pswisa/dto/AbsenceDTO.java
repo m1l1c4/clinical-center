@@ -2,8 +2,12 @@ package tim31.pswisa.dto;
 
 import java.time.LocalDate;
 
+import lombok.Getter;
+import lombok.Setter;
 import tim31.pswisa.model.Absence;
 
+@Getter
+@Setter
 public class AbsenceDTO {
 
 	private Long id;
@@ -21,7 +25,7 @@ public class AbsenceDTO {
 
 	public AbsenceDTO(Absence a) {
 		this(a.getId(), a.getStartVacation(), a.getEndVacation(), new ClinicDTO(a.getClinicOfAbsence()),
-				new MedicalWorkerDTO(a.getMw()), a.getTypeOfAbsence(), a.getAccepted());
+				new MedicalWorkerDTO(a.getMedicalWorker()), a.getTypeOfAbsence(), a.getAccepted());
 	}
 
 	public AbsenceDTO(Long id, LocalDate start, LocalDate end, ClinicDTO clinicDTO, MedicalWorkerDTO medicalWorker2,
@@ -34,62 +38,6 @@ public class AbsenceDTO {
 		this.medicalWorker = medicalWorker2;
 		this.typeOfAbsence = t;
 		this.accepted = a;
-	}
-
-	public String getAccepted() {
-		return accepted;
-	}
-
-	public void setAccepted(String accepted) {
-		this.accepted = accepted;
-	}
-
-	public String getTypeOfAbsence() {
-		return typeOfAbsence;
-	}
-
-	public void setTypeOfAbsence(String typeOfAbsence) {
-		this.typeOfAbsence = typeOfAbsence;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public LocalDate getStartVacation() {
-		return startVacation;
-	}
-
-	public void setStartVacation(LocalDate start) {
-		this.startVacation = start;
-	}
-
-	public LocalDate getEndVacation() {
-		return endVacation;
-	}
-
-	public void setEndVacation(LocalDate end) {
-		this.endVacation = end;
-	}
-
-	public MedicalWorkerDTO getMedicalWorker() {
-		return medicalWorker;
-	}
-
-	public void setMedicalWorker(MedicalWorkerDTO medicalWorker) {
-		this.medicalWorker = medicalWorker;
-	}
-
-	public ClinicDTO getClinicOfAbsence() {
-		return clinicOfAbsence;
-	}
-
-	public void setClinicOfAbsence(ClinicDTO clinicOfAbsence) {
-		this.clinicOfAbsence = clinicOfAbsence;
 	}
 
 }
