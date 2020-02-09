@@ -28,7 +28,6 @@ import tim31.pswisa.service.ClinicAdministratorService;
 import tim31.pswisa.service.UserService;
 
 @RestController
-@RequestMapping(value = "/ccadmin")
 public class ClinicAdministratorController {
 
 	@Autowired
