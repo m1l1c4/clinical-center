@@ -38,7 +38,6 @@ import tim31.pswisa.service.LoggingService;
 import tim31.pswisa.service.UserService;
 
 @RestController
-@RequestMapping(value = "/log")
 public class LoggingController {
 
 	@Autowired
