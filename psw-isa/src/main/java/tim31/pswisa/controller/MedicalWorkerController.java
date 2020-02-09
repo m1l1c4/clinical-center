@@ -36,7 +36,6 @@ import tim31.pswisa.service.RecipeService;
 import tim31.pswisa.service.UserService;
 
 @RestController
-@RequestMapping(value = "/doctor")
 public class MedicalWorkerController {
 
 	@Autowired
