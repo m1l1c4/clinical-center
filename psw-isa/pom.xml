@@ -12,10 +12,9 @@
 	<groupId>tim31</groupId>
 	<artifactId>psw-isa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 	<name>clinical-center-system</name>
 	<description>Project for PSW and ISA</description>
-
+	<packaging>war</packaging>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -112,7 +111,6 @@
 	</dependencies>
 
 	<build>
-		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
@@ -157,6 +155,7 @@
 						</execution>
 					</executions>
 				</plugin>
+				
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<executions>
@@ -176,7 +175,6 @@
 					</executions>
 				</plugin>
 			</plugins>
-		</pluginManagement>
 	</build>
 
 </project>
