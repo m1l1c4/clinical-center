@@ -315,7 +315,7 @@ public class CheckupController {
 	 * @return
 	 */
 
-	@PreAuthorize("hasRole('ROLE_PACIJENT') or hasRole('ROLE_DOKTOR')")
+	@PreAuthorize("hasRole('PACIJENT') or hasRole('DOKTOR')")
 	@PostMapping(value = "/patientHistory/{type}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HashMap<Integer, List<CheckupDTO>>> getPatientCheckups(@PathVariable String type,
 			@PathVariable Long id, HttpServletRequest request) {
@@ -371,7 +371,7 @@ public class CheckupController {
 	 * @param id      - checkup id
 	 * @return
 	 */
-	@PreAuthorize("hasRole('PACIJENT')")
+	@PreAuthorize("hasRole('PACIJENT') or hasRole('DOKTOR')")
 	@PostMapping(value = "/infoReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RecipeDTO> checkupDetails(HttpServletRequest request, @PathVariable Long id) {
 		RecipeDTO report = recipeService.additionalCheckupInfo(id);
