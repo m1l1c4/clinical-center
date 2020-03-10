@@ -1,5 +1,6 @@
 package tim31.pswisa.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -81,10 +82,10 @@ public class ClinicAdministratorController {
 		String token = tokenUtils.getToken(request);
 		String email = tokenUtils.getUsernameFromToken(token);
 		User user = userService.findOneByEmail(email);
-		if (user != null && user.getType().equals("ADMIN")) {
+		if (user != null && user.getType().equals("ADMINISTRATOR")) {
 			List<AbsenceDTO> returnValue = clinicAdministratorService.getRequestForVacation(user);
 			if (returnValue == null) {
-				return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+				return new ResponseEntity<>(new ArrayList<AbsenceDTO>(), HttpStatus.ALREADY_REPORTED);
 			} else {
 				return new ResponseEntity<>(returnValue, HttpStatus.ALREADY_REPORTED);
 			}
