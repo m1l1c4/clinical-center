@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tim31.pswisa.dto.ReportDTO;
 import tim31.pswisa.model.Checkup;
@@ -37,6 +38,7 @@ public class ReportService {
 	@Autowired
 	private MedicalWorkerService medicalWorkerService;
 
+	@Transactional(readOnly = false)
 	public Report add(ReportDTO r) {
 		Report report = new Report();
 		report.setDiagnose(r.getDiagnose());
