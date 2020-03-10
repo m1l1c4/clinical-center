@@ -306,7 +306,7 @@ public class CheckUpService {
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public Checkup update(CheckupDTO c) throws Exception {
 		List<Checkup> temp = checkupRepository.findAllByRoomIdAndTimeAndDate(c.getRoom().getId(), c.getTime(), c.getDate());
-		if(temp.size() > 0) {
+		if(temp.size() > 0 && temp.get(0).getId() != c.getId()) {
 			return null;
 		}		
 		Checkup checkup = checkupRepository.findOneById(c.getId());
@@ -534,6 +534,7 @@ public class CheckUpService {
 		return ret;
 	}
 
+	@Transactional(readOnly = false)
 	public boolean scheduleCheckup(Long id) {
 		boolean ok = true;
 		Checkup checkupToSchedule = findOneById(id);
@@ -545,6 +546,7 @@ public class CheckUpService {
 		return ok;
 	}
 
+	@Transactional(readOnly = false)
 	public boolean cancelCheckup(Long id) {
 		boolean ok = true;
 		Checkup checkupToCancel = findOneById(id);
