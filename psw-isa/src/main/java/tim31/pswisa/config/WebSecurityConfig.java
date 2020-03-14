@@ -65,8 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 				// svim korisnicima dopusti da pristupe putanjama /auth/**, /h2-console/** i
 				// /api/foo
-				.authorizeRequests().antMatchers("/log/register").permitAll().antMatchers("/log/login").permitAll()
-				.antMatchers("/api/foo").permitAll().antMatchers("/log/getUser").permitAll().antMatchers("/h2-console/**")
+				.authorizeRequests().antMatchers("/register").permitAll().antMatchers("/login").permitAll()
+				.antMatchers("/api/foo").permitAll().antMatchers("/getUser").permitAll().antMatchers("/h2-console/**")
 				.permitAll()
 
 				// svaki zahtev mora biti autorizovan
@@ -89,8 +89,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
 		web.ignoring().antMatchers(HttpMethod.POST, "/checkup/addReport", "/checkup/addAppointment",
 				"/checkup/addRecipes/*", "/checkup/checkupRequest", "/checkup/update", "/checkup/addDoctors/*",
-				"/checkup/getAllQuickApp/*", "/checkup/bookQuickApp/*", "/checkup/scheduleCheckup/*",
-				"/checkup/cancelCheckup/*", "/checkup/updateReport", "/requestVacation/*", "/clinic",
+				"/checkup/getAllQuickApp/*", "/checkup/bookQuickApp/*", "/checkup/patientHistory/*/*",
+				"/checkup/scheduleCheckup/*", "/checkup/cancelCheckup/*", "/checkup/infoReport/*",
+				"/checkup/updateReport", "/checkUpType/deleteType/*", "/checkUpType/addType", "/requestVacation/*",
 				"/updateAdministrator", "/clinic/updateClinic", "/clinic/changeNameOfType", "/clinic/searchOneType/*",
 				"/clinic/searchRooms", "/clinic/filterRooms", "/clinic/searchClinic", "/clinic/filterClinic/*",
 				"/clinic/clinicDoctors", "/clinic/", "/clinic/deleteRoom/*", "/clinic/addRoom", "/clinic/changeRoom",
@@ -99,11 +100,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/notifyDoctors/*", "/notifyPatient/*", "/changePassword", "/register", "/login", "/addAdmin",
 				"/bookForPatient", "/deleteDoctor", "/findDoctors", "/updateMedicalWorker", "/addMedicalWorker",
 				"/searchDoctors", "/verifyRecipe/*", "/vacationRequest", "/rateMedicalWorker", "/findPatients",
-				"/filterPatients", "/addPatient", "/editMedicalRecord", "/editPatient", "/");
+				"/filterPatients", "/addPatient", "/editMedicalRecord", "/");
 
-		web.ignoring().antMatchers(HttpMethod.GET, "/checkup/*", "/codebook", "/checkup/getCheckups/*",
-				"/checkup/getVacations/*", "/checkup/getCheckup/*", "/checkUpType/getTypes", "/checkUpType/allTypes",
-				"/checkUpType/allTypesOneClinic/*", "/getAdministrator", "/getRequestForVacation", "/requestsForRoom",
+		web.ignoring().antMatchers(HttpMethod.GET, "/checkup/*", "/checkup/getCheckups/*", "/checkup/getVacations/*",
+				"/checkup/getCheckup/*", "/checkUpType/getTypes", "/checkUpType/allTypes",
+				"/checkUpType/allTypesOneClicnic/*", "/getAdministrator", "/getRequestForVacation", "/requestsForRoom",
 				"/clinic/getClinics", "/clinic/getRooms", "/clinic/getFreeRooms", "/clinic/getDoctors",
 				"/clinic/getAllTypes", "/clinic/getAllTypes", "/clinic/getClinic", "/clinic/getClinicRaiting",
 				"/clinic/getReportForMonth", "/clinic/getReportForWeek", "/clinic/getClinicsByType/*",
